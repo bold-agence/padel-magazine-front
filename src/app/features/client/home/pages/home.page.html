@@ -1,9 +1,258 @@
-<main class="home-page">
-  <img
-    class="home-page__logo"
-    src="/assets/logo-light.png"
-    alt="Padel Magazine"
-  />
-  <h1>Accueil</h1>
-  <p>Base client prete. Nous allons implementer page par page.</p>
+<div id="shell-top"></div>
+
+<main class="container">
+  <section class="hero" id="hero">
+    <div class="hero-main">
+      <div class="slide active" data-idx="0">
+        <div class="ph court" data-label="S4-H1 · 900×450"></div>
+        <div class="hero-overlay">
+          <span class="badge results">Résultats</span>
+          <h3>Open Dakar 2026 : Diallo et Sow sacrés champions</h3>
+          <div class="hero-meta">Par Mamadou Diop · 12 Avril 2026 · 6 min de lecture</div>
+        </div>
+      </div>
+      <div class="slide" data-idx="1" hidden>
+        <div class="ph violet" data-label="S4-H2 · 900×450"></div>
+        <div class="hero-overlay">
+          <span class="badge classements">Classements</span>
+          <h3>WPT 2026 : Galán et Lebrón intouchables après Mexique Open</h3>
+          <div class="hero-meta">Par Ibrahima Ndiaye · 10 Avril 2026 · 4 min de lecture</div>
+        </div>
+      </div>
+      <div class="slide" data-idx="2" hidden>
+        <div class="ph blue" data-label="S4-H3 · 900×450"></div>
+        <div class="hero-overlay">
+          <span class="badge coaching">Coaching</span>
+          <h3>5 exercices pour transformer votre vibora en arme fatale</h3>
+          <div class="hero-meta">Par Carlos Vega · 8 Avril 2026 · 8 min de lecture</div>
+        </div>
+      </div>
+      <button class="hero-arrow prev" aria-label="Précédent">‹</button>
+      <button class="hero-arrow next" aria-label="Suivant">›</button>
+      <div class="hero-dots">
+        <button class="active" data-go="0"></button>
+        <button data-go="1"></button>
+        <button data-go="2"></button>
+      </div>
+    </div>
+    <div class="hero-side">
+      <div class="hero-side-item">
+        <div class="ph sunset" data-label="S4-V1 · 460×235"></div>
+        <div class="hero-overlay">
+          <span class="badge actualites">Actualités</span>
+          <h3>WPT Africa Series Dakar en juin : le padel pro débarque</h3>
+          <div class="hero-meta">29 Mars 2026</div>
+        </div>
+      </div>
+      <div class="hero-side-item">
+        <div class="ph orange" data-label="S4-V2 · 460×235"></div>
+        <div class="hero-overlay">
+          <span class="badge results">Résultats</span>
+          <h3>Championnat U18 : Oumar Diallo survole la compétition</h3>
+          <div class="hero-meta">11 Avril 2026</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div style="margin:24px 0;"><div class="leaderboard" style="display:flex;">728 × 90 — Leaderboard Publicité</div></div>
+
+  <div class="layout">
+    <div class="main-col">
+      <div class="sec-head">
+        <h2>Actualités Sénégal</h2>
+        <a href="#" class="see-all">Voir tout →</a>
+      </div>
+      <div class="card-grid-3">
+        <article class="card red">
+          <div class="card-img"><span class="badge results">Résultats</span><div class="ph orange" data-label="460×300"></div></div>
+          <div class="card-body">
+            <h3 class="card-title">Championnat National U18 : Oumar Diallo survole la compétition</h3>
+            <div class="card-meta"><span>M. Diop</span><span class="dot"></span><span>11 Avr</span><span class="dot"></span><span>5 min</span></div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-img"><span class="badge actualites">Actualités</span><div class="ph court" data-label="460×300"></div></div>
+          <div class="card-body">
+            <h3 class="card-title">Le Saly Padel Club ouvre ses portes avec 6 nouvelles pistes</h3>
+            <div class="card-meta"><span>A. Sène</span><span class="dot"></span><span>10 Avr</span><span class="dot"></span><span>3 min</span></div>
+          </div>
+        </article>
+        <article class="card blue">
+          <div class="card-img"><span class="badge interview">Interview</span><div class="ph charcoal" data-label="460×300"></div></div>
+          <div class="card-body">
+            <h3 class="card-title">Interview Ibou Ndiaye DTN : « Dans cinq ans, top 20 africain »</h3>
+            <div class="card-meta"><span>F. Ba</span><span class="dot"></span><span>9 Avr</span><span class="dot"></span><span>7 min</span></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="sec-head orange" style="margin-top:40px;">
+        <h2>Derniers résultats</h2>
+        <a href="#" class="see-all">Tous les résultats →</a>
+      </div>
+      <div class="scoreboard">
+        <div class="score-row">
+          <div class="p">A. Diallo / M. Sow</div>
+          <div class="s">6-3</div><div class="s">6-4</div>
+          <div class="p loser">B. Fall / K. Traoré</div>
+          <div class="t">Open Dakar · Finale</div>
+        </div>
+        <div class="score-row">
+          <div class="p">F. Mbaye</div>
+          <div class="s">7-5</div><div class="s">6-2</div>
+          <div class="p loser">A. Diouf</div>
+          <div class="t">Champ. Féminin · 1/2</div>
+        </div>
+        <div class="score-row">
+          <div class="p">O. Diallo / I. Ndiaye</div>
+          <div class="s">7-6</div><div class="s">6-3</div>
+          <div class="p loser">C. Ba / T. Fall</div>
+          <div class="t">Circuit Dakar · 1/4</div>
+        </div>
+      </div>
+
+      <div class="sec-head red" style="margin-top:40px;">
+        <h2>Live Stream</h2>
+        <a href="#" class="see-all">Tous les événements →</a>
+      </div>
+      <div class="live-card">
+        <div class="live-head">
+          <div class="live-label"><span class="pulse"></span> Prochain Live</div>
+          <div style="font-size:12px;color:var(--gray);">Chaîne YouTube @PadelMagazineSN</div>
+        </div>
+        <div class="live-body">
+          <div class="live-player">
+            <div class="ph charcoal" data-label="YouTube embed 16:9">
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;flex-direction:column;gap:12px;">
+                <div style="width:80px;height:80px;border-radius:50%;background:rgba(226,75,74,.2);border:2px solid var(--red);display:flex;align-items:center;justify-content:center;font-size:28px;">▶</div>
+                <div style="font-family:var(--f-display);font-size:22px;letter-spacing:.04em;">OPEN DAKAR · FINALE</div>
+                <div id="countdown" style="display:flex;gap:14px;font-family:var(--f-display);"></div>
+              </div>
+            </div>
+          </div>
+          <div class="live-info">
+            <h3>Open Dakar — Finale Hommes</h3>
+            <div class="event-meta">
+              <div><span>📅</span> Samedi 19 Avril 2026</div>
+              <div><span>⏰</span> 15h00 GMT · Dakar</div>
+              <div><span>📍</span> TGS Arena — Almadies</div>
+            </div>
+            <p style="margin:0;color:var(--gray);font-size:14px;line-height:1.6;">Diffusion en direct du match qui consacrera le champion de la 4e édition de l'Open Dakar.</p>
+            <a href="#" class="btn btn-danger">Activer le rappel</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-head violet" style="margin-top:40px;">
+        <h2>Classements</h2>
+        <a href="#" class="see-all">Classement complet →</a>
+      </div>
+      <div class="widget violet" style="padding:24px;">
+        <div class="rank-grid">
+          <div class="rank-col">
+            <h4>🇸🇳 Sénégal · Top 5 Hommes</h4>
+            <ul class="rank-list">
+              <li><span class="r">1</span><div><div class="n">A. Diallo</div><div class="p">Club Almadies</div></div><span class="p">1 420 pts</span></li>
+              <li><span class="r">2</span><div><div class="n">M. Sow</div><div class="p">Club Almadies</div></div><span class="p">1 385 pts</span></li>
+              <li><span class="r">3</span><div><div class="n">B. Fall</div><div class="p">Yoff Padel</div></div><span class="p">1 290 pts</span></li>
+              <li><span class="r">4</span><div><div class="n">I. Camara</div><div class="p">Dakar Padel Center</div></div><span class="p">1 240 pts</span></li>
+              <li><span class="r">5</span><div><div class="n">K. Traoré</div><div class="p">Club Almadies</div></div><span class="p">1 190 pts</span></li>
+            </ul>
+          </div>
+          <div class="rank-col">
+            <h4>🌍 WPT Mondial · Top 5</h4>
+            <ul class="rank-list">
+              <li><span class="r">1</span><div><div class="n">Galán / Lebrón 🇪🇸</div><div class="p">WPT</div></div><span class="p">14 850</span></li>
+              <li><span class="r">2</span><div><div class="n">Chingotto / Tello 🇦🇷</div><div class="p">WPT</div></div><span class="p">13 420</span></li>
+              <li><span class="r">3</span><div><div class="n">Lima / Tapia 🇧🇷🇦🇷</div><div class="p">WPT</div></div><span class="p">12 900</span></li>
+              <li><span class="r">4</span><div><div class="n">Gutierrez / Sánchez 🇦🇷</div><div class="p">WPT</div></div><span class="p">12 100</span></li>
+              <li><span class="r">5</span><div><div class="n">Yanguas / Coello 🇪🇸</div><div class="p">WPT</div></div><span class="p">11 780</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-head blue" style="margin-top:40px;">
+        <h2>Coaching &amp; Technique</h2>
+        <a href="#" class="see-all">Voir tout →</a>
+      </div>
+      <div class="card-grid-2">
+        <article class="card blue">
+          <div class="card-img"><span class="badge coaching">Coaching</span><div class="ph blue" data-label="460×300"></div></div>
+          <div class="card-body">
+            <h3 class="card-title">Tactique : construire le point depuis le fond</h3>
+            <p class="card-sub">Les 3 déclencheurs qui font basculer l'échange en votre faveur.</p>
+            <div class="card-meta"><span>C. Vega</span><span class="dot"></span><span>7 Avr</span><span class="dot"></span><span>9 min</span></div>
+          </div>
+        </article>
+        <article class="card blue">
+          <div class="card-img"><span class="badge coaching">Coaching</span><div class="ph green" data-label="460×300"></div></div>
+          <div class="card-body">
+            <h3 class="card-title">Guide débutant : les 10 règles du padel à connaître</h3>
+            <p class="card-sub">Le service, le grillage, la règle des 3 rebonds : tout y passe.</p>
+            <div class="card-meta"><span>C. Vega</span><span class="dot"></span><span>5 Avr</span><span class="dot"></span><span>6 min</span></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="sec-head" style="margin-top:40px;">
+        <h2>Portraits</h2>
+        <a href="#" class="see-all">Tous les portraits →</a>
+      </div>
+      <div class="portraits">
+        <a href="#" class="portrait-card">
+          <div class="av"><div class="ph court" data-label="80"></div></div>
+          <div class="info"><h4>Abdoulaye Diallo</h4><div class="meta"><strong>N°1 Sénégal ♂</strong><br>1 420 pts · Almadies</div></div>
+        </a>
+        <a href="#" class="portrait-card">
+          <div class="av"><div class="ph violet" data-label="80"></div></div>
+          <div class="info"><h4>Aminata Ba</h4><div class="meta"><strong>N°1 Sénégal ♀</strong><br>1 380 pts · Almadies</div></div>
+        </a>
+        <a href="#" class="portrait-card">
+          <div class="av"><div class="ph sunset" data-label="80"></div></div>
+          <div class="info"><h4>Oumar Diallo</h4><div class="meta"><strong>Espoir U18</strong><br>890 pts · Almadies</div></div>
+        </a>
+      </div>
+
+      <div class="sec-head coral" style="margin-top:40px;">
+        <h2>International · WPT / APP Tour</h2>
+        <a href="#" class="see-all">Voir tout →</a>
+      </div>
+      <div class="card-grid-4">
+        <article class="card coral">
+          <div class="card-img"><span class="badge international">WPT</span><div class="ph sunset" data-label="300×160"></div></div>
+          <div class="card-body">
+            <h3 class="card-title" style="font-size:15px;">Mexique Open WPT : Galán et Lebrón s'imposent</h3>
+            <div class="card-meta" style="font-size:11px;"><span>10 Avr</span></div>
+          </div>
+        </article>
+        <article class="card coral">
+          <div class="card-img"><span class="badge international">APP Tour</span><div class="ph orange" data-label="300×160"></div></div>
+          <div class="card-body">
+            <h3 class="card-title" style="font-size:15px;">APP Tour Miami : Chingotto sacré en finale</h3>
+            <div class="card-meta" style="font-size:11px;"><span>8 Avr</span></div>
+          </div>
+        </article>
+        <article class="card coral">
+          <div class="card-img"><span class="badge international">WPT</span><div class="ph violet" data-label="300×160"></div></div>
+          <div class="card-body">
+            <h3 class="card-title" style="font-size:15px;">Classement WPT : l'Espagne domine, l'Afrique s'éveille</h3>
+            <div class="card-meta" style="font-size:11px;"><span>6 Avr</span></div>
+          </div>
+        </article>
+        <article class="card coral">
+          <div class="card-img"><span class="badge international">Portrait</span><div class="ph charcoal" data-label="300×160"></div></div>
+          <div class="card-body">
+            <h3 class="card-title" style="font-size:15px;">Arturo Coello, l'héritier qui veut détrôner Galán</h3>
+            <div class="card-meta" style="font-size:11px;"><span>4 Avr</span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <aside id="sidebar"></aside>
+  </div>
 </main>
+
+<div id="shell-bottom"></div>
