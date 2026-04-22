@@ -1,0 +1,96 @@
+<section class="page-intro live-intro">
+  <div class="container">
+    <div class="crumb"><a href="/">Accueil</a> › Live Stream</div>
+    <h1>LIVE STREAM</h1>
+    <p class="lead">
+      Tous les matchs diffusés en direct sur la chaîne YouTube Padel Magazine Sénégal. Replays et
+      programmation ci-dessous.
+    </p>
+  </div>
+</section>
+
+<main class="container">
+  <div class="live-layout">
+    <div>
+      <div class="live-stage">
+        <div class="live-screen">
+          <div class="inner">
+            <div class="logo-mark"><span>PM</span></div>
+            <div class="next-label">Prochain live</div>
+            <h2>OPEN DAKAR — FINALE</h2>
+            <div class="dt">Samedi 19 Avril 2026 · 15h00 GMT</div>
+            <div class="live-cd">
+              @if (timeLeft.isLive) {
+                <div class="cell">
+                  <div class="n">LIVE</div>
+                  <div class="l">EN DIRECT</div>
+                </div>
+              } @else {
+                <div class="cell"><div class="n">{{ timeLeft.days }}</div><div class="l">JOURS</div></div>
+                <div class="cell"><div class="n">{{ timeLeft.hours }}</div><div class="l">HEURES</div></div>
+                <div class="cell"><div class="n">{{ timeLeft.minutes }}</div><div class="l">MIN</div></div>
+                <div class="cell"><div class="n">{{ timeLeft.seconds }}</div><div class="l">SEC</div></div>
+              }
+            </div>
+            <div class="actions">
+              <button class="btn btn-danger" (click)="notifyMe()">🔔 Être notifié</button>
+              <a href="#" class="btn btn-outline yt-link">YouTube · S'abonner</a>
+            </div>
+          </div>
+        </div>
+        <div class="live-bar">
+          <div class="live-tag"><span class="dot-p"></span>En attente · Prochain direct dans quelques heures</div>
+          <div class="channel">Chaîne @PadelMagazineSN</div>
+        </div>
+      </div>
+
+      <div class="sec-head red section-gap"><h2>Programmation des diffusions</h2></div>
+      <table class="data-table program-table">
+        <thead><tr><th>Date</th><th>Heure GMT</th><th>Match</th><th>Tournoi</th></tr></thead>
+        <tbody>
+          <tr><td>Sam 19 Avr</td><td>15h00</td><td><b>A. Diallo/M. Sow vs B. Fall/K. Traoré</b></td><td>Open Dakar · Finale</td></tr>
+          <tr><td>Dim 20 Avr</td><td>16h00</td><td><b>F. Mbaye vs A. Ba</b></td><td>Champ. Féminin · Finale</td></tr>
+          <tr><td>Sam 26 Avr</td><td>14h00</td><td><b>Circuit Dakar · 1/2 finales</b></td><td>Circuit Dakar</td></tr>
+          <tr><td>Sam 7 Juin</td><td>18h00</td><td><b>WPT Africa Series Dakar — Ouverture</b></td><td>WPT Exhibition</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <aside class="live-side">
+      <div class="widget red">
+        <div class="widget-head"><h3>À propos du live</h3></div>
+        <p class="about-text">
+          La finale de la 4e édition de l'Open Dakar oppose le duo N°1 sénégalais aux tenants du titre
+          2025.
+        </p>
+        <div class="about-meta">
+          📅 Samedi 19 Avril 2026<br />
+          ⏰ 15h00 GMT · 20h30 Dakar<br />
+          📍 TGS Arena, Almadies
+        </div>
+      </div>
+
+      <div class="widget">
+        <div class="widget-head"><h3>Chaîne YouTube</h3></div>
+        <p class="yt-text">Abonnez-vous pour être notifié à chaque diffusion.</p>
+        <a href="#" class="btn btn-danger btn-block">▶ S'abonner</a>
+      </div>
+
+      <div class="widget">
+        <div class="widget-head"><h3>Replays disponibles</h3></div>
+        <div class="archive-item">
+          <div class="thumb"><div class="ph court" data-label=""></div></div>
+          <div><h4>Open Dakar · 1/2 Diallo vs Gueye</h4><div class="m">1h48 · 10 Avr</div></div>
+        </div>
+        <div class="archive-item">
+          <div class="thumb"><div class="ph violet" data-label=""></div></div>
+          <div><h4>Champ. U18 · Finale Diallo/Mbaye</h4><div class="m">1h22 · 11 Avr</div></div>
+        </div>
+        <div class="archive-item">
+          <div class="thumb"><div class="ph sunset" data-label=""></div></div>
+          <div><h4>Open Saly · Finale Fall/Camara</h4><div class="m">2h14 · 3 Avr</div></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>

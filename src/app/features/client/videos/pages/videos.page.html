@@ -1,0 +1,42 @@
+<section class="page-intro">
+  <div class="container">
+    <div class="crumb"><a href="/">Accueil</a> › Vidéos</div>
+    <h1>VIDÉOS &amp; REPLAYS</h1>
+    <p class="lead">
+      Replays de matchs, interviews, coaching vidéo et highlights. Tout le contenu vidéo de la chaîne
+      Padel Magazine.
+    </p>
+  </div>
+</section>
+
+<main class="container">
+  <div class="chips">
+    <button class="chip on">Tout</button>
+    <button class="chip red">Replays matchs</button>
+    <button class="chip blue">Coaching vidéo</button>
+    <button class="chip orange">Highlights</button>
+    <button class="chip">Interviews</button>
+  </div>
+
+  <div class="card-grid-3">
+    @for (video of videos; track video.title) {
+      <div class="vid-card" (click)="isModalOpen = true">
+        <div class="vid-thumb">
+          <div class="ph {{ video.ph }}" data-label=""></div>
+          <span class="dur">{{ video.duration }}</span>
+        </div>
+        <div class="vid-body">
+          <h3>{{ video.title }}</h3>
+          <div class="m">{{ video.date }}</div>
+        </div>
+      </div>
+    }
+  </div>
+</main>
+
+<div class="modal" [class.on]="isModalOpen">
+  <div class="modal-inner">
+    <button class="modal-close" (click)="isModalOpen = false">✕ Fermer</button>
+    <div class="ph charcoal" data-label="YouTube embed"></div>
+  </div>
+</div>

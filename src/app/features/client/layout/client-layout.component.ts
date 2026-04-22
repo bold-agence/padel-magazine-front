@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { Meta, Title } from '@angular/platform-browser';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ClientHeaderComponent } from './components/client-header/client-header.component';
 import { ClientFooterComponent } from './components/client-footer/client-footer.component';
@@ -14,19 +15,28 @@ import { ClientFooterComponent } from './components/client-footer/client-footer.
   encapsulation: ViewEncapsulation.None,
 })
 export class ClientLayoutComponent implements OnInit, OnDestroy {
+  private static readonly DEFAULT_TITLE =
+    'Padel Magazine — Le padel au Sénégal et en Afrique francophone';
+  private static readonly DEFAULT_DESCRIPTION =
+    "Le premier magazine en ligne dédié au padel au Sénégal et en Afrique francophone. Actualités, résultats, classements, coaching et live.";
   private routerSubscription: Subscription | null = null;
   protected currentPage = 'home';
 
   constructor(
     @Inject(DOCUMENT) private readonly document: Document,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly title: Title,
+    private readonly meta: Meta
   ) {}
 
   ngOnInit(): void {
     this.setPageFromUrl(this.router.url);
+    this.updateSeoFromRoute();
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.setPageFromUrl(event.urlAfterRedirects);
+        this.updateSeoFromRoute();
       }
     });
   }
@@ -41,5 +51,19 @@ export class ClientLayoutComponent implements OnInit, OnDestroy {
     const segment = cleanUrl.replace(/^\/+/, '').split('/')[0] || 'home';
     this.currentPage = segment;
     this.document.body.dataset['page'] = segment;
+  }
+
+  private updateSeoFromRoute(): void {
+    let route = this.activatedRoute;
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+
+    const data = route.snapshot.data;
+    const title = data['title'] ?? ClientLayoutComponent.DEFAULT_TITLE;
+    const description = data['description'] ?? ClientLayoutComponent.DEFAULT_DESCRIPTION;
+
+    this.title.setTitle(title);
+    this.meta.updateTag({ name: 'description', content: description });
   }
 }

@@ -19,7 +19,7 @@
 
 <header class="header" [class.scrolled]="isScrolled">
   <div class="header-inner">
-    <a class="logo" href="/" aria-label="Padel Magazine — Accueil">
+    <a class="logo" routerLink="/" aria-label="Padel Magazine — Accueil">
       <img src="/assets/logo-light.png" alt="Padel Magazine" />
     </a>
     <div class="leaderboard">728 × 90 — Sponsor Leaderboard</div>
@@ -37,19 +37,23 @@
 <nav class="nav">
   <div class="nav-inner">
     <ul class="nav-links" id="navLinks">
-      <li><a href="#" [class.active]="currentPage === 'actualites'">Actualités</a></li>
-      <li><a href="#" [class.active]="currentPage === 'resultats'">Résultats</a></li>
-      <li><a href="#" [class.active]="currentPage === 'classements'">Classements</a></li>
-      <li><a href="#" [class.active]="currentPage === 'coaching'">Coaching</a></li>
-      <li><a href="#" [class.active]="currentPage === 'portraits'">Portraits</a></li>
-      <li><a href="#" [class.active]="currentPage === 'international'">International</a></li>
+      <li><a routerLink="/actualites" routerLinkActive="active">Actualités</a></li>
+      <li><a routerLink="/resultats" routerLinkActive="active">Résultats</a></li>
+      <li><a routerLink="/classements" routerLinkActive="active">Classements</a></li>
+      <li><a routerLink="/coaching" routerLinkActive="active">Coaching</a></li>
+      <li><a routerLink="/portraits" routerLinkActive="active">Portraits</a></li>
+      <li><a routerLink="/international" routerLinkActive="active">International</a></li>
       <li>
-        <a href="#" [class.active]="currentPage === 'live'">Live <span class="nav-live-dot"></span></a>
+        <a routerLink="/live" routerLinkActive="active">Live <span class="nav-live-dot"></span></a>
       </li>
-      <li><a href="#" [class.active]="currentPage === 'videos'">Vidéos</a></li>
+      <li><a routerLink="/videos" routerLinkActive="active">Vidéos</a></li>
     </ul>
     <div style="display:flex;gap:10px;align-items:center;">
-      <a href="#" style="font-size:12px;color:var(--gray);font-family:var(--f-cond);text-transform:uppercase;letter-spacing:.06em;">À propos</a>
+      <a
+        routerLink="/apropos"
+        style="font-size:12px;color:var(--gray);font-family:var(--f-cond);text-transform:uppercase;letter-spacing:.06em;"
+        >À propos</a
+      >
     </div>
   </div>
 </nav>

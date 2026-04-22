@@ -1,0 +1,42 @@
+<section class="page-intro">
+  <div class="container">
+    <div class="crumb"><a href="/">Accueil</a> › Portraits</div>
+    <h1>PORTRAITS</h1>
+    <p class="lead">
+      Les figures du padel sénégalais et international. Parcours, statistiques et coups signature.
+    </p>
+  </div>
+</section>
+
+<main class="container">
+  <div class="chips">
+    <button class="chip on">Tous</button>
+    <button class="chip">Sénégal ♂</button>
+    <button class="chip">Sénégal ♀</button>
+    <button class="chip coral">International</button>
+    <button class="chip">U18</button>
+  </div>
+
+  <div class="layout">
+    <div class="main-col">
+      <div class="card-grid-3">
+        @for (p of players; track p.name) {
+          <a href="#" class="pl-card">
+            <div class="pl-photo">
+              <div class="ph {{ p.ph }}" data-label="Photo"></div>
+              <span class="flag">{{ p.flag }}</span>
+            </div>
+            <div class="pl-body">
+              <div class="rank">{{ p.rank }}</div>
+              <h3>{{ p.name }}</h3>
+              <div class="meta"><b>{{ p.pts }} pts</b> · {{ p.club }}</div>
+              <span class="shot">Coup signature · {{ p.shot }}</span>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+
+    <app-sidebar />
+  </div>
+</main>

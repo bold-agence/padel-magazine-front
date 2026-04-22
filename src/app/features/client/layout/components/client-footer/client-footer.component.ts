@@ -1,8 +1,10 @@
 import { Component, HostListener } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-client-footer',
   standalone: true,
+  imports: [RouterLink],
   templateUrl: './client-footer.component.html',
   styleUrl: './client-footer.component.scss',
 })

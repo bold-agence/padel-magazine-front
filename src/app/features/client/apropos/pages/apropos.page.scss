@@ -1,0 +1,66 @@
+:host { display: block; }
+
+.page-intro {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2a 100%);
+  color: #fff; padding: 40px 0 36px; border-bottom: 4px solid var(--green); position: relative; overflow: hidden;
+}
+.page-intro::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(29, 158, 117, 0.08) 0 1px, transparent 1px 80px),
+    repeating-linear-gradient(0deg, rgba(29, 158, 117, 0.08) 0 1px, transparent 1px 80px);
+  pointer-events: none;
+}
+.page-intro .container { position: relative; }
+.page-intro .crumb { font-family: var(--f-cond); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.6); margin-bottom: 10px; }
+.page-intro h1 { font-family: var(--f-display); font-weight: 700; font-size: 48px; margin: 0; letter-spacing: .02em; }
+.page-intro p.lead { max-width: 660px; margin: 10px 0 0; color: rgba(255,255,255,.75); font-size: 16px; line-height: 1.6; }
+
+.about-hero { display:grid; grid-template-columns:1.2fr 1fr; gap:28px; align-items:center; margin:32px 0 40px; }
+.about-hero h2 { font-family:var(--f-display); font-size:38px; margin:0 0 14px; line-height:1.1; }
+.about-hero p { color:var(--ink); line-height:1.8; margin:0 0 12px; }
+.about-hero .img { aspect-ratio:4/3; border-radius:var(--radius); overflow:hidden; }
+
+.team-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:20px; }
+.team-card { background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; text-align:center; }
+.team-card .photo { aspect-ratio:1/1; overflow:hidden; }
+.team-card h4 { font-family:var(--f-display); font-size:17px; margin:12px 0 4px; }
+.team-card .role { font-size:12px; color:var(--gray); padding:0 12px 16px; font-family:var(--f-cond); letter-spacing:.06em; text-transform:uppercase; }
+
+.section-gap { margin-top: 40px; }
+.pub-intro { color:var(--gray); margin-top:-8px; }
+.pub-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:16px; }
+.pub-card { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:20px; }
+.pub-card h4 { font-family:var(--f-display); margin:0 0 6px; font-size:18px; }
+.pub-card .price { font-family:var(--f-display); color:var(--green); font-size:26px; margin:10px 0; }
+.pub-sub { font-size:12px; color:var(--gray); }
+
+.contact-grid { display:grid; grid-template-columns:1.2fr 1fr; gap:28px; margin-top:20px; }
+.contact-form { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:24px; }
+.contact-form label { display:block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--gray); margin:12px 0 6px; font-family:var(--f-cond); font-weight:600; }
+.contact-form input, .contact-form textarea { width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:4px; font-family:inherit; font-size:14px; }
+.contact-form textarea { min-height:140px; resize:vertical; }
+.send-btn { margin-top: 16px; }
+
+.map-placeholder {
+  aspect-ratio:4/3; border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); position:relative;
+  background:
+    linear-gradient(135deg, #e1f5ee 0%, #d4e4ef 100%),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.04) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.04) 0 1px, transparent 1px 24px);
+  display:flex; align-items:center; justify-content:center; color:var(--gray); font-family:ui-monospace,monospace; font-size:13px;
+}
+.map-pin { position:absolute; top:48%; left:52%; width:32px; height:32px; background:var(--red); border-radius:50% 50% 50% 0; transform:translate(-50%,-100%) rotate(-45deg); box-shadow:0 4px 12px rgba(0,0,0,.25); }
+.map-pin::after { content:''; position:absolute; inset:8px; background:#fff; border-radius:50%; }
+.map-caption { position:absolute; bottom:10px; left:12px; background:#fff; padding:6px 10px; border-radius:4px; font-size:12px; box-shadow:0 2px 6px rgba(0,0,0,.12); }
+.contact-meta { margin-top:16px; font-size:14px; line-height:1.8; color:var(--ink); }
+.contact-meta a { color: var(--green); }
+
+@media (max-width: 1024px) {
+  .team-grid { grid-template-columns: repeat(2,1fr); }
+  .pub-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .about-hero, .contact-grid { grid-template-columns: 1fr; }
+  .page-intro h1 { font-size: 32px; }
+}

@@ -1,0 +1,246 @@
+:host {
+  display: block;
+}
+
+.page-intro {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2a 100%);
+  color: #fff;
+  padding: 40px 0 36px;
+  border-bottom: 4px solid var(--green);
+  position: relative;
+  overflow: hidden;
+}
+
+.coaching-intro {
+  background: linear-gradient(135deg, #378add 0%, #1e4c85 100%);
+  border-bottom-color: var(--blue);
+}
+
+.page-intro::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(29, 158, 117, 0.08) 0 1px, transparent 1px 80px),
+    repeating-linear-gradient(0deg, rgba(29, 158, 117, 0.08) 0 1px, transparent 1px 80px);
+  pointer-events: none;
+}
+
+.page-intro .container {
+  position: relative;
+}
+
+.page-intro .crumb {
+  font-family: var(--f-cond);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 10px;
+}
+
+.page-intro .crumb a:hover {
+  color: var(--green);
+}
+
+.page-intro h1 {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 48px;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.page-intro p.lead {
+  max-width: 660px;
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0 28px;
+}
+
+.chip {
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-family: var(--f-cond);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: #fff;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  transition: all 0.15s;
+}
+
+.chip.on,
+.chip:hover,
+.chip.blue.on,
+.chip.blue:hover {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 28px;
+  margin: 24px 0 56px;
+}
+
+.main-col {
+  min-width: 0;
+}
+
+.card-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.card {
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
+  border-bottom: 3px solid transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  border-bottom-color: var(--blue);
+}
+
+.card-img {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  position: relative;
+}
+
+.card-img .ph {
+  transition: transform 0.4s;
+}
+
+.card:hover .card-img .ph {
+  transform: scale(1.04);
+}
+
+.card-img .badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+}
+
+.card-body {
+  padding: 14px 16px 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.25;
+  margin: 0 0 10px;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card:hover .card-title {
+  color: var(--blue);
+}
+
+.card-sub {
+  font-size: 14px;
+  color: var(--gray);
+  margin: 0 0 10px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-meta {
+  font-size: 12px;
+  color: var(--gray);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: auto;
+}
+
+.card-meta .dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--gray);
+}
+
+.featured-card {
+  margin-bottom: 28px;
+}
+
+.featured-image {
+  aspect-ratio: 21 / 9;
+}
+
+.featured-body {
+  padding: 24px 28px 28px;
+}
+
+.featured-title {
+  font-size: 28px;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.featured-sub {
+  font-size: 15px;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr 280px;
+  }
+
+  .card-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .card-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .page-intro h1 {
+    font-size: 32px;
+  }
+}

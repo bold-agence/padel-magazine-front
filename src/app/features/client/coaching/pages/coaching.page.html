@@ -1,0 +1,63 @@
+<section class="page-intro coaching-intro">
+  <div class="container">
+    <div class="crumb"><a href="/">Accueil</a> › Coaching</div>
+    <h1>COACHING &amp; TECHNIQUE</h1>
+    <p class="lead">
+      Les conseils, exercices et tactiques pour progresser au padel, par nos coachs et des experts
+      internationaux.
+    </p>
+  </div>
+</section>
+
+<main class="container">
+  <div class="chips">
+    <button class="chip blue on">Tout</button>
+    <button class="chip blue">Technique</button>
+    <button class="chip blue">Tactique</button>
+    <button class="chip blue">Physique</button>
+    <button class="chip blue">Mental</button>
+    <button class="chip blue">Débutant</button>
+    <button class="chip blue">Vidéo</button>
+  </div>
+
+  <div class="layout">
+    <div class="main-col">
+      <article class="card blue featured-card">
+        <div class="card-img featured-image">
+          <span class="badge coaching">Coaching · Featured</span>
+          <div class="ph blue" data-label="900×450"></div>
+        </div>
+        <div class="card-body featured-body">
+          <h3 class="card-title featured-title">
+            5 exercices pour transformer votre vibora en arme fatale
+          </h3>
+          <p class="card-sub featured-sub">
+            Carlos Vega, ancien joueur WPT, décompose le geste et livre une progression hebdomadaire
+            pour maîtriser ce coup redouté.
+          </p>
+          <div class="card-meta"><span>Carlos Vega · Coach</span><span class="dot"></span><span>8 Avr 2026</span><span class="dot"></span><span>8 min</span></div>
+        </div>
+      </article>
+
+      <div class="card-grid-3">
+        @for (card of cards; track card.title) {
+          <article class="card blue">
+            <div class="card-img">
+              <span class="badge coaching">{{ card.badge }}</span>
+              <div class="ph {{ card.ph }}" data-label="460×300"></div>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">{{ card.title }}</h3>
+              <p class="card-sub">{{ card.sub }}</p>
+              <div class="card-meta">
+                <span>{{ card.author }}</span><span class="dot"></span><span>{{ card.date }}</span>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+
+    <app-sidebar />
+  </div>
+</main>

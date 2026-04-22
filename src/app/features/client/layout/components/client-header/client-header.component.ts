@@ -1,8 +1,10 @@
 import { Component, HostListener, Input } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-client-header',
   standalone: true,
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './client-header.component.html',
   styleUrl: './client-header.component.scss',
 })

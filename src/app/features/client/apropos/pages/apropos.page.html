@@ -1,0 +1,85 @@
+<section class="page-intro">
+  <div class="container">
+    <div class="crumb"><a href="/">Accueil</a> › À propos</div>
+    <h1>À PROPOS &amp; CONTACT</h1>
+    <p class="lead">Le magazine, l'équipe, nos offres publicitaires et comment nous joindre.</p>
+  </div>
+</section>
+
+<main class="container">
+  <section class="about-hero">
+    <div>
+      <h2>Le padel sénégalais mérite son magazine.</h2>
+      <p>
+        Padel Magazine est né d'une conviction : le padel connaît au Sénégal et en Afrique
+        francophone une croissance exceptionnelle — clubs, licenciés, tournois, médias internationaux
+        s'y intéressent. Pourtant, aucun média n'était jusqu'ici dédié à cette communauté en pleine
+        effervescence.
+      </p>
+      <p>
+        Nous couvrons chaque semaine les tournois nationaux, les parcours des joueurs, les actualités
+        des clubs, et nous relions la scène sénégalaise aux grands circuits mondiaux (WPT, APP Tour).
+      </p>
+      <p><b>Basé à Dakar. Écrit en français. Diffusé partout.</b></p>
+    </div>
+    <div class="img"><div class="ph court" data-label="Équipe · 600×450"></div></div>
+  </section>
+
+  <div class="sec-head"><h2>L'équipe éditoriale</h2></div>
+  <div class="team-grid">
+    <div class="team-card"><div class="photo"><div class="ph court" data-label="Photo"></div></div><h4>Mamadou Diop</h4><div class="role">Rédacteur en chef</div></div>
+    <div class="team-card"><div class="photo"><div class="ph charcoal" data-label="Photo"></div></div><h4>Fatou Ba</h4><div class="role">Journaliste · Portraits</div></div>
+    <div class="team-card"><div class="photo"><div class="ph violet" data-label="Photo"></div></div><h4>Ibrahima Ndiaye</h4><div class="role">Journaliste · International</div></div>
+    <div class="team-card"><div class="photo"><div class="ph blue" data-label="Photo"></div></div><h4>Carlos Vega</h4><div class="role">Coach · Technique</div></div>
+  </div>
+
+  <div class="sec-head orange section-gap" id="pub"><h2>Publicité · Tarifs</h2></div>
+  <p class="pub-intro">
+    Touchez la communauté padel sénégalaise et africaine via nos trois emplacements premium. Tarifs
+    mensuels, remise pour engagement trimestriel.
+  </p>
+  <div class="pub-grid">
+    <div class="pub-card">
+      <h4>Leaderboard 728×90</h4>
+      <div class="pub-sub">Header · toutes les pages</div>
+      <div class="price">450 000 XOF</div>
+      <div class="pub-sub">/ mois · ≈ 150 000 imp.</div>
+    </div>
+    <div class="pub-card">
+      <h4>MPU 300×250 · Top</h4>
+      <div class="pub-sub">Haut sidebar, au-dessus du pli</div>
+      <div class="price">300 000 XOF</div>
+      <div class="pub-sub">/ mois · ≈ 110 000 imp.</div>
+    </div>
+    <div class="pub-card">
+      <h4>MPU 300×250 · Bas</h4>
+      <div class="pub-sub">Bas sidebar</div>
+      <div class="price">180 000 XOF</div>
+      <div class="pub-sub">/ mois · ≈ 60 000 imp.</div>
+    </div>
+  </div>
+
+  <div class="sec-head section-gap" id="contact"><h2>Contact</h2></div>
+  <div class="contact-grid">
+    <form class="contact-form" (submit)="contactSubmit($event)">
+      <label>Nom</label><input required />
+      <label>Email</label><input type="email" required />
+      <label>Sujet</label><input required />
+      <label>Message</label><textarea required></textarea>
+      <button type="submit" class="btn btn-primary send-btn">Envoyer</button>
+    </form>
+    <div>
+      <div class="map-placeholder">
+        <div class="map-pin"></div>
+        <div class="map-caption">📍 TGS Arena · Almadies, Dakar</div>
+      </div>
+      <div class="contact-meta">
+        <b>Rédaction</b> · <a href="mailto:redaction@padelmagazine.sn">redaction@padelmagazine.sn</a
+        ><br />
+        <b>Publicité</b> · <a href="mailto:pub@padelmagazine.sn">pub@padelmagazine.sn</a><br />
+        <b>Adresse</b> · TGS Arena, Almadies, Dakar, Sénégal<br />
+        <b>Téléphone</b> · +221 33 XXX XX XX
+      </div>
+    </div>
+  </div>
+</main>

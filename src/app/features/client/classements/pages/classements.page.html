@@ -1,0 +1,65 @@
+<section class="page-intro">
+  <div class="container">
+    <div class="crumb"><a href="/">Accueil</a> › Classements</div>
+    <h1>CLASSEMENTS</h1>
+    <p class="lead">
+      Rankings officiels : Fédération Sénégalaise de Padel, WPT Mondial et APP Tour, mis à jour
+      après chaque tournoi.
+    </p>
+  </div>
+</section>
+
+<main class="container">
+  <div class="tabs-nav">
+    <button class="on">🇸🇳 Sénégal</button>
+    <button>🌍 WPT Mondial ♂</button>
+    <button>🌍 WPT Féminin</button>
+    <button>🌍 APP Tour</button>
+  </div>
+
+  <div class="layout">
+    <div class="main-col">
+      <div class="podium">
+        @for (entry of podium; track entry.rank) {
+          <div class="podium-card {{ entry.medalClass }}">
+            <div class="medal">{{ entry.rank }}</div>
+            <div class="av"><div class="ph {{ entry.phClass }}" data-label="64"></div></div>
+            <div class="info">
+              <h4>{{ entry.name }}</h4>
+              <div class="pt">{{ entry.points }}</div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Rang</th>
+            <th>Joueur</th>
+            <th>Club / Nationalité</th>
+            <th>Points</th>
+            <th>Évolution</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of ranking; track row.rank + row.player) {
+            <tr>
+              <td>
+                <b [style.color]="row.rankColor ?? 'inherit'">{{ row.rank }}</b>
+              </td>
+              <td>{{ row.player }}</td>
+              <td>{{ row.club }}</td>
+              <td class="score">{{ row.points }}</td>
+              <td [style.color]="row.evolutionColor">{{ row.evolution }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="export-wrap"><a class="btn btn-outline" href="#">⬇ Export CSV</a></div>
+    </div>
+
+    <app-sidebar />
+  </div>
+</main>
