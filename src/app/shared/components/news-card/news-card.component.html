@@ -1,0 +1,59 @@
+<article class="card" [class]="cardClass">
+  @if (link) {
+    <a [routerLink]="link">
+      <div class="card-img">
+        <span class="badge {{ badgeClass }}">{{ badgeText }}</span>
+        <div class="ph {{ phClass }}" data-label="460×300"></div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title">{{ title }}</h3>
+        @if (author || date || read) {
+          <div class="card-meta">
+            @if (author) {
+              <span>{{ author }}</span>
+            }
+            @if (author && date) {
+              <span class="dot"></span>
+            }
+            @if (date) {
+              <span>{{ date }}</span>
+            }
+            @if ((author || date) && read) {
+              <span class="dot"></span>
+            }
+            @if (read) {
+              <span>{{ read }}</span>
+            }
+          </div>
+        }
+      </div>
+    </a>
+  } @else {
+    <div class="card-img">
+      <span class="badge {{ badgeClass }}">{{ badgeText }}</span>
+      <div class="ph {{ phClass }}" data-label="460×300"></div>
+    </div>
+    <div class="card-body">
+      <h3 class="card-title">{{ title }}</h3>
+      @if (author || date || read) {
+        <div class="card-meta">
+          @if (author) {
+            <span>{{ author }}</span>
+          }
+          @if (author && date) {
+            <span class="dot"></span>
+          }
+          @if (date) {
+            <span>{{ date }}</span>
+          }
+          @if ((author || date) && read) {
+            <span class="dot"></span>
+          }
+          @if (read) {
+            <span>{{ read }}</span>
+          }
+        </div>
+      }
+    </div>
+  }
+</article>

@@ -27,6 +27,16 @@ export const CLIENT_ROUTES: Routes = [
           import('./actualites/pages/actualites.page').then((m) => m.ActualitesPage),
       },
       {
+        path: 'actualites/:slug',
+        data: {
+          title: 'Article — Padel Magazine',
+          description:
+            "Consultez le détail d'un article Padel Magazine : analyses, résultats et actualités du padel.",
+        },
+        loadComponent: () =>
+          import('./actualites/pages/article.page').then((m) => m.ArticlePage),
+      },
+      {
         path: 'resultats',
         data: {
           title: 'Résultats — Padel Magazine',

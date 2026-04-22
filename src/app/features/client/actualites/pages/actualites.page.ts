@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
+import { NewsCardComponent } from '../../../../shared/components/news-card/news-card.component';
 import { SidebarComponent } from '../../../../shared/components/sidebar/sidebar.component';
 
 type NewsArticle = {
+  slug: string;
   cat: string;
   cls: string;
   ph: string;
@@ -15,13 +17,14 @@ type NewsArticle = {
 @Component({
   selector: 'app-actualites-page',
   standalone: true,
-  imports: [SidebarComponent],
+  imports: [SidebarComponent, NewsCardComponent],
   templateUrl: './actualites.page.html',
   styleUrl: './actualites.page.scss',
 })
 export class ActualitesPage {
   protected readonly articles: NewsArticle[] = [
     {
+      slug: 'championnat-national-u18-omar-diallo-survole-competition',
       cat: 'Résultats',
       cls: 'results',
       ph: 'orange',
@@ -32,6 +35,7 @@ export class ActualitesPage {
       cardClass: 'red',
     },
     {
+      slug: 'saly-padel-club-ouvre-ses-portes-6-nouvelles-pistes',
       cat: 'Actualités',
       cls: 'actualites',
       ph: 'court',
@@ -42,6 +46,7 @@ export class ActualitesPage {
       cardClass: '',
     },
     {
+      slug: 'interview-ibou-ndiaye-top-20-africain-cinq-ans',
       cat: 'Interview',
       cls: 'interview',
       ph: 'charcoal',
@@ -52,6 +57,7 @@ export class ActualitesPage {
       cardClass: 'blue',
     },
     {
+      slug: 'wpt-africa-series-dakar-juin-padel-pro-debarque',
       cat: 'Actualités',
       cls: 'actualites',
       ph: 'green',
@@ -62,6 +68,7 @@ export class ActualitesPage {
       cardClass: '',
     },
     {
+      slug: 'open-dakar-2026-diallo-sow-sacres-champions',
       cat: 'Résultats',
       cls: 'results',
       ph: 'sunset',
@@ -72,6 +79,7 @@ export class ActualitesPage {
       cardClass: 'red',
     },
     {
+      slug: 'wpt-2026-galan-lebron-intouchables-mexique-open',
       cat: 'Classements',
       cls: 'classements',
       ph: 'violet',
@@ -82,6 +90,7 @@ export class ActualitesPage {
       cardClass: 'violet',
     },
     {
+      slug: '5-exercices-transformer-vibora-arme-fatale',
       cat: 'Coaching',
       cls: 'coaching',
       ph: 'blue',
@@ -92,6 +101,7 @@ export class ActualitesPage {
       cardClass: 'blue',
     },
     {
+      slug: 'federation-senegalaise-plan-strategique-2026-2030',
       cat: 'Actualités',
       cls: 'actualites',
       ph: 'charcoal',
@@ -102,6 +112,7 @@ export class ActualitesPage {
       cardClass: '',
     },
     {
+      slug: 'app-tour-miami-chingotto-sacre-finale',
       cat: 'International',
       cls: 'international',
       ph: 'sunset',

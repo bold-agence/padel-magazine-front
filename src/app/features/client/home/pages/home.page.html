@@ -59,30 +59,22 @@
     <div class="main-col">
       <div class="sec-head">
         <h2>Actualités Sénégal</h2>
-        <a href="#" class="see-all">Voir tout →</a>
+        <a routerLink="/actualites" class="see-all">Voir tout →</a>
       </div>
       <div class="card-grid-3">
-        <article class="card red">
-          <div class="card-img"><span class="badge results">Résultats</span><div class="ph orange" data-label="460×300"></div></div>
-          <div class="card-body">
-            <h3 class="card-title">Championnat National U18 : Oumar Diallo survole la compétition</h3>
-            <div class="card-meta"><span>M. Diop</span><span class="dot"></span><span>11 Avr</span><span class="dot"></span><span>5 min</span></div>
-          </div>
-        </article>
-        <article class="card">
-          <div class="card-img"><span class="badge actualites">Actualités</span><div class="ph court" data-label="460×300"></div></div>
-          <div class="card-body">
-            <h3 class="card-title">Le Saly Padel Club ouvre ses portes avec 6 nouvelles pistes</h3>
-            <div class="card-meta"><span>A. Sène</span><span class="dot"></span><span>10 Avr</span><span class="dot"></span><span>3 min</span></div>
-          </div>
-        </article>
-        <article class="card blue">
-          <div class="card-img"><span class="badge interview">Interview</span><div class="ph charcoal" data-label="460×300"></div></div>
-          <div class="card-body">
-            <h3 class="card-title">Interview Ibou Ndiaye DTN : « Dans cinq ans, top 20 africain »</h3>
-            <div class="card-meta"><span>F. Ba</span><span class="dot"></span><span>9 Avr</span><span class="dot"></span><span>7 min</span></div>
-          </div>
-        </article>
+        @for (article of featuredNews; track article.title) {
+          <app-news-card
+            [cardClass]="article.cardClass"
+            [badgeClass]="article.cls"
+            [badgeText]="article.cat"
+            [phClass]="article.ph"
+            [title]="article.title"
+            [author]="article.auth"
+            [date]="article.date"
+            [read]="article.read"
+            [link]="'/actualites/' + article.slug"
+          />
+        }
       </div>
 
       <div class="sec-head orange" style="margin-top:40px;">

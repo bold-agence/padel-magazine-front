@@ -7,16 +7,66 @@ import {
   Renderer2,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { NewsCardComponent } from '../../../../shared/components/news-card/news-card.component';
 import { SidebarComponent } from '../../../../shared/components/sidebar/sidebar.component';
+import { RouterLink } from '@angular/router';
+
+type HomeNewsCard = {
+  slug: string;
+  cat: string;
+  cls: string;
+  ph: string;
+  title: string;
+  auth: string;
+  date: string;
+  read: string;
+  cardClass: string;
+};
 
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [SidebarComponent],
+  imports: [SidebarComponent, NewsCardComponent, RouterLink],
   templateUrl: './home.page.html',
   styleUrl: './home.page.scss',
 })
 export class HomePage implements OnInit, AfterViewInit, OnDestroy {
+  protected readonly featuredNews: HomeNewsCard[] = [
+    {
+      slug: 'championnat-national-u18-omar-diallo-survole-competition',
+      cat: 'Résultats',
+      cls: 'results',
+      ph: 'orange',
+      title: 'Championnat National U18 : Oumar Diallo survole la compétition',
+      auth: 'M. Diop',
+      date: '11 Avr',
+      read: '5 min',
+      cardClass: 'red',
+    },
+    {
+      slug: 'saly-padel-club-ouvre-ses-portes-6-nouvelles-pistes',
+      cat: 'Actualités',
+      cls: 'actualites',
+      ph: 'court',
+      title: 'Le Saly Padel Club ouvre ses portes avec 6 nouvelles pistes',
+      auth: 'A. Sène',
+      date: '10 Avr',
+      read: '3 min',
+      cardClass: '',
+    },
+    {
+      slug: 'interview-ibou-ndiaye-top-20-africain-cinq-ans',
+      cat: 'Interview',
+      cls: 'interview',
+      ph: 'charcoal',
+      title: 'Interview Ibou Ndiaye DTN : « Dans cinq ans, top 20 africain »',
+      auth: 'F. Ba',
+      date: '9 Avr',
+      read: '7 min',
+      cardClass: 'blue',
+    },
+  ];
+
   private heroIndex = 0;
   private heroTimer: ReturnType<typeof setInterval> | null = null;
   private countdownTimer: ReturnType<typeof setInterval> | null = null;

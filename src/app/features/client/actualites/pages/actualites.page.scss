@@ -139,6 +139,14 @@
   flex-direction: column;
 }
 
+.card > a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .card:hover {
   box-shadow: var(--shadow-md);
   border-bottom-color: var(--green);

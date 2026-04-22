@@ -24,19 +24,17 @@
     <div class="main-col">
       <div class="card-grid-3">
         @for (article of articles; track article.title) {
-          <article class="card {{ article.cardClass }}">
-            <div class="card-img">
-              <span class="badge {{ article.cls }}">{{ article.cat }}</span>
-              <div class="ph {{ article.ph }}" data-label="460×300"></div>
-            </div>
-            <div class="card-body">
-              <h3 class="card-title">{{ article.title }}</h3>
-              <div class="card-meta">
-                <span>{{ article.auth }}</span><span class="dot"></span><span>{{ article.date }}</span
-                ><span class="dot"></span><span>{{ article.read }}</span>
-              </div>
-            </div>
-          </article>
+          <app-news-card
+            [cardClass]="article.cardClass"
+            [badgeClass]="article.cls"
+            [badgeText]="article.cat"
+            [phClass]="article.ph"
+            [title]="article.title"
+            [author]="article.auth"
+            [date]="article.date"
+            [read]="article.read"
+            [link]="'/actualites/' + article.slug"
+          />
         }
       </div>
 
