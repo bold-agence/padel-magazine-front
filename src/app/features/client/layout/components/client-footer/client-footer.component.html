@@ -1,0 +1,55 @@
+<footer class="footer">
+  <div class="foot-grid">
+    <div>
+      <div class="foot-logo"><img src="/assets/logo-dark.png" alt="Padel Magazine" /></div>
+      <p class="tagline">Le premier magazine en ligne dédié au padel au Sénégal et en Afrique francophone.</p>
+      <div class="socials" style="margin-top:14px;">
+        <a href="#">f</a><a href="#">◉</a><a href="#">▶</a><a href="#">♪</a>
+      </div>
+    </div>
+    <div>
+      <h4>Rubriques</h4>
+      <a href="#">Actualités</a>
+      <a href="#">Résultats</a>
+      <a href="#">Classements</a>
+      <a href="#">Coaching</a>
+      <a href="#">Portraits</a>
+      <a href="#">International</a>
+      <a href="#">Live</a>
+      <a href="#">Vidéos</a>
+    </div>
+    <div>
+      <h4>Informations</h4>
+      <a href="#">À propos</a>
+      <a href="#">Contact</a>
+      <a href="#">Publicité</a>
+      <a href="#">Mentions légales</a>
+      <a href="#">CGU</a>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <p style="margin:0;line-height:1.7;">
+        <a href="mailto:redaction@padelmagazine.sn">redaction@padelmagazine.sn</a><br />
+        TGS Arena, Almadies<br />
+        Dakar, Sénégal 🇸🇳
+      </p>
+    </div>
+  </div>
+  <div class="sub-foot">
+    <span>© 2026 Padel Magazine Sénégal — Tous droits réservés.</span>
+    <form class="mini-news" (submit)="miniNewsSubmit($event)">
+      <input type="email" placeholder="votre@email.com" required />
+      <button type="submit">S'abonner</button>
+    </form>
+  </div>
+</footer>
+
+<button class="back-top" aria-label="Retour en haut" [class.show]="showBackTop" (click)="backTop()">↑</button>
+<div class="cookie" [class.hidden]="cookieHidden">
+  <p>Nous utilisons des cookies pour améliorer votre expérience sur Padel Magazine.</p>
+  <div class="cookie-btns">
+    <button class="btn btn-primary" (click)="closeCookie()">Accepter</button>
+    <button class="btn btn-outline" (click)="closeCookie()">Refuser</button>
+    <button class="btn btn-outline" (click)="cookieInfo()">En savoir plus</button>
+  </div>
+</div>

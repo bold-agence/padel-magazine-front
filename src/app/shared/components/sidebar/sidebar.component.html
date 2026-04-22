@@ -1,0 +1,74 @@
+<aside>
+  <div class="ad-slot" style="margin-top:18px;">300 × 250 — MPU #1</div>
+
+  <div class="newsletter-card" id="newsletter">
+    <h3>Restez informé</h3>
+    <p class="sub">L'actu padel sénégalaise chaque semaine, dans votre boîte mail.</p>
+    <form (submit)="newsletterSubmit($event)">
+      <input type="email" placeholder="votre@email.com" required />
+      <button type="submit" class="btn btn-primary btn-block">Je m'abonne</button>
+      <p class="priv">
+        En vous inscrivant, vous acceptez de recevoir nos communications. Désabonnement en 1 clic.
+      </p>
+      <p class="priv msg" style="color:var(--green);font-weight:600;font-size:12px;"></p>
+    </form>
+  </div>
+
+  <div class="widget red">
+    <div class="widget-head">
+      <h3>Populaires</h3>
+      <div class="tabs">
+        <button class="on">Trending</button>
+        <button>Popular</button>
+      </div>
+    </div>
+    <ul class="compact-list">
+      @for (item of popular; track item.title) {
+        <li class="compact-item">
+          <div class="mini"><div class="ph {{ item.phClass }}" data-label="60"></div></div>
+          <div>
+            <span class="badge {{ item.cls }}">{{ item.cat }}</span>
+            <h4 class="t" style="margin-top:6px;">{{ item.title }}</h4>
+            <div class="m" style="color:var(--gray)"><span>{{ item.age }}</span></div>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <div class="event-card">
+    <div
+      style="font-family:var(--f-cond);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:8px;"
+    >
+      Prochain événement
+    </div>
+    <h3>WPT Africa Series Dakar</h3>
+    <ul class="event-meta-list">
+      <li>📅 7–8 Juin 2026</li>
+      <li>📍 TGS Arena, Dakar</li>
+      <li>⏰ 14h00 GMT</li>
+    </ul>
+    <a href="#" class="btn btn-danger btn-block">Voir le live →</a>
+  </div>
+
+  <div class="widget social-widget">
+    <div class="widget-head"><h3>Réseaux sociaux</h3></div>
+    <div class="social-row">
+      <span class="s-ico" style="background:#1877F2">f</span>
+      <div class="s-info"><div class="name">Facebook</div><div class="count">12 400 abonnés</div></div>
+      <a href="#" class="follow">Suivre</a>
+    </div>
+    <div class="social-row">
+      <span class="s-ico" style="background:linear-gradient(135deg,#FFC107,#E1306C,#833AB4)">◉</span>
+      <div class="s-info"><div class="name">Instagram</div><div class="count">8 950 abonnés</div></div>
+      <a href="#" class="follow">Suivre</a>
+    </div>
+    <div class="social-row">
+      <span class="s-ico" style="background:#FF0000">▶</span>
+      <div class="s-info"><div class="name">YouTube</div><div class="count">3 200 abonnés</div></div>
+      <a href="#" class="follow">Suivre</a>
+    </div>
+  </div>
+
+  <div class="ad-slot">300 × 250 — MPU #2</div>
+</aside>

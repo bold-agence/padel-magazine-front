@@ -7,10 +7,12 @@ import {
   Renderer2,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { SidebarComponent } from '../../../../shared/components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-home-page',
   standalone: true,
+  imports: [SidebarComponent],
   templateUrl: './home.page.html',
   styleUrl: './home.page.scss',
 })
@@ -25,12 +27,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     private readonly renderer: Renderer2
   ) {}
 
-  async ngOnInit(): Promise<void> {
-    this.document.body.dataset['page'] = 'home';
-    this.loadStylesheet('/assets/styles.css');
-    await this.loadScript('/assets/shell.js');
-    await this.loadScript('/assets/sidebar.js');
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     this.initHeroSlider();
@@ -45,7 +42,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       clearInterval(this.countdownTimer);
     }
     this.unlisteners.forEach((unlisten) => unlisten());
-    delete this.document.body.dataset['page'];
   }
 
   private initHeroSlider(): void {
@@ -138,28 +134,4 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this.countdownTimer = setInterval(tick, 1000);
   }
 
-  private async loadScript(src: string): Promise<void> {
-    if (this.document.querySelector(`script[src="${src}"]`)) {
-      return;
-    }
-
-    await new Promise<void>((resolve, reject) => {
-      const script = this.renderer.createElement('script') as HTMLScriptElement;
-      script.src = src;
-      script.async = false;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error(`Unable to load script: ${src}`));
-      this.renderer.appendChild(this.document.body, script);
-    });
-  }
-
-  private loadStylesheet(href: string): void {
-    if (this.document.querySelector(`link[rel="stylesheet"][href="${href}"]`)) {
-      return;
-    }
-    const link = this.renderer.createElement('link') as HTMLLinkElement;
-    link.rel = 'stylesheet';
-    link.href = href;
-    this.renderer.appendChild(this.document.head, link);
-  }
 }
