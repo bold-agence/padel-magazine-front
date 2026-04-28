@@ -4,7 +4,7 @@ export const routes: Routes = [
   {
     path: '',
     loadChildren: () =>
-      import('./features/client/client.routes').then((m) => m.CLIENT_ROUTES),
+      import('./features/pages/pages.routes').then((m) => m.PAGES_ROUTES),
   },
   {
     path: '**',
