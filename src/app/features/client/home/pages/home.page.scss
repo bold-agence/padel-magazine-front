@@ -120,6 +120,27 @@
   right: 14px;
 }
 
+.home-leaderboard-wrap {
+  margin: 24px 0;
+}
+
+.home-leaderboard {
+  max-width: 728px;
+  height: 90px;
+  margin: 0 auto;
+  border: 1px dashed #d8dee4;
+  border-radius: 8px;
+  background: repeating-linear-gradient(135deg, #f5f7fa, #f5f7fa 12px, #eef2f6 12px, #eef2f6 24px);
+  color: #5f6b7a;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .layout {
   display: grid;
   grid-template-columns: 1fr 340px;
