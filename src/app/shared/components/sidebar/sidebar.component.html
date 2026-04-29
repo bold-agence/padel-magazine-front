@@ -18,20 +18,58 @@
     <div class="widget-head">
       <h3>Populaires</h3>
       <div class="tabs">
-        <button class="on">Trending</button>
-        <button>Popular</button>
+        <button
+          type="button"
+          [class.on]="activeTab === 'trending'"
+          (click)="selectTab('trending')"
+        >
+          Trending
+        </button>
+        <button
+          type="button"
+          [class.on]="activeTab === 'popular'"
+          (click)="selectTab('popular')"
+        >
+          Popular
+        </button>
       </div>
     </div>
     <ul class="compact-list">
-      @for (item of popular; track item.title) {
+      @if (isLoadingPopular) {
         <li class="compact-item">
-          <div class="mini"><div class="ph {{ item.phClass }}" data-label="60"></div></div>
+          <div class="mini"><div class="ph court" data-label="60"></div></div>
+          <div>
+            <span class="badge actualites">Chargement...</span>
+            <h4 class="t" style="margin-top:6px;">&nbsp;</h4>
+          </div>
+        </li>
+      } @else if (!popular.length) {
+        <li class="compact-item">
+          <div class="mini"><div class="ph court" data-label="60"></div></div>
+          <div>
+            <span class="badge actualites">Aucun</span>
+            <h4 class="t" style="margin-top:6px;">Pas d'articles pour le moment.</h4>
+          </div>
+        </li>
+      } @else {
+        @for (item of popular; track item.slug) {
+        <li class="compact-item">
+          <div class="mini">
+            @if (item.bannerImage) {
+              <img [src]="item.bannerImage" alt="miniature" class="mini-img" />
+            } @else {
+              <div class="ph court" data-label="60"></div>
+            }
+          </div>
           <div>
             <span class="badge {{ item.cls }}">{{ item.cat }}</span>
-            <h4 class="t" style="margin-top:6px;">{{ item.title }}</h4>
+            <h4 class="t" style="margin-top:6px;">
+              <a [href]="'/actualites/' + item.slug">{{ item.title }}</a>
+            </h4>
             <div class="m" style="color:var(--gray)"><span>{{ item.age }}</span></div>
           </div>
         </li>
+        }
       }
     </ul>
   </div>

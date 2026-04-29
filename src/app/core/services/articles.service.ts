@@ -62,6 +62,26 @@ export class ArticlesService {
       .pipe(map((response) => this.unwrap(response)));
   }
 
+  findPopular(
+    limit = 5,
+    category = 'all',
+    excludeSlug?: string,
+    mode: 'popular' | 'trending' = 'popular',
+  ): Observable<ArticleModel[]> {
+    const params = new URLSearchParams();
+    params.set('limit', String(limit));
+    params.set('category', category);
+    params.set('mode', mode);
+    if (excludeSlug) {
+      params.set('excludeSlug', excludeSlug);
+    }
+    return this.http
+      .get<ApiEnvelope<ArticleModel[]> | ArticleModel[]>(
+        `${this.apiUrl}/popular?${params.toString()}`,
+      )
+      .pipe(map((response) => this.unwrap(response)));
+  }
+
   findAllCategories(): Observable<ArticleCategoryModel[]> {
     return this.http
       .get<ApiEnvelope<ArticleCategoryModel[]> | ArticleCategoryModel[]>(
