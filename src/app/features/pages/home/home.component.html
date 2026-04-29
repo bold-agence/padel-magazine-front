@@ -18,7 +18,7 @@
       <button class="hero-arrow prev" aria-label="Précédent" (click)="prevHero()">‹</button>
       <button class="hero-arrow next" aria-label="Suivant" (click)="nextHero()">›</button>
       <div class="hero-dots">
-        @for (item of heroMainNews; track item.slug; let i = $index) {
+        @for (item of heroMainNews; track item.slug + '-' + $index; let i = $index) {
           <button [class.active]="i === heroActiveIndex" [attr.data-go]="i" (click)="goToHero(i)"></button>
         }
       </div>
@@ -196,7 +196,7 @@
 
       <div class="sec-head coral" style="margin-top:40px;">
         <h2>International · WPT / APP Tour</h2>
-        <a routerLink="/actualites?category=international" class="see-all">Voir tout →</a>
+        <a [routerLink]="['/actualites']" [queryParams]="{ category: 'international' }" class="see-all">Voir tout →</a>
       </div>
       <div class="card-grid-4">
         @for (article of internationalNews; track article.slug) {
