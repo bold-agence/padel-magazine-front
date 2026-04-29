@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NewsCardComponent } from '../../../shared/components/news-card/news-card.component';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { ArticleModel } from '../../../core/models/article.model';
-import { ArticlesService } from '../../../core/services/articles.service';
+import {
+  ArticlesService,
+  PaginatedArticlesResponse,
+} from '../../../core/services/articles.service';
 
 type NewsArticle = {
   id: string;
@@ -33,19 +37,33 @@ type CategoryChip = {
   styleUrl: './actualites.component.scss',
 })
 export class ActualitesComponent implements OnInit {
+  private readonly pageSize = 9;
   protected isLoading = false;
   protected errorMessage = '';
   protected activeCategory = 'all';
   protected articles: NewsArticle[] = [];
   protected filteredArticles: NewsArticle[] = [];
+  protected currentPage = 1;
+  protected totalPages = 1;
+  protected hasPreviousPage = false;
+  protected hasNextPage = false;
+  protected pageNumbers: number[] = [1];
   protected categories: CategoryChip[] = [
     { id: 'all', label: 'Tout', value: 'all', className: '' },
   ];
 
-  constructor(private readonly articlesService: ArticlesService) {}
+  constructor(
+    private readonly articlesService: ArticlesService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+  ) {}
 
   ngOnInit(): void {
-    this.loadArticles();
+    this.route.queryParamMap.subscribe((params) => {
+      const rawPage = Number(params.get('page') ?? '1');
+      const page = Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1;
+      this.loadArticles(page);
+    });
   }
 
   protected selectCategory(value: string): void {
@@ -57,14 +75,36 @@ export class ActualitesComponent implements OnInit {
     this.filteredArticles = this.articles.filter((article) => article.cls === value);
   }
 
-  private loadArticles(): void {
+  protected goToPage(page: number): void {
+    if (this.isLoading || page < 1 || page > this.totalPages || page === this.currentPage) {
+      return;
+    }
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  private loadArticles(page = 1): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.articlesService.findAll().subscribe({
-      next: (articles) => {
-        this.articles = articles.map((article) => this.toNewsArticle(article));
-        this.filteredArticles = this.articles;
+    this.articlesService.findPaginated(page, this.pageSize).subscribe({
+      next: (response: PaginatedArticlesResponse) => {
+        this.articles = response.items.map((article) => this.toNewsArticle(article));
+        this.currentPage = response.pagination.page;
+        this.totalPages = response.pagination.totalPages;
+        this.hasPreviousPage = response.pagination.hasPreviousPage;
+        this.hasNextPage = response.pagination.hasNextPage;
+        this.pageNumbers = this.buildPageNumbers(
+          response.pagination.page,
+          response.pagination.totalPages,
+        );
         this.categories = this.buildCategoryChips(this.articles);
+        this.selectCategory(this.activeCategory);
+        if (!this.filteredArticles.length && this.activeCategory !== 'all') {
+          this.selectCategory('all');
+        }
         this.isLoading = false;
       },
       error: () => {
@@ -72,6 +112,19 @@ export class ActualitesComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  private buildPageNumbers(currentPage: number, totalPages: number): number[] {
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+    const start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, start + 4);
+    const normalizedStart = Math.max(1, end - 4);
+    return Array.from(
+      { length: end - normalizedStart + 1 },
+      (_, index) => normalizedStart + index,
+    );
   }
 
   private buildCategoryChips(articles: NewsArticle[]): CategoryChip[] {

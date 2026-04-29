@@ -10,6 +10,18 @@ type ApiEnvelope<T> = {
   meta?: unknown;
 };
 
+export type PaginatedArticlesResponse = {
+  items: ArticleModel[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalItems: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -21,6 +33,17 @@ export class ArticlesService {
   findAll(): Observable<ArticleModel[]> {
     return this.http
       .get<ApiEnvelope<ArticleModel[]> | ArticleModel[]>(this.apiUrl)
+      .pipe(map((response) => this.unwrap(response)));
+  }
+
+  findPaginated(
+    page = 1,
+    limit = 9,
+  ): Observable<PaginatedArticlesResponse> {
+    return this.http
+      .get<ApiEnvelope<PaginatedArticlesResponse> | PaginatedArticlesResponse>(
+        `${this.apiUrl}/paginated?page=${page}&limit=${limit}`,
+      )
       .pipe(map((response) => this.unwrap(response)));
   }
 

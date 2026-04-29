@@ -53,13 +53,21 @@
 
       @if (!isLoading && !errorMessage) {
         <div class="pagination">
-          <a href="#">‹</a>
-          <span class="on">1</span>
-          <a href="#">2</a>
-          <a href="#">3</a>
-          <a href="#">4</a>
-          <a href="#">5</a>
-          <a href="#">›</a>
+          <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="!hasPreviousPage">
+            ‹
+          </button>
+          @for (page of pageNumbers; track page) {
+            <button
+              type="button"
+              [class.on]="page === currentPage"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          }
+          <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="!hasNextPage">
+            ›
+          </button>
         </div>
       }
     </div>
