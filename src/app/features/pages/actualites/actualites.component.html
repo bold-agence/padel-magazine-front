@@ -11,42 +11,57 @@
 
 <main class="container">
   <div class="chips">
-    <button class="chip on">Tout</button>
-    <button class="chip red">Résultats</button>
-    <button class="chip">Actualités</button>
-    <button class="chip blue">Interview</button>
-    <button class="chip blue">Coaching</button>
-    <button class="chip violet">Classements</button>
-    <button class="chip coral">International</button>
+    @for (category of categories; track category.id) {
+      <button
+        class="chip"
+        [class.on]="activeCategory === category.value"
+        [class.red]="category.className === 'red'"
+        [class.blue]="category.className === 'blue'"
+        [class.violet]="category.className === 'violet'"
+        [class.coral]="category.className === 'coral'"
+        (click)="selectCategory(category.value)"
+      >
+        {{ category.label }}
+      </button>
+    }
   </div>
 
   <div class="layout">
     <div class="main-col">
-      <div class="card-grid-3">
-        @for (article of articles; track article.title) {
-          <app-news-card
-            [cardClass]="article.cardClass"
-            [badgeClass]="article.cls"
-            [badgeText]="article.cat"
-            [phClass]="article.ph"
-            [title]="article.title"
-            [author]="article.auth"
-            [date]="article.date"
-            [read]="article.read"
-            [link]="'/actualites/' + article.slug"
-          />
-        }
-      </div>
+      @if (errorMessage) {
+        <p>{{ errorMessage }}</p>
+      } @else if (isLoading) {
+        <p>Chargement des actualités...</p>
+      } @else {
+        <div class="card-grid-3">
+          @for (article of filteredArticles; track article.id) {
+            <app-news-card
+              [cardClass]="article.cardClass"
+              [badgeClass]="article.cls"
+              [badgeText]="article.cat"
+              [phClass]="article.ph"
+              [title]="article.title"
+              [author]="article.auth"
+              [date]="article.date"
+              [read]="article.read"
+            [bannerImage]="article.bannerImage"
+              [link]="'/actualites/' + article.slug"
+            />
+          }
+        </div>
+      }
 
-      <div class="pagination">
-        <a href="#">‹</a>
-        <span class="on">1</span>
-        <a href="#">2</a>
-        <a href="#">3</a>
-        <a href="#">4</a>
-        <a href="#">5</a>
-        <a href="#">›</a>
-      </div>
+      @if (!isLoading && !errorMessage) {
+        <div class="pagination">
+          <a href="#">‹</a>
+          <span class="on">1</span>
+          <a href="#">2</a>
+          <a href="#">3</a>
+          <a href="#">4</a>
+          <a href="#">5</a>
+          <a href="#">›</a>
+        </div>
+      }
     </div>
 
     <app-sidebar />

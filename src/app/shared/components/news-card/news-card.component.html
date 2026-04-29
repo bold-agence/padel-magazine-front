@@ -3,7 +3,11 @@
     <a [routerLink]="link">
       <div class="card-img">
         <span class="badge {{ badgeClass }}">{{ badgeText }}</span>
-        <div class="ph {{ phClass }}" data-label="460×300"></div>
+        @if (bannerImage) {
+          <img [src]="bannerImage" [alt]="title" class="cover-image" />
+        } @else {
+          <div class="ph {{ phClass }}" data-label="460×300"></div>
+        }
       </div>
       <div class="card-body">
         <h3 class="card-title">{{ title }}</h3>
@@ -31,7 +35,11 @@
   } @else {
     <div class="card-img">
       <span class="badge {{ badgeClass }}">{{ badgeText }}</span>
-      <div class="ph {{ phClass }}" data-label="460×300"></div>
+      @if (bannerImage) {
+        <img [src]="bannerImage" [alt]="title" class="cover-image" />
+      } @else {
+        <div class="ph {{ phClass }}" data-label="460×300"></div>
+      }
     </div>
     <div class="card-body">
       <h3 class="card-title">{{ title }}</h3>

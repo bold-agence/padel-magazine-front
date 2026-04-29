@@ -17,6 +17,7 @@ export class NewsCardComponent {
   @Input() author = '';
   @Input() date = '';
   @Input() read = '';
+  @Input() bannerImage?: string | null;
   @Input() cardClass = '';
   @Input() link = '';
 }

@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NewsCardComponent } from '../../../shared/components/news-card/news-card.component';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { ArticleModel } from '../../../core/models/article.model';
+import { ArticlesService } from '../../../core/services/articles.service';
 
 type NewsArticle = {
+  id: string;
   slug: string;
   cat: string;
   cls: string;
@@ -11,7 +14,15 @@ type NewsArticle = {
   auth: string;
   date: string;
   read: string;
+  bannerImage?: string;
   cardClass: string;
+};
+
+type CategoryChip = {
+  id: string;
+  label: string;
+  value: string;
+  className: string;
 };
 
 @Component({
@@ -21,106 +32,120 @@ type NewsArticle = {
   templateUrl: './actualites.component.html',
   styleUrl: './actualites.component.scss',
 })
-export class ActualitesComponent {
-  protected readonly articles: NewsArticle[] = [
-    {
-      slug: 'championnat-national-u18-omar-diallo-survole-competition',
-      cat: 'Résultats',
-      cls: 'results',
-      ph: 'orange',
-      title: 'Championnat National U18 : Oumar Diallo survole la compétition',
-      auth: 'M. Diop',
-      date: '11 Avr',
-      read: '5 min',
-      cardClass: 'red',
-    },
-    {
-      slug: 'saly-padel-club-ouvre-ses-portes-6-nouvelles-pistes',
-      cat: 'Actualités',
-      cls: 'actualites',
-      ph: 'court',
-      title: 'Le Saly Padel Club ouvre ses portes avec 6 nouvelles pistes',
-      auth: 'A. Sène',
-      date: '10 Avr',
-      read: '3 min',
-      cardClass: '',
-    },
-    {
-      slug: 'interview-ibou-ndiaye-top-20-africain-cinq-ans',
-      cat: 'Interview',
-      cls: 'interview',
-      ph: 'charcoal',
-      title: 'Interview Ibou Ndiaye DTN : « Dans cinq ans, top 20 africain »',
-      auth: 'F. Ba',
-      date: '9 Avr',
-      read: '7 min',
-      cardClass: 'blue',
-    },
-    {
-      slug: 'wpt-africa-series-dakar-juin-padel-pro-debarque',
-      cat: 'Actualités',
-      cls: 'actualites',
-      ph: 'green',
-      title: 'WPT Africa Series Dakar en juin : le padel pro débarque',
-      auth: 'Rédaction',
-      date: '29 Mar',
-      read: '4 min',
-      cardClass: '',
-    },
-    {
-      slug: 'open-dakar-2026-diallo-sow-sacres-champions',
-      cat: 'Résultats',
-      cls: 'results',
-      ph: 'sunset',
-      title: 'Open Dakar 2026 : Diallo et Sow sacrés champions',
-      auth: 'M. Diop',
-      date: '12 Avr',
-      read: '6 min',
-      cardClass: 'red',
-    },
-    {
-      slug: 'wpt-2026-galan-lebron-intouchables-mexique-open',
-      cat: 'Classements',
-      cls: 'classements',
-      ph: 'violet',
-      title: 'WPT 2026 : Galán et Lebrón intouchables après Mexique Open',
-      auth: 'I. Ndiaye',
-      date: '10 Avr',
-      read: '4 min',
-      cardClass: 'violet',
-    },
-    {
-      slug: '5-exercices-transformer-vibora-arme-fatale',
-      cat: 'Coaching',
-      cls: 'coaching',
-      ph: 'blue',
-      title: '5 exercices pour transformer votre vibora en arme fatale',
-      auth: 'C. Vega',
-      date: '8 Avr',
-      read: '8 min',
-      cardClass: 'blue',
-    },
-    {
-      slug: 'federation-senegalaise-plan-strategique-2026-2030',
-      cat: 'Actualités',
-      cls: 'actualites',
-      ph: 'charcoal',
-      title: 'Fédération Sénégalaise : un plan stratégique 2026-2030',
-      auth: 'A. Sène',
-      date: '4 Avr',
-      read: '5 min',
-      cardClass: '',
-    },
-    {
-      slug: 'app-tour-miami-chingotto-sacre-finale',
-      cat: 'International',
-      cls: 'international',
-      ph: 'sunset',
-      title: 'APP Tour Miami : Chingotto sacré en finale',
-      auth: 'I. Ndiaye',
-      date: '8 Avr',
-      read: '3 min',
-      cardClass: 'coral',
-    },
+export class ActualitesComponent implements OnInit {
+  protected isLoading = false;
+  protected errorMessage = '';
+  protected activeCategory = 'all';
+  protected articles: NewsArticle[] = [];
+  protected filteredArticles: NewsArticle[] = [];
+  protected categories: CategoryChip[] = [
+    { id: 'all', label: 'Tout', value: 'all', className: '' },
   ];
+
+  constructor(private readonly articlesService: ArticlesService) {}
+
+  ngOnInit(): void {
+    this.loadArticles();
+  }
+
+  protected selectCategory(value: string): void {
+    this.activeCategory = value;
+    if (value === 'all') {
+      this.filteredArticles = this.articles;
+      return;
+    }
+    this.filteredArticles = this.articles.filter((article) => article.cls === value);
+  }
+
+  private loadArticles(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.articlesService.findAll().subscribe({
+      next: (articles) => {
+        this.articles = articles.map((article) => this.toNewsArticle(article));
+        this.filteredArticles = this.articles;
+        this.categories = this.buildCategoryChips(this.articles);
+        this.isLoading = false;
+      },
+      error: () => {
+        this.errorMessage = "Impossible de charger les actualités.";
+        this.isLoading = false;
+      },
+    });
+  }
+
+  private buildCategoryChips(articles: NewsArticle[]): CategoryChip[] {
+    const map = new Map<string, CategoryChip>();
+    for (const article of articles) {
+      if (!map.has(article.cls)) {
+        map.set(article.cls, {
+          id: article.cls,
+          value: article.cls,
+          label: article.cat,
+          className: this.getChipColorClass(article.cls),
+        });
+      }
+    }
+    return [{ id: 'all', label: 'Tout', value: 'all', className: '' }, ...map.values()];
+  }
+
+  private toNewsArticle(article: ArticleModel): NewsArticle {
+    const normalized = this.normalizeCategory(article.category?.name);
+    return {
+      id: article.id,
+      slug: article.slug,
+      cat: article.category?.name ?? 'Actualités',
+      cls: normalized,
+      ph: this.getPlaceholderClass(normalized),
+      title: article.title,
+      auth: article.author,
+      date: this.toShortDate(article.date),
+      read: article.readingTime,
+      bannerImage: article.bannerImage,
+      cardClass: this.getCardClass(normalized),
+    };
+  }
+
+  private normalizeCategory(value?: string): string {
+    const source = (value ?? 'actualites').toLowerCase();
+    if (source.includes('result')) return 'results';
+    if (source.includes('interview')) return 'interview';
+    if (source.includes('coaching')) return 'coaching';
+    if (source.includes('classement')) return 'classements';
+    if (source.includes('international')) return 'international';
+    return 'actualites';
+  }
+
+  private getChipColorClass(category: string): string {
+    if (category === 'results') return 'red';
+    if (category === 'interview' || category === 'coaching') return 'blue';
+    if (category === 'classements') return 'violet';
+    if (category === 'international') return 'coral';
+    return '';
+  }
+
+  private getCardClass(category: string): string {
+    if (category === 'results') return 'red';
+    if (category === 'interview' || category === 'coaching') return 'blue';
+    if (category === 'classements') return 'violet';
+    if (category === 'international') return 'coral';
+    return '';
+  }
+
+  private getPlaceholderClass(category: string): string {
+    if (category === 'results') return 'sunset';
+    if (category === 'interview') return 'charcoal';
+    if (category === 'coaching') return 'blue';
+    if (category === 'classements') return 'violet';
+    if (category === 'international') return 'sunset';
+    return 'court';
+  }
+
+  private toShortDate(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+  }
 }
