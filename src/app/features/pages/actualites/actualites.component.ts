@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NewsCardComponent } from '../../../shared/components/news-card/news-card.component';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
-import { ArticleModel } from '../../../core/models/article.model';
+import { ArticleCategoryModel, ArticleModel } from '../../../core/models/article.model';
 import {
   ArticlesService,
   PaginatedArticlesResponse,
@@ -59,20 +59,25 @@ export class ActualitesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadCategoryChips();
     this.route.queryParamMap.subscribe((params) => {
       const rawPage = Number(params.get('page') ?? '1');
       const page = Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1;
-      this.loadArticles(page);
+      const category = (params.get('category') ?? 'all').toLowerCase();
+      this.activeCategory = category || 'all';
+      this.loadArticles(page, this.activeCategory);
     });
   }
 
   protected selectCategory(value: string): void {
-    this.activeCategory = value;
-    if (value === 'all') {
-      this.filteredArticles = this.articles;
+    if (this.isLoading || value === this.activeCategory) {
       return;
     }
-    this.filteredArticles = this.articles.filter((article) => article.cls === value);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { category: value, page: 1 },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected goToPage(page: number): void {
@@ -81,17 +86,18 @@ export class ActualitesComponent implements OnInit {
     }
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { page },
+      queryParams: { page, category: this.activeCategory || 'all' },
       queryParamsHandling: 'merge',
     });
   }
 
-  private loadArticles(page = 1): void {
+  private loadArticles(page = 1, category = 'all'): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.articlesService.findPaginated(page, this.pageSize).subscribe({
+    this.articlesService.findPaginated(page, this.pageSize, category).subscribe({
       next: (response: PaginatedArticlesResponse) => {
         this.articles = response.items.map((article) => this.toNewsArticle(article));
+        this.filteredArticles = this.articles;
         this.currentPage = response.pagination.page;
         this.totalPages = response.pagination.totalPages;
         this.hasPreviousPage = response.pagination.hasPreviousPage;
@@ -100,11 +106,6 @@ export class ActualitesComponent implements OnInit {
           response.pagination.page,
           response.pagination.totalPages,
         );
-        this.categories = this.buildCategoryChips(this.articles);
-        this.selectCategory(this.activeCategory);
-        if (!this.filteredArticles.length && this.activeCategory !== 'all') {
-          this.selectCategory('all');
-        }
         this.isLoading = false;
       },
       error: () => {
@@ -127,19 +128,23 @@ export class ActualitesComponent implements OnInit {
     );
   }
 
-  private buildCategoryChips(articles: NewsArticle[]): CategoryChip[] {
-    const map = new Map<string, CategoryChip>();
-    for (const article of articles) {
-      if (!map.has(article.cls)) {
-        map.set(article.cls, {
-          id: article.cls,
-          value: article.cls,
-          label: article.cat,
-          className: this.getChipColorClass(article.cls),
-        });
-      }
-    }
-    return [{ id: 'all', label: 'Tout', value: 'all', className: '' }, ...map.values()];
+  private loadCategoryChips(): void {
+    this.articlesService.findAllCategories().subscribe({
+      next: (categories: ArticleCategoryModel[]) => {
+        this.categories = [
+          { id: 'all', label: 'Tout', value: 'all', className: '' },
+          ...categories.map((category) => ({
+            id: category.id,
+            value: category.slug,
+            label: category.name,
+            className: this.getChipColorClass(this.normalizeCategory(category.name)),
+          })),
+        ];
+      },
+      error: () => {
+        this.categories = [{ id: 'all', label: 'Tout', value: 'all', className: '' }];
+      },
+    });
   }
 
   private toNewsArticle(article: ArticleModel): NewsArticle {

@@ -39,10 +39,11 @@ export class ArticlesService {
   findPaginated(
     page = 1,
     limit = 9,
+    category = 'all',
   ): Observable<PaginatedArticlesResponse> {
     return this.http
       .get<ApiEnvelope<PaginatedArticlesResponse> | PaginatedArticlesResponse>(
-        `${this.apiUrl}/paginated?page=${page}&limit=${limit}`,
+        `${this.apiUrl}/paginated?page=${page}&limit=${limit}&category=${encodeURIComponent(category)}`,
       )
       .pipe(map((response) => this.unwrap(response)));
   }
