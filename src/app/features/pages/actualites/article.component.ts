@@ -64,6 +64,7 @@ export class ArticleComponent implements OnInit {
           return;
         }
         this.article = article;
+        this.trackView(article.slug);
         this.loadRelatedArticles(article.slug);
       },
       error: () => {
@@ -82,6 +83,17 @@ export class ArticleComponent implements OnInit {
       error: () => {
         this.relatedArticles = [];
         this.isLoading = false;
+      },
+    });
+  }
+
+  private trackView(slug: string): void {
+    this.articlesService.trackViewBySlug(slug).subscribe({
+      next: () => {
+        // no-op: metrics call should not block article rendering
+      },
+      error: () => {
+        // no-op: ignore analytics failures
       },
     });
   }

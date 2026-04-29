@@ -54,6 +54,15 @@ export class ArticlesService {
       .pipe(map((response) => this.unwrap(response)));
   }
 
+  trackViewBySlug(slug: string): Observable<void> {
+    return this.http
+      .post<ApiEnvelope<{ success: boolean }> | { success: boolean }>(
+        `${this.apiUrl}/slug/${slug}/view`,
+        {},
+      )
+      .pipe(map(() => undefined));
+  }
+
   findRelatedBySlug(slug: string): Observable<ArticleModel[]> {
     return this.http
       .get<ApiEnvelope<ArticleModel[]> | ArticleModel[]>(

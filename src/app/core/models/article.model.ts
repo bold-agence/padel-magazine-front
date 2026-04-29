@@ -19,6 +19,8 @@ export interface ArticleModel {
   readingTime: string;
   bannerImage?: string;
   isVisible: boolean;
+  viewCount?: number;
+  lastViewedAt?: string | null;
   tags: TagModel[];
   category?: ArticleCategoryModel | null;
   sections?: ArticleSectionModel[];
