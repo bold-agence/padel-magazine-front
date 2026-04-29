@@ -59,7 +59,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       slug: '',
       title: 'Open Dakar 2026 : Diallo et Sow sacres champions',
-      cat: 'Resultats',
+      cat: 'Résultats',
       cls: 'results',
       date: '12 avril 2026',
       author: 'Mamadou Diop',
