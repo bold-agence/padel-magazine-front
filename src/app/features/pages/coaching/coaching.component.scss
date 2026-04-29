@@ -134,7 +134,19 @@
   transition: transform 0.4s;
 }
 
+.card-img .cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s;
+}
+
 .card:hover .card-img .ph {
+  transform: scale(1.04);
+}
+
+.card:hover .card-img .cover-image {
   transform: scale(1.04);
 }
 
@@ -167,6 +179,10 @@
 
 .card:hover .card-title {
   color: var(--blue);
+}
+
+.card-title a {
+  color: inherit;
 }
 
 .card-sub {
@@ -219,6 +235,52 @@
   font-size: 15px;
   -webkit-line-clamp: 2;
   line-clamp: 2;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 40px 0 20px;
+}
+
+.pagination button {
+  appearance: none;
+  min-width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.pagination .on {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+
+.pagination .on:hover {
+  color: #fff;
+}
+
+.pagination button:hover:not(:disabled) {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.pagination button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 @media (max-width: 1024px) {

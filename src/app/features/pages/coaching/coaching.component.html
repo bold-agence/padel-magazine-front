@@ -11,51 +11,90 @@
 
 <main class="container">
   <div class="chips">
-    <button class="chip blue on">Tout</button>
-    <button class="chip blue">Technique</button>
-    <button class="chip blue">Tactique</button>
-    <button class="chip blue">Physique</button>
-    <button class="chip blue">Mental</button>
-    <button class="chip blue">Débutant</button>
-    <button class="chip blue">Vidéo</button>
+    @for (tag of tagChips; track tag.id) {
+      <button
+        class="chip blue"
+        [class.on]="activeTag === tag.value"
+        (click)="selectTag(tag.value)"
+      >
+        {{ tag.label }}
+      </button>
+    }
   </div>
 
   <div class="layout">
     <div class="main-col">
-      <article class="card blue featured-card">
-        <div class="card-img featured-image">
-          <span class="badge coaching">Coaching · Featured</span>
-          <div class="ph blue" data-label="900×450"></div>
-        </div>
-        <div class="card-body featured-body">
-          <h3 class="card-title featured-title">
-            5 exercices pour transformer votre vibora en arme fatale
-          </h3>
-          <p class="card-sub featured-sub">
-            Carlos Vega, ancien joueur WPT, décompose le geste et livre une progression hebdomadaire
-            pour maîtriser ce coup redouté.
-          </p>
-          <div class="card-meta"><span>Carlos Vega · Coach</span><span class="dot"></span><span>8 Avr 2026</span><span class="dot"></span><span>8 min</span></div>
-        </div>
-      </article>
+      @if (errorMessage) {
+        <p>{{ errorMessage }}</p>
+      } @else if (isLoading) {
+        <p>Chargement des articles coaching...</p>
+      } @else if (!featuredCard) {
+        <p>Aucun article coaching disponible.</p>
+      } @else {
+        <article class="card blue featured-card">
+          <div class="card-img featured-image">
+            <span class="badge coaching">Coaching · Featured</span>
+            @if (featuredCard.bannerImage) {
+              <img [src]="featuredCard.bannerImage" alt="image article coaching" class="cover-image" />
+            } @else {
+              <div class="ph blue" data-label="900×450"></div>
+            }
+          </div>
+          <div class="card-body featured-body">
+            <h3 class="card-title featured-title">
+              <a [href]="'/actualites/' + featuredCard.slug">{{ featuredCard.title }}</a>
+            </h3>
+            <p class="card-sub featured-sub">{{ featuredCard.sub }}</p>
+            <div class="card-meta">
+              <span>{{ featuredCard.author }}</span><span class="dot"></span><span>{{ featuredCard.date }}</span><span class="dot"></span><span>{{ featuredCard.read }}</span>
+            </div>
+          </div>
+        </article>
 
-      <div class="card-grid-3">
-        @for (card of cards; track card.title) {
-          <article class="card blue">
-            <div class="card-img">
-              <span class="badge coaching">{{ card.badge }}</span>
-              <div class="ph {{ card.ph }}" data-label="460×300"></div>
-            </div>
-            <div class="card-body">
-              <h3 class="card-title">{{ card.title }}</h3>
-              <p class="card-sub">{{ card.sub }}</p>
-              <div class="card-meta">
-                <span>{{ card.author }}</span><span class="dot"></span><span>{{ card.date }}</span>
+        <div class="card-grid-3">
+          @for (card of filteredCards; track card.slug) {
+            <article class="card blue">
+              <div class="card-img">
+                <span class="badge coaching">{{ card.badge }}</span>
+                @if (card.bannerImage) {
+                  <img [src]="card.bannerImage" alt="image article coaching" class="cover-image" />
+                } @else {
+                  <div class="ph blue" data-label="460×300"></div>
+                }
               </div>
-            </div>
-          </article>
-        }
-      </div>
+              <div class="card-body">
+                <h3 class="card-title">
+                  <a [href]="'/actualites/' + card.slug">{{ card.title }}</a>
+                </h3>
+                <p class="card-sub">{{ card.sub }}</p>
+                <div class="card-meta">
+                  <span>{{ card.author }}</span><span class="dot"></span><span>{{ card.date }}</span>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+
+      @if (!isLoading && !errorMessage && totalPages > 1) {
+        <div class="pagination">
+          <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="!hasPreviousPage">
+            ‹
+          </button>
+          @for (page of pageNumbers; track page) {
+            <button
+              type="button"
+              [class.on]="page === currentPage"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          }
+          <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="!hasNextPage">
+            ›
+          </button>
+        </div>
+      }
     </div>
 
     <app-sidebar />
