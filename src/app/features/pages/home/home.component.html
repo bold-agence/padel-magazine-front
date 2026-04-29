@@ -1,55 +1,43 @@
 <main class="container">
   <section class="hero" id="hero">
     <div class="hero-main">
-      <div class="slide active" data-idx="0">
-        <div class="ph court" data-label="S4-H1 · 900×450"></div>
-        <div class="hero-overlay">
-          <span class="badge results">Résultats</span>
-          <h3>Open Dakar 2026 : Diallo et Sow sacrés champions</h3>
-          <div class="hero-meta">Par Mamadou Diop · 12 Avril 2026 · 6 min de lecture</div>
-        </div>
-      </div>
-      <div class="slide" data-idx="1" hidden>
-        <div class="ph violet" data-label="S4-H2 · 900×450"></div>
-        <div class="hero-overlay">
-          <span class="badge classements">Classements</span>
-          <h3>WPT 2026 : Galán et Lebrón intouchables après Mexique Open</h3>
-          <div class="hero-meta">Par Ibrahima Ndiaye · 10 Avril 2026 · 4 min de lecture</div>
-        </div>
-      </div>
-      <div class="slide" data-idx="2" hidden>
-        <div class="ph blue" data-label="S4-H3 · 900×450"></div>
-        <div class="hero-overlay">
-          <span class="badge coaching">Coaching</span>
-          <h3>5 exercices pour transformer votre vibora en arme fatale</h3>
-          <div class="hero-meta">Par Carlos Vega · 8 Avril 2026 · 8 min de lecture</div>
-        </div>
-      </div>
-      <button class="hero-arrow prev" aria-label="Précédent">‹</button>
-      <button class="hero-arrow next" aria-label="Suivant">›</button>
+      @for (item of heroMainNews; track item.slug + '-' + $index; let i = $index) {
+        <a class="slide" [class.active]="i === heroActiveIndex" [attr.data-idx]="i" [hidden]="i !== heroActiveIndex" [attr.href]="item.slug ? '/actualites/' + item.slug : null">
+          @if (item.bannerImage) {
+            <img [src]="item.bannerImage" class="hero-media" alt="image article hero" />
+          } @else {
+            <div class="ph {{ item.ph }}" data-label="S4-H · 900×450"></div>
+          }
+          <div class="hero-overlay">
+            <span class="badge {{ item.cls }}">{{ item.cat }}</span>
+            <h3>{{ item.title }}</h3>
+            <div class="hero-meta">Par {{ item.author }} · {{ item.date }} · {{ item.read }} de lecture</div>
+          </div>
+        </a>
+      }
+      <button class="hero-arrow prev" aria-label="Précédent" (click)="prevHero()">‹</button>
+      <button class="hero-arrow next" aria-label="Suivant" (click)="nextHero()">›</button>
       <div class="hero-dots">
-        <button class="active" data-go="0"></button>
-        <button data-go="1"></button>
-        <button data-go="2"></button>
+        @for (item of heroMainNews; track item.slug; let i = $index) {
+          <button [class.active]="i === heroActiveIndex" [attr.data-go]="i" (click)="goToHero(i)"></button>
+        }
       </div>
     </div>
     <div class="hero-side">
-      <div class="hero-side-item">
-        <div class="ph sunset" data-label="S4-V1 · 460×235"></div>
-        <div class="hero-overlay">
-          <span class="badge actualites">Actualités</span>
-          <h3>WPT Africa Series Dakar en juin : le padel pro débarque</h3>
-          <div class="hero-meta">29 Mars 2026</div>
-        </div>
-      </div>
-      <div class="hero-side-item">
-        <div class="ph orange" data-label="S4-V2 · 460×235"></div>
-        <div class="hero-overlay">
-          <span class="badge results">Résultats</span>
-          <h3>Championnat U18 : Oumar Diallo survole la compétition</h3>
-          <div class="hero-meta">11 Avril 2026</div>
-        </div>
-      </div>
+      @for (item of heroSideNews; track item.slug + '-' + $index) {
+        <a class="hero-side-item" [attr.href]="item.slug ? '/actualites/' + item.slug : null">
+          @if (item.bannerImage) {
+            <img [src]="item.bannerImage" class="hero-media" alt="image article hero" />
+          } @else {
+            <div class="ph {{ item.ph }}" data-label="S4-V · 460×235"></div>
+          }
+          <div class="hero-overlay">
+            <span class="badge {{ item.cls }}">{{ item.cat }}</span>
+            <h3>{{ item.title }}</h3>
+            <div class="hero-meta">{{ item.date }}</div>
+          </div>
+        </a>
+      }
     </div>
   </section>
 
@@ -74,6 +62,7 @@
             [author]="article.auth"
             [date]="article.date"
             [read]="article.read"
+            [bannerImage]="article.bannerImage"
             [link]="'/actualites/' + article.slug"
           />
         }
@@ -167,25 +156,23 @@
 
       <div class="sec-head blue" style="margin-top:40px;">
         <h2>Coaching &amp; Technique</h2>
-        <a href="#" class="see-all">Voir tout →</a>
+        <a routerLink="/coaching" class="see-all">Voir tout →</a>
       </div>
       <div class="card-grid-2">
-        <article class="card blue">
-          <div class="card-img"><span class="badge coaching">Coaching</span><div class="ph blue" data-label="460×300"></div></div>
-          <div class="card-body">
-            <h3 class="card-title">Tactique : construire le point depuis le fond</h3>
-            <p class="card-sub">Les 3 déclencheurs qui font basculer l'échange en votre faveur.</p>
-            <div class="card-meta"><span>C. Vega</span><span class="dot"></span><span>7 Avr</span><span class="dot"></span><span>9 min</span></div>
-          </div>
-        </article>
-        <article class="card blue">
-          <div class="card-img"><span class="badge coaching">Coaching</span><div class="ph green" data-label="460×300"></div></div>
-          <div class="card-body">
-            <h3 class="card-title">Guide débutant : les 10 règles du padel à connaître</h3>
-            <p class="card-sub">Le service, le grillage, la règle des 3 rebonds : tout y passe.</p>
-            <div class="card-meta"><span>C. Vega</span><span class="dot"></span><span>5 Avr</span><span class="dot"></span><span>6 min</span></div>
-          </div>
-        </article>
+        @for (article of coachingNews; track article.slug) {
+          <app-news-card
+            [cardClass]="article.cardClass"
+            [badgeClass]="article.cls"
+            [badgeText]="article.cat"
+            [phClass]="article.ph"
+            [title]="article.title"
+            [author]="article.auth"
+            [date]="article.date"
+            [read]="article.read"
+            [bannerImage]="article.bannerImage"
+            [link]="'/actualites/' + article.slug"
+          />
+        }
       </div>
 
       <div class="sec-head" style="margin-top:40px;">
@@ -209,37 +196,23 @@
 
       <div class="sec-head coral" style="margin-top:40px;">
         <h2>International · WPT / APP Tour</h2>
-        <a href="#" class="see-all">Voir tout →</a>
+        <a routerLink="/actualites?category=international" class="see-all">Voir tout →</a>
       </div>
       <div class="card-grid-4">
-        <article class="card coral">
-          <div class="card-img"><span class="badge international">WPT</span><div class="ph sunset" data-label="300×160"></div></div>
-          <div class="card-body">
-            <h3 class="card-title" style="font-size:15px;">Mexique Open WPT : Galán et Lebrón s'imposent</h3>
-            <div class="card-meta" style="font-size:11px;"><span>10 Avr</span></div>
-          </div>
-        </article>
-        <article class="card coral">
-          <div class="card-img"><span class="badge international">APP Tour</span><div class="ph orange" data-label="300×160"></div></div>
-          <div class="card-body">
-            <h3 class="card-title" style="font-size:15px;">APP Tour Miami : Chingotto sacré en finale</h3>
-            <div class="card-meta" style="font-size:11px;"><span>8 Avr</span></div>
-          </div>
-        </article>
-        <article class="card coral">
-          <div class="card-img"><span class="badge international">WPT</span><div class="ph violet" data-label="300×160"></div></div>
-          <div class="card-body">
-            <h3 class="card-title" style="font-size:15px;">Classement WPT : l'Espagne domine, l'Afrique s'éveille</h3>
-            <div class="card-meta" style="font-size:11px;"><span>6 Avr</span></div>
-          </div>
-        </article>
-        <article class="card coral">
-          <div class="card-img"><span class="badge international">Portrait</span><div class="ph charcoal" data-label="300×160"></div></div>
-          <div class="card-body">
-            <h3 class="card-title" style="font-size:15px;">Arturo Coello, l'héritier qui veut détrôner Galán</h3>
-            <div class="card-meta" style="font-size:11px;"><span>4 Avr</span></div>
-          </div>
-        </article>
+        @for (article of internationalNews; track article.slug) {
+          <app-news-card
+            [cardClass]="article.cardClass"
+            [badgeClass]="article.cls"
+            [badgeText]="article.cat"
+            [phClass]="article.ph"
+            [title]="article.title"
+            [author]="article.auth"
+            [date]="article.date"
+            [read]="article.read"
+            [bannerImage]="article.bannerImage"
+            [link]="'/actualites/' + article.slug"
+          />
+        }
       </div>
     </div>
 
