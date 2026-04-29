@@ -21,4 +21,19 @@ export interface ArticleModel {
   isVisible: boolean;
   tags: TagModel[];
   category?: ArticleCategoryModel | null;
+  sections?: ArticleSectionModel[];
+}
+
+export interface ArticleSectionModel {
+  id: string;
+  type: 'paragraph' | 'heading' | 'quote' | 'image' | 'spacer' | 'info_box';
+  order: number;
+  content?: string;
+  headingLevel?: number;
+  imageUrl?: string;
+  imageCaption?: string;
+  quoteAuthor?: string;
+  spacerHeight?: number;
+  infoBoxTitle?: string;
+  data?: Record<string, unknown>;
 }

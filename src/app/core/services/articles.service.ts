@@ -24,6 +24,20 @@ export class ArticlesService {
       .pipe(map((response) => this.unwrap(response)));
   }
 
+  findBySlug(slug: string): Observable<ArticleModel | undefined> {
+    return this.http
+      .get<ApiEnvelope<ArticleModel> | ArticleModel>(`${this.apiUrl}/slug/${slug}`)
+      .pipe(map((response) => this.unwrap(response)));
+  }
+
+  findRelatedBySlug(slug: string): Observable<ArticleModel[]> {
+    return this.http
+      .get<ApiEnvelope<ArticleModel[]> | ArticleModel[]>(
+        `${this.apiUrl}/slug/${slug}/related`,
+      )
+      .pipe(map((response) => this.unwrap(response)));
+  }
+
   findAllCategories(): Observable<ArticleCategoryModel[]> {
     return this.http
       .get<ApiEnvelope<ArticleCategoryModel[]> | ArticleCategoryModel[]>(
