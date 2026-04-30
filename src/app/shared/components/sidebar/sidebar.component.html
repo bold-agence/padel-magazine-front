@@ -1,5 +1,13 @@
 <aside>
-  <div class="ad-slot" style="margin-top:18px;">300 × 250 — MPU #1</div>
+  <div class="ad-slot" style="margin-top:18px;">
+    @if (topSidebarAd?.imageUrl) {
+      <a [href]="topSidebarAd?.targetUrl || '#'" [attr.target]="topSidebarAd?.targetUrl ? '_blank' : null" [attr.rel]="topSidebarAd?.targetUrl ? 'noopener noreferrer' : null">
+        <img [src]="topSidebarAd?.imageUrl" [alt]="topSidebarAd?.title || 'Publicite sidebar'" />
+      </a>
+    } @else {
+      <span>300 × 250 — MPU #1</span>
+    }
+  </div>
 
   <div class="newsletter-card" id="newsletter">
     <h3>Restez informé</h3>
@@ -108,5 +116,13 @@
     </div>
   </div>
 
-  <div class="ad-slot">300 × 250 — MPU #2</div>
+  <div class="ad-slot">
+    @if (bottomSidebarAd?.imageUrl) {
+      <a [href]="bottomSidebarAd?.targetUrl || '#'" [attr.target]="bottomSidebarAd?.targetUrl ? '_blank' : null" [attr.rel]="bottomSidebarAd?.targetUrl ? 'noopener noreferrer' : null">
+        <img [src]="bottomSidebarAd?.imageUrl" [alt]="bottomSidebarAd?.title || 'Publicite sidebar'" />
+      </a>
+    } @else {
+      <span>300 × 250 — MPU #2</span>
+    }
+  </div>
 </aside>

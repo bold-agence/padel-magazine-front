@@ -128,6 +128,20 @@
   font-size: 12px;
 }
 
+.leaderboard a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.leaderboard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 4px;
+}
+
 .leaderboard::before {
   content: 'Publicité';
   position: absolute;

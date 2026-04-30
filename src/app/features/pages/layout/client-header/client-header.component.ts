@@ -1,5 +1,10 @@
-import { Component, HostListener, Input } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  AdImageItem,
+  BreakingNewsItem,
+  ClientContentService,
+} from '../../../../core/services/client-content.service';
 
 @Component({
   selector: 'app-client-header',
@@ -8,7 +13,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './client-header.component.html',
   styleUrl: './client-header.component.scss',
 })
-export class ClientHeaderComponent {
+export class ClientHeaderComponent implements OnInit {
   @Input() currentPage = 'home';
 
   protected readonly dateFr = new Intl.DateTimeFormat('fr-FR', {
@@ -19,6 +24,29 @@ export class ClientHeaderComponent {
   }).format(new Date());
 
   protected isScrolled = false;
+  protected headerAd?: AdImageItem;
+  protected breakingNews: BreakingNewsItem[] = [];
+
+  constructor(private readonly clientContentService: ClientContentService) {}
+
+  ngOnInit(): void {
+    this.clientContentService.findAdImages('header_main', true).subscribe({
+      next: (items) => {
+        this.headerAd = items[0];
+      },
+      error: () => {
+        this.headerAd = undefined;
+      },
+    });
+    this.clientContentService.findBreakingNews(true).subscribe({
+      next: (items) => {
+        this.breakingNews = items;
+      },
+      error: () => {
+        this.breakingNews = [];
+      },
+    });
+  }
 
   @HostListener('window:scroll')
   onWindowScroll(): void {

@@ -2,6 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { ArticleModel } from '../../../core/models/article.model';
 import { ArticlesService } from '../../../core/services/articles.service';
+import {
+  AdImageItem,
+  ClientContentService,
+} from '../../../core/services/client-content.service';
 
 type PopularItem = {
   cat: string;
@@ -25,11 +29,17 @@ export class SidebarComponent implements OnInit, OnChanges {
   protected isLoadingPopular = false;
   protected popular: PopularItem[] = [];
   protected activeTab: 'trending' | 'popular' = 'trending';
+  protected topSidebarAd?: AdImageItem;
+  protected bottomSidebarAd?: AdImageItem;
 
-  constructor(private readonly articlesService: ArticlesService) {}
+  constructor(
+    private readonly articlesService: ArticlesService,
+    private readonly clientContentService: ClientContentService,
+  ) {}
 
   ngOnInit(): void {
     this.loadPopular();
+    this.loadAds();
   }
 
   ngOnChanges(): void {
@@ -56,6 +66,25 @@ export class SidebarComponent implements OnInit, OnChanges {
       error: () => {
         this.popular = [];
         this.isLoadingPopular = false;
+      },
+    });
+  }
+
+  private loadAds(): void {
+    this.clientContentService.findAdImages('sidebar_top', true).subscribe({
+      next: (items) => {
+        this.topSidebarAd = items[0];
+      },
+      error: () => {
+        this.topSidebarAd = undefined;
+      },
+    });
+    this.clientContentService.findAdImages('sidebar_bottom', true).subscribe({
+      next: (items) => {
+        this.bottomSidebarAd = items[0];
+      },
+      error: () => {
+        this.bottomSidebarAd = undefined;
       },
     });
   }

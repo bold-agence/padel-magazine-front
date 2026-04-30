@@ -22,7 +22,15 @@
     <a class="logo" routerLink="/" aria-label="Padel Magazine — Accueil">
       <img src="/assets/logo-light.png" alt="Padel Magazine" />
     </a>
-    <div class="leaderboard">728 × 90 — Sponsor Leaderboard</div>
+    <div class="leaderboard">
+      @if (headerAd?.imageUrl) {
+        <a [href]="headerAd?.targetUrl || '#'" [attr.target]="headerAd?.targetUrl ? '_blank' : null" [attr.rel]="headerAd?.targetUrl ? 'noopener noreferrer' : null">
+          <img [src]="headerAd?.imageUrl" [alt]="headerAd?.title || 'Publicite header'" />
+        </a>
+      } @else {
+        <span>728 × 90 — Sponsor Leaderboard</span>
+      }
+    </div>
     <div class="header-right">
       <button class="icon-btn" aria-label="Recherche" (click)="search()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -62,20 +70,16 @@
   <div class="ticker-label">Breaking News</div>
   <div class="ticker-track">
     <div class="ticker-move">
-      <span>Open Dakar 2026 : Diallo et Sow sacrés champions devant 300 spectateurs</span>
-      <span>WPT Africa Series Dakar officialisé pour le 7-8 juin 2026 à la TGS Arena</span>
-      <span>Aminata Ba reste N°1 sénégalaise avec 1 380 points</span>
-      <span>Ibou Ndiaye, DTN : « Dans cinq ans, nous serons top 20 africain »</span>
-      <span>Classement WPT : Galán et Lebrón conservent la tête après Mexique Open</span>
-      <span>Championnat National U18 : Oumar Diallo survole la compétition</span>
-      <span>Le Saly Padel Club ouvre officiellement ses 6 nouvelles pistes</span>
-      <span>Open Dakar 2026 : Diallo et Sow sacrés champions devant 300 spectateurs</span>
-      <span>WPT Africa Series Dakar officialisé pour le 7-8 juin 2026 à la TGS Arena</span>
-      <span>Aminata Ba reste N°1 sénégalaise avec 1 380 points</span>
-      <span>Ibou Ndiaye, DTN : « Dans cinq ans, nous serons top 20 africain »</span>
-      <span>Classement WPT : Galán et Lebrón conservent la tête après Mexique Open</span>
-      <span>Championnat National U18 : Oumar Diallo survole la compétition</span>
-      <span>Le Saly Padel Club ouvre officiellement ses 6 nouvelles pistes</span>
+      @if (breakingNews.length) {
+        @for (item of breakingNews; track item.id) {
+          <span>{{ item.title }}</span>
+        }
+        @for (item of breakingNews; track item.id + '-dup') {
+          <span>{{ item.title }}</span>
+        }
+      } @else {
+        <span>Padel Magazine Sénégal — actualités en continu</span>
+      }
     </div>
   </div>
 </div>
