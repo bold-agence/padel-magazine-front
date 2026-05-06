@@ -9,6 +9,10 @@ import { DOCUMENT } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { ArticleModel } from '../../../core/models/article.model';
 import { ArticlesService } from '../../../core/services/articles.service';
+import {
+  AdImageItem,
+  ClientContentService,
+} from '../../../core/services/client-content.service';
 import { NewsCardComponent } from '../../../shared/components/news-card/news-card.component';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { RouterLink } from '@angular/router';
@@ -52,6 +56,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   protected heroMainNews: HeroItem[] = [];
   protected heroSideNews: HeroItem[] = [];
   protected heroActiveIndex = 0;
+  protected homeLeaderboardAd?: AdImageItem;
 
   private heroTimer: ReturnType<typeof setInterval> | null = null;
   private countdownTimer: ReturnType<typeof setInterval> | null = null;
@@ -109,10 +114,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     @Inject(DOCUMENT) private readonly document: Document,
     private readonly articlesService: ArticlesService,
+    private readonly clientContentService: ClientContentService,
   ) {}
 
   ngOnInit(): void {
     this.loadHomepageSections();
+    this.loadHomeAds();
   }
 
   ngAfterViewInit(): void {
@@ -225,6 +232,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.coachingNews = [];
         this.internationalNews = [];
         this.startHeroAutoplay();
+      },
+    });
+  }
+
+  private loadHomeAds(): void {
+    this.clientContentService.findAdImages('home_leaderboard', true).subscribe({
+      next: (items) => {
+        this.homeLeaderboardAd = items[0];
+      },
+      error: () => {
+        this.homeLeaderboardAd = undefined;
       },
     });
   }

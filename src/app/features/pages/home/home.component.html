@@ -42,7 +42,22 @@
   </section>
 
   <div class="home-leaderboard-wrap">
-    <div class="home-leaderboard">728 × 90 — Leaderboard Publicité</div>
+    <div class="home-leaderboard">
+      @if (homeLeaderboardAd?.imageUrl) {
+        <a
+          [href]="homeLeaderboardAd?.targetUrl || '#'"
+          [attr.target]="homeLeaderboardAd?.targetUrl ? '_blank' : null"
+          [attr.rel]="homeLeaderboardAd?.targetUrl ? 'noopener noreferrer' : null"
+        >
+          <img
+            [src]="homeLeaderboardAd?.imageUrl"
+            [alt]="homeLeaderboardAd?.title || 'Publicite home leaderboard'"
+          />
+        </a>
+      } @else {
+        <span>728 × 90 — Leaderboard Publicité</span>
+      }
+    </div>
   </div>
 
   <div class="layout">

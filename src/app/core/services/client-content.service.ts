@@ -3,7 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable, shareReplay } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export type AdSlot = 'header_main' | 'sidebar_top' | 'sidebar_bottom';
+export type AdSlot =
+  | 'header_main'
+  | 'home_leaderboard'
+  | 'sidebar_top'
+  | 'sidebar_bottom';
 
 export type BreakingNewsItem = {
   id: string;
