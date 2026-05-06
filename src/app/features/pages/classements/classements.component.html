@@ -11,16 +11,26 @@
 
 <main class="container">
   <div class="tabs-nav">
-    <button class="on">🇸🇳 Sénégal</button>
-    <button>🌍 WPT Mondial ♂</button>
-    <button>🌍 WPT Féminin</button>
-    <button>🌍 APP Tour</button>
+    <button
+      type="button"
+      [class.on]="activeTab === 'men'"
+      (click)="selectTab('men')"
+    >
+      ♂ Masculin
+    </button>
+    <button
+      type="button"
+      [class.on]="activeTab === 'women'"
+      (click)="selectTab('women')"
+    >
+      ♀ Féminin
+    </button>
   </div>
 
   <div class="layout">
     <div class="main-col">
       <div class="podium">
-        @for (entry of podium; track entry.rank) {
+        @for (entry of currentPodium; track entry.rank) {
           <div class="podium-card {{ entry.medalClass }}">
             <div class="medal">{{ entry.rank }}</div>
             <div class="av"><div class="ph {{ entry.phClass }}" data-label="64"></div></div>
@@ -35,27 +45,39 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>Rang</th>
+            <th>Pos</th>
             <th>Joueur</th>
-            <th>Club / Nationalité</th>
-            <th>Points</th>
-            <th>Évolution</th>
+            <th>Points (15/04/2026)</th>
+            <th>Tournois</th>
+            <th>Ancien pos</th>
+            <th>Points (28/02/2026)</th>
+            <th>Évol. pos</th>
+            <th>Évol. points</th>
           </tr>
         </thead>
         <tbody>
-          @for (row of ranking; track row.rank + row.player) {
+          @for (row of currentRanking; track row.rank + row.player) {
             <tr>
-              <td>
-                <b [style.color]="row.rankColor ?? 'inherit'">{{ row.rank }}</b>
-              </td>
+              <td><b>{{ row.rank }}</b></td>
               <td>{{ row.player }}</td>
-              <td>{{ row.club }}</td>
-              <td class="score">{{ row.points }}</td>
-              <td [style.color]="row.evolutionColor">{{ row.evolution }}</td>
+              <td class="score">{{ row.pointsNow }}</td>
+              <td>{{ row.tournaments }}</td>
+              <td>{{ row.previousRank }}</td>
+              <td>{{ row.pointsPrev }}</td>
+              <td>{{ row.rankDelta }}</td>
+              <td>{{ row.pointsDelta }}</td>
             </tr>
           }
         </tbody>
       </table>
+
+      <div class="pagination" aria-label="Pagination (aperçu)">
+        <button type="button" disabled>‹</button>
+        <button type="button" class="on">1</button>
+        <button type="button">2</button>
+        <button type="button">3</button>
+        <button type="button">›</button>
+      </div>
 
       <div class="export-wrap"><a class="btn btn-outline" href="#">⬇ Export CSV</a></div>
     </div>
