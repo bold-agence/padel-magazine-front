@@ -42,7 +42,7 @@
         <div class="art-body">
           @for (section of getSortedSections(); track section.id) {
             @if (section.type === 'paragraph') {
-              <p [innerHTML]="section.content || ''"></p>
+              <div class="rt" [innerHTML]="section.content || ''"></div>
             }
             @if (section.type === 'heading') {
               @if (toHeadingTag(section.headingLevel) === 'h2') {
@@ -74,7 +74,7 @@
             @if (section.type === 'info_box') {
               <div class="info-box">
                 <h4>{{ section.infoBoxTitle || 'Info' }}</h4>
-                <p style="margin: 0" [innerHTML]="section.content || ''"></p>
+                <div class="rt" style="margin: 0" [innerHTML]="section.content || ''"></div>
               </div>
             }
             @if (section.type === 'spacer') {

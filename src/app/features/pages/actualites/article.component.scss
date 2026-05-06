@@ -123,6 +123,34 @@
   margin: 0 0 18px;
 }
 
+/* innerHTML content: needs deep selector */
+:host ::ng-deep .art-body .rt ul,
+:host ::ng-deep .art-body .rt ol {
+  margin: 0 0 8px;
+  padding-left: 1.2em;
+  list-style-position: outside;
+}
+
+:host ::ng-deep .art-body .rt ul {
+  list-style-type: disc;
+}
+
+:host ::ng-deep .art-body .rt ol {
+  list-style-type: decimal;
+}
+
+:host ::ng-deep .art-body .rt li {
+  margin: 0;
+}
+
+.art-body strong {
+  font-weight: 700;
+}
+
+.art-body em {
+  font-style: italic;
+}
+
 .art-body h2 {
   font-family: var(--f-display);
   font-size: 26px;
