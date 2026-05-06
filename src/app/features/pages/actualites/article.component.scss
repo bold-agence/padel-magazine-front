@@ -119,8 +119,8 @@
   color: var(--ink);
 }
 
-.art-body p {
-  margin: 0 0 18px;
+:host ::ng-deep .art-body .rt p {
+  margin: 0 0 12px;
 }
 
 /* innerHTML content: needs deep selector */
