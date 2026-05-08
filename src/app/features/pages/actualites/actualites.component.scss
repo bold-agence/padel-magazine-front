@@ -116,6 +116,10 @@
 
 .main-col {
   min-width: 0;
+}
+
+app-sidebar {
+  align-self: start;
   position: sticky;
   top: 16px;
 }

@@ -62,7 +62,12 @@
             @if (section.type === 'image') {
               <figure>
                 @if (section.imageUrl) {
-                  <img [src]="section.imageUrl" [alt]="section.imageCaption || 'image article'" class="section-image" />
+                  <img
+                    [src]="section.imageUrl"
+                    [alt]="section.imageCaption || 'image article'"
+                    class="section-image"
+                    (load)="onSectionImageLoad($event)"
+                  />
                 } @else {
                   <div class="ph sunset" data-label="Photo · 900×506"></div>
                 }

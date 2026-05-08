@@ -212,10 +212,34 @@
   display: block;
 }
 
+.section-image.portrait {
+  width: 60%;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .section-image.portrait {
+    width: 100%;
+  }
+}
+
 .art-body figcaption {
   font-size: 13px;
   color: var(--gray);
   margin-top: 6px;
+}
+
+.art-body figure.portrait figcaption {
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .art-body figure.portrait figcaption {
+    width: 100%;
+  }
 }
 
 .tags {

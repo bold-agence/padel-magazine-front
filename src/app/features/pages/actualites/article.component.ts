@@ -52,6 +52,21 @@ export class ArticleComponent implements OnInit {
     return 'actualites';
   }
 
+  protected onSectionImageLoad(event: Event): void {
+    const img = event.target as HTMLImageElement | null;
+    if (!img) return;
+
+    const w = img.naturalWidth || img.width;
+    const h = img.naturalHeight || img.height;
+    if (!w || !h) return;
+
+    const isPortrait = h > w;
+    img.classList.toggle('portrait', isPortrait);
+
+    const figure = img.closest('figure');
+    figure?.classList.toggle('portrait', isPortrait);
+  }
+
   private loadArticle(slug: string): void {
     this.isLoading = true;
     this.errorMessage = '';
