@@ -7,12 +7,16 @@
         <p>Chargement de l'article...</p>
       } @else {
         <header class="art-header">
-          <div class="art-crumb">
-            <a routerLink="/">Accueil</a> › <a routerLink="/actualites">Actualités</a> › {{ article.title }}
-          </div>
-          <span class="badge" [class]="getBadgeClass(article.category?.name)">
-            {{ article.category?.name || 'Actualités' }}
-          </span>
+          @if (article.isVisible) {
+            <div class="art-crumb">
+              <a routerLink="/">Accueil</a> › <a routerLink="/actualites">Actualités</a> › {{ article.title }}
+            </div>
+          }
+          @if (article.isVisible) {
+            <span class="badge" [class]="getBadgeClass(article.category?.name)">
+              {{ article.category?.name || 'Actualités' }}
+            </span>
+          }
           <h1>{{ article.title }}</h1>
           <div class="art-meta">
             <div class="author">
