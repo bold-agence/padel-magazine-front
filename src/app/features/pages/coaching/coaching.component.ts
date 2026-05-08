@@ -88,7 +88,10 @@ export class CoachingComponent implements OnInit {
     this.errorMessage = '';
     this.articlesService.findPaginated(page, this.pageSize, 'coaching').subscribe({
       next: (response) => {
-        this.cards = response.items.map((article) => this.toCard(article));
+        const visibleItems = response.items.filter(
+          (article) => article.isVisible !== false,
+        );
+        this.cards = visibleItems.map((article) => this.toCard(article));
         this.currentPage = response.pagination.page;
         this.totalPages = response.pagination.totalPages;
         this.hasPreviousPage = response.pagination.hasPreviousPage;

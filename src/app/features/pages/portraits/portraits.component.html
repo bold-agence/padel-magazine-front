@@ -10,31 +10,63 @@
 
 <main class="container">
   <div class="chips">
-    <button class="chip on">Tous</button>
-    <button class="chip">Sénégal ♂</button>
-    <button class="chip">Sénégal ♀</button>
-    <button class="chip coral">International</button>
-    <button class="chip">U18</button>
+    <button
+      type="button"
+      class="chip"
+      [class.on]="activeCategoryId === 'all'"
+      (click)="selectCategory('all')"
+    >
+      Tous
+    </button>
+    @for (c of categories; track c.id) {
+      <button
+        type="button"
+        class="chip"
+        [class.on]="activeCategoryId === c.id"
+        (click)="selectCategory(c.id)"
+      >
+        {{ c.libelle }}
+      </button>
+    }
   </div>
 
   <div class="layout">
     <div class="main-col">
-      <div class="card-grid-3">
-        @for (p of players; track p.name) {
-          <a href="#" class="pl-card">
-            <div class="pl-photo">
-              <div class="ph {{ p.ph }}" data-label="Photo"></div>
-              <span class="flag">{{ p.flag }}</span>
-            </div>
-            <div class="pl-body">
-              <div class="rank">{{ p.rank }}</div>
-              <h3>{{ p.name }}</h3>
-              <div class="meta"><b>{{ p.pts }} pts</b> · {{ p.club }}</div>
-              <span class="shot">Coup signature · {{ p.shot }}</span>
-            </div>
-          </a>
-        }
-      </div>
+      @if (errorMessage) {
+        <p>{{ errorMessage }}</p>
+      } @else if (isLoading) {
+        <p>Chargement des portraits...</p>
+      } @else {
+        <div class="card-grid-3">
+          @for (p of filteredPortraits; track p.id) {
+            <a
+              class="pl-card"
+              [attr.href]="getPortraitArticleLink(p) || '#'"
+              (click)="onPortraitClick($event, p)"
+            >
+              <div class="pl-photo">
+                @if (getPlayerPhotoUrl(p); as photoUrl) {
+                  <img [src]="photoUrl" [alt]="p.player.name" class="pl-img" />
+                } @else {
+                  <div class="ph court" data-label="Photo"></div>
+                }
+              </div>
+              <div class="pl-body">
+                <div class="rank">{{ p.category.libelle }}</div>
+                <h3>{{ p.player.name }}</h3>
+                <div class="meta">
+                  <b>{{ p.pointNumber }} pts</b>
+                  ·
+                  {{ p.player.club?.title || '—' }}
+                </div>
+                @if (p.signature) {
+                  <span class="shot">{{ p.signature }}</span>
+                }
+              </div>
+            </a>
+          }
+        </div>
+      }
     </div>
 
     <app-sidebar />
