@@ -1,30 +1,110 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
+import {
+  VideoDto,
+  VideoTypeDto,
+  VideosService,
+} from '../../../core/services/videos.service';
+import {
+  extractYouTubeVideoId,
+  youtubeEmbedUrl,
+  youtubeThumbnailUrl,
+} from '../../../core/utils/youtube.util';
 
-type VideoItem = {
-  title: string;
-  duration: string;
-  date: string;
-  ph: string;
+export type VideoCardVm = VideoDto & {
+  thumbUrl: string | null;
+  embedUrl: string | null;
+  dateLabel: string;
 };
 
 @Component({
   selector: 'app-videos-component',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './videos.component.html',
   styleUrl: './videos.component.scss',
 })
-export class VideosComponent {
+export class VideosComponent implements OnInit {
+  protected isLoading = true;
+  protected loadError = '';
+  protected videoTypes: VideoTypeDto[] = [];
+  /** « Tout » + filtres par type */
+  protected activeTypeId: 'all' | string = 'all';
+  protected videos: VideoCardVm[] = [];
   protected isModalOpen = false;
+  protected selectedEmbedSafe: SafeResourceUrl | null = null;
+  protected selectedTitle = '';
 
-  protected readonly videos: VideoItem[] = [
-    { title: 'Open Dakar 2026 — Finale Diallo/Sow vs Fall/Traoré', duration: '1:48:22', date: '12 Avr', ph: 'court' },
-    { title: 'Highlights Championnat U18 Sénégal', duration: '6:42', date: '11 Avr', ph: 'orange' },
-    { title: 'Interview · Ibou Ndiaye, DTN Fédération Sénégalaise', duration: '18:30', date: '9 Avr', ph: 'charcoal' },
-    { title: 'Coaching · La vibora en 5 exercices (Carlos Vega)', duration: '12:15', date: '8 Avr', ph: 'blue' },
-    { title: 'WPT Mexico Open · Best of Galán-Lebrón', duration: '8:04', date: '7 Avr', ph: 'sunset' },
-    { title: 'Coaching · Construire le point depuis le fond', duration: '9:18', date: '7 Avr', ph: 'green' },
-    { title: 'Open Saly · Finale intégrale Fall/Camara', duration: '2:14:08', date: '3 Avr', ph: 'violet' },
-    { title: 'Portrait vidéo · Aminata Ba, N°1 sénégalaise', duration: '7:55', date: '1 Avr', ph: 'red' },
-    { title: 'Highlights APP Miami · Chingotto sacré', duration: '5:30', date: '5 Avr', ph: 'charcoal' },
-  ];
+  constructor(
+    private readonly videosService: VideosService,
+    private readonly sanitizer: DomSanitizer,
+  ) {}
+
+  ngOnInit(): void {
+    this.isLoading = true;
+    this.loadError = '';
+    forkJoin({
+      types: this.videosService.findAllTypes().pipe(catchError(() => of([] as VideoTypeDto[]))),
+      videos: this.videosService.findAllVideos().pipe(catchError(() => of([] as VideoDto[]))),
+    })
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: ({ types, videos }) => {
+          this.videoTypes = types;
+          this.videos = videos.map((v) => this.toCardVm(v));
+          if (!types.length && !videos.length) {
+            this.loadError = '';
+          }
+        },
+        error: () => {
+          this.loadError = 'Impossible de charger les vidéos.';
+        },
+      });
+  }
+
+  protected setFilter(typeId: 'all' | string): void {
+    this.activeTypeId = typeId;
+  }
+
+  protected get filteredVideos(): VideoCardVm[] {
+    if (this.activeTypeId === 'all') return this.videos;
+    return this.videos.filter((v) => v.videoType?.id === this.activeTypeId);
+  }
+
+  protected openVideo(v: VideoCardVm): void {
+    if (!v.embedUrl) return;
+    this.selectedTitle = v.title;
+    this.selectedEmbedSafe = this.sanitizer.bypassSecurityTrustResourceUrl(v.embedUrl);
+    this.isModalOpen = true;
+  }
+
+  protected closeModal(): void {
+    this.isModalOpen = false;
+    this.selectedEmbedSafe = null;
+    this.selectedTitle = '';
+  }
+
+  /** Fermeture au clic sur la zone assombrie (pas sur le lecteur ni la carte blanche). */
+  protected onModalBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeModal();
+    }
+  }
+
+  private toCardVm(v: VideoDto): VideoCardVm {
+    const id = extractYouTubeVideoId(v.youtubeLink);
+    const created = v.createdAt ? new Date(v.createdAt) : null;
+    const dateLabel = created
+      ? created.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+      : '';
+    return {
+      ...v,
+      thumbUrl: id ? youtubeThumbnailUrl(id) : null,
+      embedUrl: id ? youtubeEmbedUrl(id) : null,
+      dateLabel,
+    };
+  }
 }

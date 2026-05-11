@@ -10,33 +10,87 @@
 </section>
 
 <main class="container">
-  <div class="chips">
-    <button class="chip on">Tout</button>
-    <button class="chip red">Replays matchs</button>
-    <button class="chip blue">Coaching vidéo</button>
-    <button class="chip orange">Highlights</button>
-    <button class="chip">Interviews</button>
-  </div>
+  @if (isLoading) {
+    <p class="state-msg">Chargement des vidéos…</p>
+  } @else if (loadError) {
+    <p class="state-msg">{{ loadError }}</p>
+  } @else {
+    <div class="chips">
+      <button
+        type="button"
+        class="chip"
+        [class.on]="activeTypeId === 'all'"
+        (click)="setFilter('all')"
+      >
+        Tout
+      </button>
+      @for (t of videoTypes; track t.id) {
+        <button
+          type="button"
+          class="chip"
+          [class.on]="activeTypeId === t.id"
+          (click)="setFilter(t.id)"
+        >
+          {{ t.title }}
+        </button>
+      }
+    </div>
 
-  <div class="card-grid-3">
-    @for (video of videos; track video.title) {
-      <div class="vid-card" (click)="isModalOpen = true">
-        <div class="vid-thumb">
-          <div class="ph {{ video.ph }}" data-label=""></div>
-          <span class="dur">{{ video.duration }}</span>
-        </div>
-        <div class="vid-body">
-          <h3>{{ video.title }}</h3>
-          <div class="m">{{ video.date }}</div>
-        </div>
+    @if (!filteredVideos.length) {
+      <p class="state-msg">Aucune vidéo pour ce filtre.</p>
+    } @else {
+      <div class="card-grid-3">
+        @for (video of filteredVideos; track video.id) {
+          <div
+            class="vid-card"
+            role="button"
+            tabindex="0"
+            (click)="openVideo(video)"
+            (keydown.enter)="openVideo(video)"
+            (keydown.space)="$event.preventDefault(); openVideo(video)"
+          >
+            <div class="vid-thumb">
+              @if (video.thumbUrl) {
+                <img [src]="video.thumbUrl" [alt]="" loading="lazy" />
+              } @else {
+                <div class="ph charcoal" data-label=""></div>
+              }
+              @if (video.dateLabel) {
+                <span class="dur">{{ video.dateLabel }}</span>
+              }
+            </div>
+            <div class="vid-body">
+              <h3>{{ video.title }}</h3>
+              @if (video.videoType.title) {
+                <div class="m type-tag">{{ video.videoType.title }}</div>
+              }
+            </div>
+          </div>
+        }
       </div>
     }
-  </div>
+  }
 </main>
 
-<div class="modal" [class.on]="isModalOpen">
-  <div class="modal-inner">
-    <button class="modal-close" (click)="isModalOpen = false">✕ Fermer</button>
-    <div class="ph charcoal" data-label="YouTube embed"></div>
+<div
+  class="modal"
+  [class.on]="isModalOpen"
+  role="presentation"
+  (click)="onModalBackdropClick($event)"
+>
+  <div class="modal-inner" (click)="$event.stopPropagation()">
+    <button type="button" class="modal-close" (click)="closeModal()">✕ Fermer</button>
+    @if (selectedTitle) {
+      <p class="modal-title">{{ selectedTitle }}</p>
+    }
+    @if (selectedEmbedSafe) {
+      <iframe
+        [title]="selectedTitle || 'Lecture vidéo'"
+        [src]="selectedEmbedSafe"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    }
   </div>
 </div>
