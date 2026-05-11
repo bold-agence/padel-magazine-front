@@ -272,6 +272,19 @@
   cursor: not-allowed;
 }
 
+.loading-msg,
+.empty-msg {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--ink-muted, #666);
+  font-size: 1rem;
+}
+
+.export-wrap .btn {
+  font: inherit;
+  text-decoration: none;
+}
+
 @media (max-width: 1024px) {
   .layout {
     grid-template-columns: 1fr 280px;

@@ -10,78 +10,111 @@
 </section>
 
 <main class="container">
-  <div class="tabs-nav">
-    <button
-      type="button"
-      [class.on]="activeTab === 'men'"
-      (click)="selectTab('men')"
-    >
-      ♂ ASPS Masculin
-    </button>
-    <button
-      type="button"
-      [class.on]="activeTab === 'women'"
-      (click)="selectTab('women')"
-    >
-      ♀ ASPS Féminin
-    </button>
-  </div>
+  @if (isLoading) {
+    <p class="loading-msg">Chargement des classements…</p>
+  } @else if (loadError) {
+    <p class="loading-msg">{{ loadError }}</p>
+  } @else if (!summaries.length) {
+    <p class="empty-msg">Aucun classement pour le moment. Ajoutez-en depuis l’administration.</p>
+  } @else {
+    <div class="tabs-nav">
+      @for (s of summaries; track s.id) {
+        <button
+          type="button"
+          [class.on]="activeId === s.id"
+          (click)="selectTab(s.id)"
+        >
+          {{ s.title }}
+        </button>
+      }
+    </div>
 
-  <div class="layout">
-    <div class="main-col">
-      <div class="podium">
-        @for (entry of currentPodium; track entry.rank) {
-          <div class="podium-card {{ entry.medalClass }}">
-            <div class="medal">{{ entry.rank }}</div>
-            <div class="av"><div class="ph {{ entry.phClass }}" data-label="64"></div></div>
-            <div class="info">
-              <h4>{{ entry.name }}</h4>
-              <div class="pt">{{ entry.points }}</div>
-            </div>
+    <div class="layout">
+      <div class="main-col">
+        @if (currentPodium.length) {
+          <div class="podium">
+            @for (entry of currentPodium; track entry.rank + entry.name) {
+              <div class="podium-card {{ entry.medalClass }}">
+                <div class="medal">{{ entry.rank }}</div>
+                <div class="av"><div class="ph {{ entry.phClass }}" data-label="64"></div></div>
+                <div class="info">
+                  <h4>{{ entry.name }}</h4>
+                  <div class="pt">{{ entry.points }}</div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (currentRanking.length) {
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Pos</th>
+                <th>Joueur</th>
+                <th>{{ pointsNowHeader }}</th>
+                <th>Tournois</th>
+                <th>Ancien pos</th>
+                <th>{{ pointsPrevHeader }}</th>
+                <th>Évol. pos</th>
+                <th>Évol. points</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of pagedRanking; track row.id) {
+                <tr>
+                  <td><b>{{ row.rank }}</b></td>
+                  <td>{{ row.player }}</td>
+                  <td class="score">{{ row.pointsNow }}</td>
+                  <td>{{ row.tournaments }}</td>
+                  <td>{{ row.previousRank }}</td>
+                  <td>{{ row.pointsPrev }}</td>
+                  <td>{{ row.rankDelta }}</td>
+                  <td>{{ row.pointsDelta }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p class="empty-msg">Aucune ligne pour ce classement. Importez un fichier Excel depuis l’administration.</p>
+        }
+
+        @if (currentRanking.length > rankingPageSize) {
+          <nav class="pagination" aria-label="Pagination du tableau">
+            <button
+              type="button"
+              (click)="goToPage(displayedPage - 1)"
+              [disabled]="!hasPreviousPage"
+            >
+              ‹
+            </button>
+            @for (p of pageNumbers; track p) {
+              <button
+                type="button"
+                [class.on]="p === displayedPage"
+                (click)="goToPage(p)"
+              >
+                {{ p }}
+              </button>
+            }
+            <button
+              type="button"
+              (click)="goToPage(displayedPage + 1)"
+              [disabled]="!hasNextPage"
+            >
+              ›
+            </button>
+          </nav>
+        }
+
+        @if (currentRanking.length) {
+          <div class="export-wrap">
+            <button type="button" class="btn btn-outline" (click)="downloadCsv()">⬇ Export CSV</button>
           </div>
         }
       </div>
 
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Pos</th>
-            <th>Joueur</th>
-            <th>Points (15/04/2026)</th>
-            <th>Tournois</th>
-            <th>Ancien pos</th>
-            <th>Points (28/02/2026)</th>
-            <th>Évol. pos</th>
-            <th>Évol. points</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of currentRanking; track row.rank + row.player) {
-            <tr>
-              <td><b>{{ row.rank }}</b></td>
-              <td>{{ row.player }}</td>
-              <td class="score">{{ row.pointsNow }}</td>
-              <td>{{ row.tournaments }}</td>
-              <td>{{ row.previousRank }}</td>
-              <td>{{ row.pointsPrev }}</td>
-              <td>{{ row.rankDelta }}</td>
-              <td>{{ row.pointsDelta }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-
-      <div class="pagination" aria-label="Pagination (aperçu)">
-        <button type="button" disabled>‹</button>
-        <button type="button" class="on">1</button>
-        <button type="button">2</button>
-        <button type="button">3</button>
-        <button type="button">›</button>
-      </div>
-
-      <div class="export-wrap"><a class="btn btn-outline" href="#">⬇ Export CSV</a></div>
+      <app-sidebar />
     </div>
-
-    <app-sidebar />
-  </div>
+  }
 </main>

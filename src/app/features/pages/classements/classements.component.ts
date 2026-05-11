@@ -1,5 +1,14 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import {
+  ClassementDetailDto,
+  ClassementLineDto,
+  ClassementSummaryDto,
+  ClassementsService,
+} from '../../../core/services/classements.service';
 
 type PodiumEntry = {
   rank: number;
@@ -9,96 +18,243 @@ type PodiumEntry = {
   points: string;
 };
 
-type RankingRow = {
+export type RankingRow = {
+  id: string;
   rank: number;
   player: string;
   pointsNow: number;
   tournaments: number;
   previousRank: number;
   pointsPrev: number;
-  rankDelta: string; // ex: +2, -1, -
-  pointsDelta: string; // ex: +75, -90, -
+  rankDelta: string;
+  pointsDelta: string;
 };
+
+const PODIUM_PH = ['court', 'charcoal', 'sunset', 'violet'] as const;
+
+/** Nombre de lignes du tableau par page (pagination uniquement côté client) */
+const RANKING_PAGE_SIZE = 15;
 
 @Component({
   selector: 'app-classements-component',
   standalone: true,
-  imports: [SidebarComponent],
+  imports: [CommonModule, SidebarComponent],
   templateUrl: './classements.component.html',
   styleUrl: './classements.component.scss',
 })
-export class ClassementsComponent {
-  protected activeTab: 'men' | 'women' = 'men';
+export class ClassementsComponent implements OnInit {
+  protected summaries: ClassementSummaryDto[] = [];
+  /** Détail chargé par id (lignes incluses) */
+  protected detailsById: Record<string, ClassementDetailDto> = {};
+  protected activeId: string | null = null;
 
-  protected selectTab(tab: 'men' | 'women'): void {
-    this.activeTab = tab;
+  protected isLoading = true;
+  protected loadError = '';
+
+  /** Page courante du tableau (1-based), réinitialisée au changement d’onglet */
+  protected currentPage = 1;
+
+  /** Exposé au template pour la condition d’affichage de la pagination */
+  protected readonly rankingPageSize = RANKING_PAGE_SIZE;
+
+  constructor(private readonly classementsService: ClassementsService) {}
+
+  ngOnInit(): void {
+    this.isLoading = true;
+    this.loadError = '';
+    this.classementsService
+      .findAllSummaries()
+      .pipe(
+        switchMap((summaries) => {
+          this.summaries = summaries;
+          this.detailsById = {};
+          this.activeId = null;
+          if (!summaries.length) {
+            return of(null);
+          }
+          this.activeId = summaries[0].id;
+          return forkJoin(
+            summaries.map((s) =>
+              this.classementsService.findOne(s.id).pipe(
+                catchError(() => of(null)),
+                map((detail) => ({ id: s.id, detail })),
+              ),
+            ),
+          ).pipe(
+            tap((pairs) => {
+              for (const { id, detail } of pairs) {
+                if (detail) {
+                  this.detailsById[id] = detail;
+                }
+              }
+            }),
+          );
+        }),
+        catchError(() => {
+          this.loadError = 'Impossible de charger les classements.';
+          return of(null);
+        }),
+        finalize(() => {
+          this.isLoading = false;
+        }),
+      )
+      .subscribe();
+  }
+
+  protected selectTab(id: string): void {
+    if (this.activeId !== id) {
+      this.currentPage = 1;
+    }
+    this.activeId = id;
+  }
+
+  protected goToPage(page: number): void {
+    const tp = this.totalPages;
+    this.currentPage = Math.min(Math.max(1, page), tp);
+  }
+
+  /** Page affichée (borne si le classement raccourcit) */
+  protected get displayedPage(): number {
+    return Math.min(Math.max(1, this.currentPage), this.totalPages);
+  }
+
+  protected get totalPages(): number {
+    const n = this.currentRanking.length;
+    return Math.max(1, Math.ceil(n / this.rankingPageSize));
+  }
+
+  protected get pageNumbers(): number[] {
+    return this.buildPageNumbers(this.displayedPage, this.totalPages);
+  }
+
+  protected get hasPreviousPage(): boolean {
+    return this.displayedPage > 1;
+  }
+
+  protected get hasNextPage(): boolean {
+    return this.displayedPage < this.totalPages;
+  }
+
+  /** Lignes affichées sur la page courante du tableau */
+  protected get pagedRanking(): RankingRow[] {
+    const all = this.currentRanking;
+    const start = (this.displayedPage - 1) * this.rankingPageSize;
+    return all.slice(start, start + this.rankingPageSize);
+  }
+
+  private buildPageNumbers(currentPage: number, totalPages: number): number[] {
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+    const start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, start + 4);
+    const normalizedStart = Math.max(1, end - 4);
+    return Array.from(
+      { length: end - normalizedStart + 1 },
+      (_, index) => normalizedStart + index,
+    );
+  }
+
+  protected get currentDetail(): ClassementDetailDto | null {
+    if (!this.activeId) return null;
+    return this.detailsById[this.activeId] ?? null;
   }
 
   protected get currentTitle(): string {
-    return this.activeTab === 'women' ? 'Classement Femmes' : 'Classement Hommes';
+    return this.currentDetail?.title ?? 'Classement';
+  }
+
+  protected get pointsNowHeader(): string {
+    return this.currentDetail?.pointsNowLabel?.trim() || 'Points actuels';
+  }
+
+  protected get pointsPrevHeader(): string {
+    return this.currentDetail?.pointsPrevLabel?.trim() || 'Points précédents';
   }
 
   protected get currentPodium(): PodiumEntry[] {
-    return this.activeTab === 'women' ? this.podiumWomen : this.podiumMen;
+    const d = this.currentDetail;
+    return d?.lines?.length ? this.buildPodium(d.lines) : [];
   }
 
   protected get currentRanking(): RankingRow[] {
-    return this.activeTab === 'women' ? this.rankingWomen : this.rankingMen;
+    const d = this.currentDetail;
+    return d?.lines?.length ? this.mapLines(d.lines) : [];
   }
 
-  protected readonly podiumMen: PodiumEntry[] = [
-    {
-      rank: 1,
-      medalClass: 'gold',
-      phClass: 'court',
-      name: 'Maher Hachem',
-      points: '3 400 pts',
-    },
-    {
-      rank: 2,
-      medalClass: 'silver',
-      phClass: 'charcoal',
-      name: 'Youssef Ait',
-      points: '2 900 pts',
-    },
-    {
-      rank: 3,
-      medalClass: 'bronze',
-      phClass: 'sunset',
-      name: 'Hamoude El Hadi',
-      points: '2 800 pts',
-    },
-  ];
+  protected downloadCsv(): void {
+    const rows = this.currentRanking;
+    if (!rows.length) return;
+    const sep = ';';
+    const headers = [
+      'Pos',
+      'Joueur',
+      this.pointsNowHeader,
+      'Tournois',
+      'Ancien pos',
+      this.pointsPrevHeader,
+      'Evol. pos',
+      'Evol. points',
+    ];
+    const lines = [
+      headers.join(sep),
+      ...rows.map((r) =>
+        [
+          r.rank,
+          this.escapeCsv(r.player),
+          r.pointsNow,
+          r.tournaments,
+          r.previousRank,
+          r.pointsPrev,
+          this.escapeCsv(r.rankDelta),
+          this.escapeCsv(r.pointsDelta),
+        ].join(sep),
+      ),
+    ];
+    const blob = new Blob(['\ufeff' + lines.join('\n')], {
+      type: 'text/csv;charset=utf-8',
+    });
+    const slug = this.currentDetail?.slug ?? 'classement';
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `classement-${slug}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
 
-  protected readonly rankingMen: RankingRow[] = [
-    { rank: 1, player: 'Maher Hachem', pointsNow: 3400, tournaments: 18, previousRank: 1, pointsPrev: 3300, rankDelta: '-', pointsDelta: '+100' },
-    { rank: 2, player: 'Youssef Ait', pointsNow: 2900, tournaments: 19, previousRank: 3, pointsPrev: 2950, rankDelta: '+1', pointsDelta: '-50' },
-    { rank: 3, player: 'Hamoude El Hadi', pointsNow: 2800, tournaments: 17, previousRank: 2, pointsPrev: 3050, rankDelta: '-1', pointsDelta: '-250' },
-    { rank: 3, player: 'Omar Ka', pointsNow: 2800, tournaments: 15, previousRank: 4, pointsPrev: 2800, rankDelta: '+1', pointsDelta: '-' },
-    { rank: 5, player: 'Karim Karrit', pointsNow: 2650, tournaments: 19, previousRank: 5, pointsPrev: 2650, rankDelta: '-', pointsDelta: '-' },
-    { rank: 6, player: 'Yannick Languina', pointsNow: 2625, tournaments: 13, previousRank: 6, pointsPrev: 2625, rankDelta: '-', pointsDelta: '-' },
-    { rank: 7, player: 'Wael Fakhry', pointsNow: 2300, tournaments: 18, previousRank: 7, pointsPrev: 2250, rankDelta: '-', pointsDelta: '+50' },
-    { rank: 8, player: 'Mohamed Daffé', pointsNow: 2125, tournaments: 20, previousRank: 9, pointsPrev: 2125, rankDelta: '+1', pointsDelta: '-' },
-    { rank: 8, player: 'Hugo Houedessou', pointsNow: 2125, tournaments: 14, previousRank: 9, pointsPrev: 2125, rankDelta: '+1', pointsDelta: '-' },
-    { rank: 10, player: 'Mahmoud Joubaily', pointsNow: 2100, tournaments: 16, previousRank: 12, pointsPrev: 2025, rankDelta: '+2', pointsDelta: '+75' },
-  ];
+  private escapeCsv(value: string): string {
+    const v = value.replace(/"/g, '""');
+    return /[;\n\r"]/.test(v) ? `"${v}"` : v;
+  }
 
-  protected readonly podiumWomen: PodiumEntry[] = [
-    { rank: 1, medalClass: 'gold', phClass: 'violet', name: 'Marina Fakhry', points: '1 550 pts' },
-    { rank: 2, medalClass: 'silver', phClass: 'sunset', name: 'Gwendoline Laurent Daw', points: '1 473 pts' },
-    { rank: 3, medalClass: 'bronze', phClass: 'court', name: 'Karine Ghozayel', points: '1 450 pts' },
-  ];
+  private mapLines(lines: ClassementLineDto[]): RankingRow[] {
+    const sorted = [...lines].sort((a, b) => a.sortOrder - b.sortOrder);
+    return sorted.map((line) => ({
+      id: line.id,
+      rank: line.rank,
+      player: line.playerName?.trim() || '—',
+      pointsNow: line.pointsNow,
+      tournaments: line.tournaments,
+      previousRank: line.previousRank,
+      pointsPrev: line.pointsPrev,
+      rankDelta: line.rankDelta ?? '-',
+      pointsDelta: line.pointsDelta ?? '-',
+    }));
+  }
 
-  protected readonly rankingWomen: RankingRow[] = [
-    { rank: 1, player: 'Marina Fakhry', pointsNow: 1550, tournaments: 8, previousRank: 3, pointsPrev: 1550, rankDelta: '+2', pointsDelta: '-' },
-    { rank: 2, player: 'Gwendoline Laurent Daw', pointsNow: 1473, tournaments: 8, previousRank: 2, pointsPrev: 1563, rankDelta: '-', pointsDelta: '-90' },
-    { rank: 3, player: 'Karine Ghozayel', pointsNow: 1450, tournaments: 6, previousRank: 1, pointsPrev: 1700, rankDelta: '-2', pointsDelta: '-250' },
-    { rank: 4, player: 'Mélina Fawaz', pointsNow: 1360, tournaments: 6, previousRank: 4, pointsPrev: 1520, rankDelta: '-', pointsDelta: '-160' },
-    { rank: 5, player: 'Maya Issa', pointsNow: 1053, tournaments: 10, previousRank: 5, pointsPrev: 1053, rankDelta: '-', pointsDelta: '-' },
-    { rank: 6, player: 'Sarah Sayegh', pointsNow: 1050, tournaments: 10, previousRank: 6, pointsPrev: 1050, rankDelta: '-', pointsDelta: '-' },
-    { rank: 7, player: 'Fati Zahra Youssoufi', pointsNow: 1015, tournaments: 13, previousRank: 7, pointsPrev: 1015, rankDelta: '-', pointsDelta: '-' },
-    { rank: 8, player: 'Dounia Fenaiche', pointsNow: 970, tournaments: 13, previousRank: 8, pointsPrev: 945, rankDelta: '-', pointsDelta: '+25' },
-    { rank: 9, player: 'Sarah Salhab', pointsNow: 935, tournaments: 9, previousRank: 10, pointsPrev: 935, rankDelta: '+1', pointsDelta: '-' },
-    { rank: 10, player: 'Lilia Salhab', pointsNow: 925, tournaments: 5, previousRank: 11, pointsPrev: 925, rankDelta: '+1', pointsDelta: '-' },
-  ];
+  private buildPodium(lines: ClassementLineDto[]): PodiumEntry[] {
+    const sorted = [...lines].sort((a, b) => a.sortOrder - b.sortOrder);
+    const medals: PodiumEntry['medalClass'][] = ['gold', 'silver', 'bronze'];
+    return sorted.slice(0, 3).map((line, i) => ({
+      rank: line.rank,
+      medalClass: medals[i] ?? 'bronze',
+      phClass: PODIUM_PH[i % PODIUM_PH.length],
+      name: line.playerName?.trim() || '—',
+      points: this.formatPoints(line.pointsNow),
+    }));
+  }
+
+  private formatPoints(n: number): string {
+    return `${n.toLocaleString('fr-FR')} pts`;
+  }
 }
