@@ -66,11 +66,97 @@
   min-width: 0;
 }
 
-.podium {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+.podium-block-after {
+  margin-top: 28px;
+}
+
+.podium-carousel-wrap {
+  position: relative;
   margin-bottom: 24px;
+}
+
+.podium-carousel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 44px;
+  padding: 4px 2px 12px;
+  margin: 0 40px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.podium-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.podium-carousel .podium-card {
+  flex: 0 0 min(100%, 300px);
+  scroll-snap-align: start;
+  margin-bottom: 0;
+}
+
+@media (min-width: 600px) {
+  .podium-carousel .podium-card {
+    flex: 0 0 calc((100% - 24px) / 3);
+    min-width: 220px;
+  }
+}
+
+@media (min-width: 900px) {
+  .podium-carousel .podium-card {
+    flex: 0 0 calc((100% - 24px) / 3);
+    max-width: 320px;
+  }
+}
+
+.podium-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  font-family: var(--f-display);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--coral);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 2px;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.podium-nav:hover {
+  background: var(--coral);
+  color: #fff;
+  border-color: var(--coral);
+}
+
+.podium-nav-prev {
+  left: 0;
+}
+
+.podium-nav-next {
+  right: 0;
+}
+
+.podium-card.default-rank {
+  border-top: 4px solid rgba(216, 90, 48, 0.28);
+}
+
+.podium-card.default-rank .medal {
+  color: var(--coral);
 }
 
 .podium-card {
@@ -246,6 +332,12 @@
   margin-top: 32px;
 }
 
+.articles-state {
+  margin: 0 0 16px;
+  color: var(--gray);
+  font-size: 15px;
+}
+
 @media (max-width: 1024px) {
   .layout {
     grid-template-columns: 1fr 280px;
@@ -262,10 +354,6 @@
   }
 
   .card-grid-4 {
-    grid-template-columns: 1fr;
-  }
-
-  .podium {
     grid-template-columns: 1fr;
   }
 

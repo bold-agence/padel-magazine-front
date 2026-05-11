@@ -9,23 +9,76 @@
 <main class="container">
   <div class="layout">
     <div class="main-col">
-      <div class="sec-head coral"><h2>Top 3 Mondial WPT</h2></div>
-      <div class="podium">
-        <div class="podium-card gold">
-          <div class="medal">1</div>
-          <div class="av"><div class="ph orange" data-label="64"></div></div>
-          <div class="info"><h4>Galán / Lebrón 🇪🇸</h4><div class="pt">14 850 pts</div></div>
+      <div class="sec-head coral"><h2>Top 10 Mondial Premier Padel - Hommes</h2></div>
+      <div class="podium-carousel-wrap">
+        <button
+          type="button"
+          class="podium-nav podium-nav-prev"
+          aria-label="Voir les paires précédentes"
+          (click)="scrollPodiumHommes(-1)"
+        >
+          ‹
+        </button>
+        <div
+          #podiumTrackHommes
+          class="podium-carousel"
+          tabindex="0"
+          role="region"
+          aria-label="Top 10 mondial messieurs, défilement horizontal"
+          (keydown)="onPodiumHommesKeydown($event)"
+        >
+          @for (e of top10; track e.rank) {
+            <div class="podium-card" [class.gold]="e.tier === 'gold'" [class.silver]="e.tier === 'silver'" [class.bronze]="e.tier === 'bronze'" [class.default-rank]="e.tier === 'default'">
+              <div class="medal">{{ e.rank }}</div>
+              <div class="av"><div [class]="'ph ' + e.phClass" data-label="64"></div></div>
+              <div class="info"><h4>{{ e.team }}</h4><div class="pt">{{ e.points }}</div></div>
+            </div>
+          }
         </div>
-        <div class="podium-card silver">
-          <div class="medal">2</div>
-          <div class="av"><div class="ph sunset" data-label="64"></div></div>
-          <div class="info"><h4>Chingotto / Tello 🇦🇷</h4><div class="pt">13 420 pts</div></div>
+        <button
+          type="button"
+          class="podium-nav podium-nav-next"
+          aria-label="Voir les paires suivantes"
+          (click)="scrollPodiumHommes(1)"
+        >
+          ›
+        </button>
+      </div>
+
+      <div class="sec-head coral podium-block-after"><h2>Top 10 Mondial Premier Padel — Féminin</h2></div>
+      <div class="podium-carousel-wrap">
+        <button
+          type="button"
+          class="podium-nav podium-nav-prev"
+          aria-label="Voir les paires précédentes (féminin)"
+          (click)="scrollPodiumFeminin(-1)"
+        >
+          ‹
+        </button>
+        <div
+          #podiumTrackFeminin
+          class="podium-carousel"
+          tabindex="0"
+          role="region"
+          aria-label="Top 10 féminin, défilement horizontal"
+          (keydown)="onPodiumFemininKeydown($event)"
+        >
+          @for (e of top10Feminin; track e.rank) {
+            <div class="podium-card" [class.gold]="e.tier === 'gold'" [class.silver]="e.tier === 'silver'" [class.bronze]="e.tier === 'bronze'" [class.default-rank]="e.tier === 'default'">
+              <div class="medal">{{ e.rank }}</div>
+              <div class="av"><div [class]="'ph ' + e.phClass" data-label="64"></div></div>
+              <div class="info"><h4>{{ e.team }}</h4><div class="pt">{{ e.points }}</div></div>
+            </div>
+          }
         </div>
-        <div class="podium-card bronze">
-          <div class="medal">3</div>
-          <div class="av"><div class="ph violet" data-label="64"></div></div>
-          <div class="info"><h4>Lima / Tapia 🇧🇷🇦🇷</h4><div class="pt">12 900 pts</div></div>
-        </div>
+        <button
+          type="button"
+          class="podium-nav podium-nav-next"
+          aria-label="Voir les paires suivantes (féminin)"
+          (click)="scrollPodiumFeminin(1)"
+        >
+          ›
+        </button>
       </div>
 
       <div class="sec-head coral section-spacing"><h2>Derniers résultats Premier Padel</h2></div>
@@ -41,25 +94,40 @@
       </table>
 
 
-      <div class="sec-head coral section-spacing"><h2>Articles internationaux</h2></div>
-      <div class="card-grid-4">
-        <article class="card coral">
-          <div class="card-img"><span class="badge international">WPT</span><div class="ph sunset" data-label="300×160"></div></div>
-          <div class="card-body"><h3 class="card-title mini-title">Mexique Open : Galán-Lebrón s'imposent</h3><div class="card-meta mini-meta"><span>10 Avr</span></div></div>
-        </article>
-        <article class="card coral">
-          <div class="card-img"><span class="badge international">APP</span><div class="ph orange" data-label="300×160"></div></div>
-          <div class="card-body"><h3 class="card-title mini-title">APP Miami : Chingotto sacré</h3><div class="card-meta mini-meta"><span>8 Avr</span></div></div>
-        </article>
-        <article class="card coral">
-          <div class="card-img"><span class="badge international">WPT</span><div class="ph violet" data-label="300×160"></div></div>
-          <div class="card-body"><h3 class="card-title mini-title">L'Espagne domine, l'Afrique s'éveille</h3><div class="card-meta mini-meta"><span>6 Avr</span></div></div>
-        </article>
-        <article class="card coral">
-          <div class="card-img"><span class="badge international">Portrait</span><div class="ph charcoal" data-label="300×160"></div></div>
-          <div class="card-body"><h3 class="card-title mini-title">Arturo Coello, l'héritier</h3><div class="card-meta mini-meta"><span>4 Avr</span></div></div>
-        </article>
+      <div class="sec-head coral section-spacing">
+        <h2>Articles internationaux</h2>
+        <a
+          routerLink="/actualites"
+          [queryParams]="{ category: 'international', page: 1 }"
+          class="see-all"
+        >
+          Voir tout →
+        </a>
       </div>
+      @if (articlesError) {
+        <p class="articles-state">{{ articlesError }}</p>
+      } @else if (isLoadingArticles) {
+        <p class="articles-state">Chargement des articles…</p>
+      } @else if (!internationalArticles.length) {
+        <p class="articles-state">Aucun article international pour le moment.</p>
+      } @else {
+        <div class="card-grid-4">
+          @for (article of internationalArticles; track article.id) {
+            <app-news-card
+              [cardClass]="article.cardClass"
+              [badgeClass]="article.cls"
+              [badgeText]="article.cat"
+              [phClass]="article.ph"
+              [title]="article.title"
+              [author]="article.auth"
+              [date]="article.date"
+              [read]="article.read"
+              [bannerImage]="article.bannerImage"
+              [link]="'/actualites/' + article.slug"
+            />
+          }
+        </div>
+      }
 
       <div class="sec-head coral section-spacing"><h2>Calendrier WPT à venir</h2></div>
       <table class="data-table">
