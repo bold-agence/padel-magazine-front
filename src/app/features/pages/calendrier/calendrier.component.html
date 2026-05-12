@@ -1,0 +1,183 @@
+<section class="page-intro">
+  <div class="container">
+    <div class="crumb"><a href="/">Accueil</a> › Calendrier</div>
+    <h1>CALENDRIER</h1>
+    <p class="lead">
+      Tournois nationaux, circuits régionaux et grandes rendez-vous internationaux : dates et lieux à
+      ne pas manquer.
+    </p>
+  </div>
+</section>
+
+<main class="container">
+  <div class="chips">
+    <button type="button" class="chip on">À venir</button>
+    <button type="button" class="chip">Sénégal</button>
+    <button type="button" class="chip">WPT / APP</button>
+    <button type="button" class="chip">Jeunes</button>
+  </div>
+
+  <div class="layout">
+    <div class="main-col">
+      <section class="upcoming-events" aria-labelledby="upcoming-heading">
+        <div class="upcoming-events-head">
+          <h2 id="upcoming-heading">Prochains événements</h2>
+          <p class="upcoming-events-sub">Les trois prochaines dates à retenir (à partir d’aujourd’hui).</p>
+        </div>
+        @if (nextThreeEvents.length === 0) {
+          <p class="upcoming-events-empty">Aucun événement à venir pour le moment.</p>
+        } @else {
+          <div class="upcoming-grid">
+            @for (ev of nextThreeEvents; track ev.id) {
+              <button type="button" class="upcoming-card" (click)="openModalFromUpcoming(ev)">
+                @if (ev.coverImageUrl) {
+                  <div class="upcoming-card-cover">
+                    <img [src]="ev.coverImageUrl" [alt]="ev.title" width="640" height="360" loading="lazy" />
+                  </div>
+                } @else {
+                  <div class="upcoming-card-cover upcoming-card-cover--placeholder" aria-hidden="true"></div>
+                }
+                <div class="upcoming-card-body">
+                  <span class="upcoming-card-tier" [style.--tier-color]="ev.accent">{{ ev.tier }}</span>
+                  <span class="upcoming-card-date">{{ formatEventStartShort(ev) }}</span>
+                  <span class="upcoming-card-title">{{ ev.title }}</span>
+                  <span class="upcoming-card-venue">{{ ev.venue }}</span>
+                </div>
+              </button>
+            }
+          </div>
+        }
+      </section>
+
+      <div class="calendar-wrap">
+        <header class="calendar-panel-head">
+          <div class="calendar-panel-head-text">
+            <span class="calendar-panel-title">Vue mensuelle</span>
+            <span class="calendar-panel-hint"
+              >Pastilles personnalisées par niveau — cliquez sur un jour ou sur une pastille pour le
+              détail.</span
+            >
+          </div>
+          <div class="calendar-panel-legend" aria-hidden="true">
+            <span class="calendar-legend-item"><i class="calendar-legend-swatch today"></i>Aujourd’hui</span>
+            <span class="calendar-legend-item"><i class="calendar-legend-swatch event"></i>Avec événement</span>
+          </div>
+        </header>
+        <div class="calendar-panel-body">
+          <div class="cal-fc-custom-toolbar" role="toolbar" aria-label="Navigation du calendrier">
+            <div class="cal-fc-toolbar-row">
+              <div class="cal-fc-toolbar-left">
+                <button type="button" class="cal-fc-icon-btn" (click)="calendarPrev()" aria-label="Mois précédent">
+                  ‹
+                </button>
+                <button type="button" class="cal-fc-icon-btn" (click)="calendarNext()" aria-label="Mois suivant">
+                  ›
+                </button>
+                <label class="cal-fc-toolbar-label">
+                  <span class="visually-hidden">Mois</span>
+                  <select
+                    class="cal-fc-select"
+                    [value]="toolbarMonth()"
+                    (change)="onToolbarMonthChange($event)"
+                  >
+                    @for (opt of monthOptions; track opt.value) {
+                      <option [value]="opt.value">{{ opt.label }}</option>
+                    }
+                  </select>
+                </label>
+                <label class="cal-fc-toolbar-label">
+                  <span class="visually-hidden">Année</span>
+                  <select
+                    class="cal-fc-select"
+                    [value]="toolbarYear()"
+                    (change)="onToolbarYearChange($event)"
+                  >
+                    @for (y of yearOptions; track y) {
+                      <option [value]="y">{{ y }}</option>
+                    }
+                  </select>
+                </label>
+                <button type="button" class="cal-fc-today-btn" (click)="calendarToday()">Aujourd'hui</button>
+              </div>
+              <h2 class="cal-fc-toolbar-title">{{ viewMonthYearTitle() }}</h2>
+            </div>
+          </div>
+          <full-calendar #fullCal [options]="calendarOptions">
+            <ng-template #eventContent let-arg>
+              <div
+                class="cal-event-badge"
+                [style.--cal-badge-accent]="eventBadgeAccent(arg)"
+                role="presentation"
+              >
+                <span class="cal-event-badge-bar" aria-hidden="true"></span>
+                <span class="cal-event-badge-inner">
+                  <span class="cal-event-badge-tier">{{ eventBadgeTier(arg) }}</span>
+                  <span class="cal-event-badge-title">{{ arg.event.title }}</span>
+                </span>
+              </div>
+            </ng-template>
+          </full-calendar>
+        </div>
+      </div>
+    </div>
+
+    <app-sidebar />
+  </div>
+</main>
+
+@if (modalOpen()) {
+  <div
+    class="cal-modal-backdrop"
+    (click)="closeModal()"
+    role="presentation"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="cal-modal"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="'cal-modal-title'"
+  >
+    <div class="cal-modal-head">
+      <h2 id="cal-modal-title">{{ modalDateLabel() }}</h2>
+      <button type="button" class="cal-modal-close" (click)="closeModal()" aria-label="Fermer">
+        ×
+      </button>
+    </div>
+    <div class="cal-modal-body">
+      @if (modalEvents().length === 0) {
+        <p class="cal-modal-empty">Aucun événement prévu ce jour.</p>
+      } @else {
+        <ul class="cal-modal-list">
+          @for (ev of modalEvents(); track ev.id) {
+            <li class="cal-modal-item">
+              @if (ev.coverImageUrl) {
+                <div class="cal-modal-item-cover">
+                  <img
+                    [src]="ev.coverImageUrl"
+                    [alt]="'Couverture : ' + ev.title"
+                    width="800"
+                    height="420"
+                    loading="lazy"
+                  />
+                </div>
+              } @else {
+                <div class="cal-modal-item-cover cal-modal-item-cover--placeholder" aria-hidden="true"></div>
+              }
+              <div class="cal-modal-item-body">
+                <div class="cal-modal-item-date">{{ formatModalEventDate(ev) }}</div>
+                @if (ev.timeLabel) {
+                  <div class="cal-modal-item-time">{{ ev.timeLabel }}</div>
+                }
+                <div class="cal-modal-item-match">{{ modalMatchLine(ev) }}</div>
+                @if (eventDescriptionSafe(ev); as descHtml) {
+                  <div class="cal-modal-item-desc" [innerHTML]="descHtml"></div>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+}

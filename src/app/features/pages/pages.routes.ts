@@ -57,6 +57,16 @@ export const PAGES_ROUTES: Routes = [
           import('./classements/classements.component').then((m) => m.ClassementsComponent),
       },
       {
+        path: 'calendrier',
+        data: {
+          title: 'Calendrier — Padel Magazine',
+          description:
+            'Calendrier des tournois et événements padel au Sénégal et à l’international : dates, lieux et niveaux.',
+        },
+        loadComponent: () =>
+          import('./calendrier/calendrier.component').then((m) => m.CalendrierComponent),
+      },
+      {
         path: 'coaching',
         data: {
           title: 'Coaching & Technique — Padel Magazine',
