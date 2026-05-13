@@ -5,19 +5,13 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-<<<<<<< HEAD
-import { DOCUMENT } from '@angular/common';
-import { forkJoin } from 'rxjs';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize, switchMap } from 'rxjs/operators';
 import {
   ArticleCategoryModel,
   ArticleModel,
 } from '../../../core/models/article.model';
-=======
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { forkJoin, of } from 'rxjs';
-import { catchError, finalize, switchMap } from 'rxjs/operators';
-import { ArticleModel } from '../../../core/models/article.model';
->>>>>>> f89c5679bcb012ff50e3c2408bf9b9ecd58f9853
 import { ArticlesService } from '../../../core/services/articles.service';
 import {
   ClassementDetailDto,
@@ -30,11 +24,6 @@ import {
   ClientContentService,
 } from '../../../core/services/client-content.service';
 import {
-<<<<<<< HEAD
-  NewsCardBadge,
-  NewsCardComponent,
-} from '../../../shared/components/news-card/news-card.component';
-=======
   LatestResult,
   LatestResultsService,
 } from '../../../core/services/latest-results.service';
@@ -55,8 +44,10 @@ import {
   pickUpcoming,
   toLiveEmbedUrl,
 } from '../../../core/utils/live-scheduling.util';
-import { NewsCardComponent } from '../../../shared/components/news-card/news-card.component';
->>>>>>> f89c5679bcb012ff50e3c2408bf9b9ecd58f9853
+import {
+  NewsCardBadge,
+  NewsCardComponent,
+} from '../../../shared/components/news-card/news-card.component';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { RouterLink } from '@angular/router';
 

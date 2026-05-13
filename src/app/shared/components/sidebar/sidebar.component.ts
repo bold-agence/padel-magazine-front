@@ -1,14 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
-<<<<<<< HEAD
 import {
   ArticleCategoryModel,
   ArticleModel,
 } from '../../../core/models/article.model';
-=======
 import { RouterLink } from '@angular/router';
-import { ArticleModel } from '../../../core/models/article.model';
->>>>>>> f89c5679bcb012ff50e3c2408bf9b9ecd58f9853
 import { ArticlesService } from '../../../core/services/articles.service';
 import {
   AdImageItem,
