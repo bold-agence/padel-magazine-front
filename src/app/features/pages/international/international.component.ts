@@ -1,6 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ArticleModel } from '../../../core/models/article.model';
+import {
+  ArticleCategoryModel,
+  ArticleModel,
+} from '../../../core/models/article.model';
 import { ArticlesService } from '../../../core/services/articles.service';
 import {
   FipRankingDto,
@@ -11,7 +14,10 @@ import {
   LatestResult,
   LatestResultsService,
 } from '../../../core/services/latest-results.service';
-import { NewsCardComponent } from '../../../shared/components/news-card/news-card.component';
+import {
+  NewsCardBadge,
+  NewsCardComponent,
+} from '../../../shared/components/news-card/news-card.component';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 
 export type PodiumTier = 'gold' | 'silver' | 'bronze' | 'default';
@@ -40,6 +46,7 @@ type InternationalArticleCard = {
   read: string;
   cardClass: string;
   bannerImage?: string;
+  badges: NewsCardBadge[];
 };
 
 type InternationalResultRow = LatestResult & {
@@ -257,11 +264,13 @@ export class InternationalComponent implements OnInit {
   }
 
   private toArticleCard(article: ArticleModel): InternationalArticleCard {
-    const normalized = this.normalizeCategory(article.category?.name);
+    const categories = this.getArticleCategories(article);
+    const primaryCategory = categories[0] ?? null;
+    const normalized = this.normalizeCategory(primaryCategory?.name);
     return {
       id: article.id,
       slug: article.slug,
-      cat: article.category?.name ?? 'International',
+      cat: primaryCategory?.name ?? 'International',
       cls: normalized,
       ph: this.getPlaceholderClass(normalized),
       title: article.title,
@@ -270,7 +279,29 @@ export class InternationalComponent implements OnInit {
       read: article.readingTime,
       cardClass: this.getCardClass(normalized),
       bannerImage: article.bannerImage,
+      badges: this.toCategoryBadges(categories),
     };
+  }
+
+  private getArticleCategories(article: ArticleModel): ArticleCategoryModel[] {
+    const categories = article.categories?.length
+      ? article.categories
+      : article.category
+        ? [article.category]
+        : [];
+    const seen = new Set<string>();
+    return categories.filter((category) => {
+      if (seen.has(category.id)) return false;
+      seen.add(category.id);
+      return true;
+    });
+  }
+
+  private toCategoryBadges(categories: ArticleCategoryModel[]): NewsCardBadge[] {
+    return categories.map((category) => ({
+      text: category.name,
+      className: this.normalizeCategory(category.name),
+    }));
   }
 
   private normalizeCategory(value?: string): string {

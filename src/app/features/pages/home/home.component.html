@@ -9,7 +9,15 @@
             <div class="ph {{ item.ph }}" data-label="S4-H · 900×450"></div>
           }
           <div class="hero-overlay">
-            <span class="badge {{ item.cls }}">{{ item.cat }}</span>
+            <div class="hero-badges">
+              @if (item.badges?.length) {
+                @for (badge of item.badges; track badge.text) {
+                  <span class="badge {{ badge.className }}">{{ badge.text }}</span>
+                }
+              } @else {
+                <span class="badge {{ item.cls }}">{{ item.cat }}</span>
+              }
+            </div>
             <h3>{{ item.title }}</h3>
             <div class="hero-meta">Par {{ item.author }} · {{ item.date }} · {{ item.read }} de lecture</div>
           </div>
@@ -32,7 +40,15 @@
             <div class="ph {{ item.ph }}" data-label="S4-V · 460×235"></div>
           }
           <div class="hero-overlay">
-            <span class="badge {{ item.cls }}">{{ item.cat }}</span>
+            <div class="hero-badges">
+              @if (item.badges?.length) {
+                @for (badge of item.badges; track badge.text) {
+                  <span class="badge {{ badge.className }}">{{ badge.text }}</span>
+                }
+              } @else {
+                <span class="badge {{ item.cls }}">{{ item.cat }}</span>
+              }
+            </div>
             <h3>{{ item.title }}</h3>
             <div class="hero-meta">{{ item.date }}</div>
           </div>
@@ -72,6 +88,7 @@
             [cardClass]="article.cardClass"
             [badgeClass]="article.cls"
             [badgeText]="article.cat"
+            [badges]="article.badges ?? []"
             [phClass]="article.ph"
             [title]="article.title"
             [author]="article.auth"
@@ -179,6 +196,7 @@
             [cardClass]="article.cardClass"
             [badgeClass]="article.cls"
             [badgeText]="article.cat"
+            [badges]="article.badges ?? []"
             [phClass]="article.ph"
             [title]="article.title"
             [author]="article.auth"
@@ -219,6 +237,7 @@
             [cardClass]="article.cardClass"
             [badgeClass]="article.cls"
             [badgeText]="article.cat"
+            [badges]="article.badges ?? []"
             [phClass]="article.ph"
             [title]="article.title"
             [author]="article.auth"
@@ -234,4 +253,3 @@
     <app-sidebar />
   </div>
 </main>
-

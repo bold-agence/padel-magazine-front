@@ -89,6 +89,12 @@
   color: var(--green);
 }
 
+.compact-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
 .compact-item .t {
   font-family: var(--f-display);
   font-weight: 500;

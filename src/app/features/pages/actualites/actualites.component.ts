@@ -7,6 +7,7 @@ import {
   ArticlesService,
   PaginatedArticlesResponse,
 } from '../../../core/services/articles.service';
+import { NewsCardBadge } from '../../../shared/components/news-card/news-card.component';
 
 type NewsArticle = {
   id: string;
@@ -20,6 +21,7 @@ type NewsArticle = {
   read: string;
   bannerImage?: string;
   cardClass: string;
+  badges: NewsCardBadge[];
 };
 
 type CategoryChip = {
@@ -148,11 +150,13 @@ export class ActualitesComponent implements OnInit {
   }
 
   private toNewsArticle(article: ArticleModel): NewsArticle {
-    const normalized = this.normalizeCategory(article.category?.name);
+    const categories = this.getArticleCategories(article);
+    const primaryCategory = categories[0] ?? null;
+    const normalized = this.normalizeCategory(primaryCategory?.name);
     return {
       id: article.id,
       slug: article.slug,
-      cat: article.category?.name ?? 'Actualités',
+      cat: primaryCategory?.name ?? 'Actualités',
       cls: normalized,
       ph: this.getPlaceholderClass(normalized),
       title: article.title,
@@ -161,7 +165,29 @@ export class ActualitesComponent implements OnInit {
       read: article.readingTime,
       bannerImage: article.bannerImage,
       cardClass: this.getCardClass(normalized),
+      badges: this.toCategoryBadges(categories),
     };
+  }
+
+  private getArticleCategories(article: ArticleModel): ArticleCategoryModel[] {
+    const categories = article.categories?.length
+      ? article.categories
+      : article.category
+        ? [article.category]
+        : [];
+    const seen = new Set<string>();
+    return categories.filter((category) => {
+      if (seen.has(category.id)) return false;
+      seen.add(category.id);
+      return true;
+    });
+  }
+
+  private toCategoryBadges(categories: ArticleCategoryModel[]): NewsCardBadge[] {
+    return categories.map((category) => ({
+      text: category.name,
+      className: this.normalizeCategory(category.name),
+    }));
   }
 
   private normalizeCategory(value?: string): string {

@@ -1,6 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+export type NewsCardBadge = {
+  text: string;
+  className: string;
+};
+
 @Component({
   selector: 'app-news-card',
   standalone: true,
@@ -13,6 +18,7 @@ export class NewsCardComponent {
   @Input({ required: true }) badgeText = '';
   @Input({ required: true }) badgeClass = '';
   @Input({ required: true }) phClass = '';
+  @Input() badges: NewsCardBadge[] = [];
 
   @Input() author = '';
   @Input() date = '';

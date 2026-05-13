@@ -7,13 +7,19 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { forkJoin } from 'rxjs';
-import { ArticleModel } from '../../../core/models/article.model';
+import {
+  ArticleCategoryModel,
+  ArticleModel,
+} from '../../../core/models/article.model';
 import { ArticlesService } from '../../../core/services/articles.service';
 import {
   AdImageItem,
   ClientContentService,
 } from '../../../core/services/client-content.service';
-import { NewsCardComponent } from '../../../shared/components/news-card/news-card.component';
+import {
+  NewsCardBadge,
+  NewsCardComponent,
+} from '../../../shared/components/news-card/news-card.component';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { RouterLink } from '@angular/router';
 
@@ -28,6 +34,7 @@ type HomeNewsCard = {
   read: string;
   cardClass: string;
   bannerImage?: string;
+  badges?: NewsCardBadge[];
 };
 
 type HeroItem = {
@@ -40,6 +47,7 @@ type HeroItem = {
   read?: string;
   ph: string;
   bannerImage?: string;
+  badges?: NewsCardBadge[];
 };
 
 @Component({
@@ -290,25 +298,30 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private toHeroItem(article: ArticleModel): HeroItem {
-    const normalized = this.normalizeCategory(article.category?.name);
+    const categories = this.getArticleCategories(article);
+    const primaryCategory = categories[0] ?? null;
+    const normalized = this.normalizeCategory(primaryCategory?.name);
     return {
       slug: article.slug,
       title: article.title,
-      cat: article.category?.name ?? 'Actualités',
+      cat: primaryCategory?.name ?? 'Actualités',
       cls: normalized,
       date: this.toLongDate(article.date),
       author: article.author,
       read: article.readingTime,
       ph: this.getPlaceholderClass(normalized),
       bannerImage: article.bannerImage,
+      badges: this.toCategoryBadges(categories),
     };
   }
 
   private toHomeNewsCard(article: ArticleModel): HomeNewsCard {
-    const normalized = this.normalizeCategory(article.category?.name);
+    const categories = this.getArticleCategories(article);
+    const primaryCategory = categories[0] ?? null;
+    const normalized = this.normalizeCategory(primaryCategory?.name);
     return {
       slug: article.slug,
-      cat: article.category?.name ?? 'Actualités',
+      cat: primaryCategory?.name ?? 'Actualités',
       cls: normalized,
       ph: this.getPlaceholderClass(normalized),
       title: article.title,
@@ -317,7 +330,29 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       read: article.readingTime,
       cardClass: this.getCardClass(normalized),
       bannerImage: article.bannerImage,
+      badges: this.toCategoryBadges(categories),
     };
+  }
+
+  private getArticleCategories(article: ArticleModel): ArticleCategoryModel[] {
+    const categories = article.categories?.length
+      ? article.categories
+      : article.category
+        ? [article.category]
+        : [];
+    const seen = new Set<string>();
+    return categories.filter((category) => {
+      if (seen.has(category.id)) return false;
+      seen.add(category.id);
+      return true;
+    });
+  }
+
+  private toCategoryBadges(categories: ArticleCategoryModel[]): NewsCardBadge[] {
+    return categories.map((category) => ({
+      text: category.name,
+      className: this.normalizeCategory(category.name),
+    }));
   }
 
   private normalizeCategory(value?: string): string {

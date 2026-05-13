@@ -71,11 +71,15 @@
   transform: scale(1.04);
 }
 
-.card-img .badge {
+.card-img .badge-stack {
   position: absolute;
   top: 12px;
   left: 12px;
   z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: calc(100% - 24px);
 }
 
 /* Sous le badge : sans z-index, le plein cadre recouvre le badge (surtout le placeholder). */

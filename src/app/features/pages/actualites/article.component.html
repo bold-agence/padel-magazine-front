@@ -13,9 +13,15 @@
             </div>
           }
           @if (article.isVisible) {
-            <span class="badge" [class]="getBadgeClass(article.category?.name)">
-              {{ article.category?.name || 'Actualités' }}
-            </span>
+            <div class="article-badges">
+              @if (getCategoryBadges(article).length) {
+                @for (badge of getCategoryBadges(article); track badge.text) {
+                  <span class="badge" [class]="badge.className">{{ badge.text }}</span>
+                }
+              } @else {
+                <span class="badge actualites">Actualités</span>
+              }
+            </div>
           }
           <h1>{{ article.title }}</h1>
           <div class="art-meta">
@@ -106,8 +112,9 @@
             @for (related of relatedArticles; track related.id) {
               <app-news-card
                 [cardClass]="''"
-                [badgeClass]="getBadgeClass(related.category?.name)"
-                [badgeText]="related.category?.name || 'Actualités'"
+                [badgeClass]="getBadgeClass(getPrimaryCategory(related)?.name)"
+                [badgeText]="getPrimaryCategory(related)?.name || 'Actualités'"
+                [badges]="getCategoryBadges(related)"
                 [phClass]="'court'"
                 [title]="related.title"
                 [author]="related.author"

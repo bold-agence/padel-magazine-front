@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
-import { ArticleModel } from '../../../core/models/article.model';
+import {
+  ArticleCategoryModel,
+  ArticleModel,
+} from '../../../core/models/article.model';
 import { ArticlesService } from '../../../core/services/articles.service';
 import {
   AdImageItem,
@@ -10,6 +13,7 @@ import {
 type PopularItem = {
   cat: string;
   cls: string;
+  badges: { text: string; className: string }[];
   title: string;
   age: string;
   slug: string;
@@ -90,15 +94,35 @@ export class SidebarComponent implements OnInit, OnChanges {
   }
 
   private toPopularItem(article: ArticleModel): PopularItem {
-    const cls = this.normalizeCategory(article.category?.name);
+    const categories = this.getArticleCategories(article);
+    const primaryCategory = categories[0] ?? null;
+    const cls = this.normalizeCategory(primaryCategory?.name);
     return {
-      cat: article.category?.name ?? 'Actualités',
+      cat: primaryCategory?.name ?? 'Actualités',
       cls,
+      badges: categories.map((category) => ({
+        text: category.name,
+        className: this.normalizeCategory(category.name),
+      })),
       title: article.title,
       age: this.toRelativeAge(article.date),
       slug: article.slug,
       bannerImage: article.bannerImage,
     };
+  }
+
+  private getArticleCategories(article: ArticleModel): ArticleCategoryModel[] {
+    const categories = article.categories?.length
+      ? article.categories
+      : article.category
+        ? [article.category]
+        : [];
+    const seen = new Set<string>();
+    return categories.filter((category) => {
+      if (seen.has(category.id)) return false;
+      seen.add(category.id);
+      return true;
+    });
   }
 
   private normalizeCategory(value?: string): string {

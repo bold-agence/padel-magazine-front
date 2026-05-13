@@ -3,8 +3,15 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { ArticlesService } from '../../../core/services/articles.service';
-import { ArticleModel, ArticleSectionModel } from '../../../core/models/article.model';
-import { NewsCardComponent } from '../../../shared/components/news-card/news-card.component';
+import {
+  ArticleCategoryModel,
+  ArticleModel,
+  ArticleSectionModel,
+} from '../../../core/models/article.model';
+import {
+  NewsCardBadge,
+  NewsCardComponent,
+} from '../../../shared/components/news-card/news-card.component';
 
 @Component({
   selector: 'app-article-component',
@@ -50,6 +57,17 @@ export class ArticleComponent implements OnInit {
     if (source.includes('coaching')) return 'coaching';
     if (source.includes('international')) return 'international';
     return 'actualites';
+  }
+
+  protected getCategoryBadges(article?: ArticleModel): NewsCardBadge[] {
+    return this.getArticleCategories(article).map((category) => ({
+      text: category.name,
+      className: this.getBadgeClass(category.name),
+    }));
+  }
+
+  protected getPrimaryCategory(article?: ArticleModel): ArticleCategoryModel | null {
+    return this.getArticleCategories(article)[0] ?? null;
   }
 
   protected onSectionImageLoad(event: Event): void {
@@ -110,6 +128,21 @@ export class ArticleComponent implements OnInit {
       error: () => {
         // no-op: ignore analytics failures
       },
+    });
+  }
+
+  private getArticleCategories(article?: ArticleModel): ArticleCategoryModel[] {
+    if (!article) return [];
+    const categories = article.categories?.length
+      ? article.categories
+      : article.category
+        ? [article.category]
+        : [];
+    const seen = new Set<string>();
+    return categories.filter((category) => {
+      if (seen.has(category.id)) return false;
+      seen.add(category.id);
+      return true;
     });
   }
 }

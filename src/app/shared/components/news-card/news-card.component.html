@@ -2,7 +2,15 @@
   @if (link) {
     <a [routerLink]="link">
       <div class="card-img">
-        <span class="badge {{ badgeClass }}">{{ badgeText }}</span>
+        <div class="badge-stack">
+          @if (badges.length) {
+            @for (badge of badges; track badge.text) {
+              <span class="badge {{ badge.className }}">{{ badge.text }}</span>
+            }
+          } @else {
+            <span class="badge {{ badgeClass }}">{{ badgeText }}</span>
+          }
+        </div>
         @if (bannerImage) {
           <img [src]="bannerImage" [alt]="title" class="cover-image" />
         } @else {
@@ -34,7 +42,15 @@
     </a>
   } @else {
     <div class="card-img">
-      <span class="badge {{ badgeClass }}">{{ badgeText }}</span>
+      <div class="badge-stack">
+        @if (badges.length) {
+          @for (badge of badges; track badge.text) {
+            <span class="badge {{ badge.className }}">{{ badge.text }}</span>
+          }
+        } @else {
+          <span class="badge {{ badgeClass }}">{{ badgeText }}</span>
+        }
+      </div>
       @if (bannerImage) {
         <img [src]="bannerImage" [alt]="title" class="cover-image" />
       } @else {

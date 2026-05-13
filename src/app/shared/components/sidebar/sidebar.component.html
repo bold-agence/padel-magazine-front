@@ -70,7 +70,15 @@
             }
           </div>
           <div>
-            <span class="badge {{ item.cls }}">{{ item.cat }}</span>
+            <div class="compact-badges">
+              @if (item.badges.length) {
+                @for (badge of item.badges; track badge.text) {
+                  <span class="badge {{ badge.className }}">{{ badge.text }}</span>
+                }
+              } @else {
+                <span class="badge {{ item.cls }}">{{ item.cat }}</span>
+              }
+            </div>
             <h4 class="t" style="margin-top:6px;">
               <a [href]="'/actualites/' + item.slug">{{ item.title }}</a>
             </h4>

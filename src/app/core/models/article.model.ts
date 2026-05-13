@@ -23,6 +23,7 @@ export interface ArticleModel {
   lastViewedAt?: string | null;
   tags: TagModel[];
   category?: ArticleCategoryModel | null;
+  categories?: ArticleCategoryModel[];
   sections?: ArticleSectionModel[];
 }
 
