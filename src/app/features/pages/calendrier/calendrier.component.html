@@ -24,11 +24,15 @@
           <h2 id="upcoming-heading">Prochains événements</h2>
           <p class="upcoming-events-sub">Les trois prochaines dates à retenir (à partir d’aujourd’hui).</p>
         </div>
-        @if (nextThreeEvents.length === 0) {
+        @if (eventsLoading()) {
+          <p class="upcoming-events-empty">Chargement des événements…</p>
+        } @else if (eventsLoadError()) {
+          <p class="upcoming-events-empty">Impossible de charger les événements. Réessayez plus tard.</p>
+        } @else if (nextThreeEvents().length === 0) {
           <p class="upcoming-events-empty">Aucun événement à venir pour le moment.</p>
         } @else {
           <div class="upcoming-grid">
-            @for (ev of nextThreeEvents; track ev.id) {
+            @for (ev of nextThreeEvents(); track ev.id) {
               <button type="button" class="upcoming-card" (click)="openModalFromUpcoming(ev)">
                 @if (ev.coverImageUrl) {
                   <div class="upcoming-card-cover">
@@ -165,10 +169,10 @@
                 <div class="cal-modal-item-cover cal-modal-item-cover--placeholder" aria-hidden="true"></div>
               }
               <div class="cal-modal-item-body">
-                <div class="cal-modal-item-date">{{ formatModalEventDate(ev) }}</div>
-                @if (ev.timeLabel) {
-                  <div class="cal-modal-item-time">{{ ev.timeLabel }}</div>
-                }
+                <div class="cal-modal-item-period">
+                  <div class="cal-modal-item-period-line">{{ formatModalDebutLine(ev) }}</div>
+                  <div class="cal-modal-item-period-line">{{ formatModalFinLine(ev) }}</div>
+                </div>
                 <div class="cal-modal-item-match">{{ modalMatchLine(ev) }}</div>
                 @if (eventDescriptionSafe(ev); as descHtml) {
                   <div class="cal-modal-item-desc" [innerHTML]="descHtml"></div>

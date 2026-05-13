@@ -5,6 +5,7 @@ import {
   HostListener,
   inject,
   NgZone,
+  OnInit,
   SecurityContext,
   signal,
   ViewChild,
@@ -15,29 +16,15 @@ import { CalendarOptions, EventContentArg, EventInput } from '@fullcalendar/core
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import frLocale from '@fullcalendar/core/locales/fr';
+import type { PadelCalendarEvent } from '../../../core/models/padel-calendar-event.model';
+import { EventsService, mapEventDtoToPadel } from '../../../core/services/events.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 
-export type PadelCalendarEvent = {
-  id: string;
-  title: string;
-  venue: string;
-  tier: string;
-  accent: string;
-  /** Début du créneau (jour inclus), ISO local YYYY-MM-DD */
-  start: string;
-  /** Fin exclusive pour une plage multi-jours */
-  endExclusive?: string;
-  /** Image de couverture (modal, cartes « prochains ») */
-  coverImageUrl?: string;
-  /** Heure ou créneau affiché dans le modal (ex. « 19 h 30 », « Toute la journée ») */
-  timeLabel?: string;
-  /** Texte libre : tableau, phase tournoi, affiche de match, etc. */
-  match?: string;
-  /** Texte riche (HTML) — filtré côté client (SecurityContext.HTML). */
-  descriptionHtml?: string;
-};
-
-function accentToEventColor(accent: string): string {
+function resolveAccentHex(accent: string): string {
+  const t = accent.trim();
+  if (/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(t)) {
+    return t;
+  }
   const map: Record<string, string> = {
     'var(--red)': '#e24b4a',
     'var(--orange)': '#ef9f27',
@@ -46,18 +33,19 @@ function accentToEventColor(accent: string): string {
     'var(--coral)': '#d85a30',
     'var(--green)': '#1d9e75',
   };
-  return map[accent] ?? '#1d9e75';
+  return map[t] ?? '#1d9e75';
 }
 
 function mapPadelToFullCalendar(events: PadelCalendarEvent[]): EventInput[] {
   return events.map((ev) => {
-    const bg = accentToEventColor(ev.accent);
+    const bg = resolveAccentHex(ev.accent);
+    const endIso = fcTimedEndForCalendar(ev.debut, ev.fin);
     return {
       id: ev.id,
       title: ev.title,
-      start: ev.start,
-      ...(ev.endExclusive ? { end: ev.endExclusive } : {}),
-      allDay: true,
+      start: ev.debut,
+      end: endIso,
+      allDay: false,
       backgroundColor: 'transparent',
       borderColor: 'transparent',
       textColor: 'transparent',
@@ -71,6 +59,14 @@ function mapPadelToFullCalendar(events: PadelCalendarEvent[]): EventInput[] {
   });
 }
 
+/** FullCalendar exige une fin pour les événements horaires ; si l’API n’envoie pas `fin`, on prolonge d’1 h (affichage seulement). */
+function fcTimedEndForCalendar(debutIso: string, finIso?: string | null): string {
+  if (finIso?.trim()) return finIso.trim();
+  const d = new Date(debutIso);
+  d.setTime(d.getTime() + 60 * 60 * 1000);
+  return d.toISOString();
+}
+
 @Component({
   selector: 'app-calendrier-component',
   standalone: true,
@@ -78,9 +74,10 @@ function mapPadelToFullCalendar(events: PadelCalendarEvent[]): EventInput[] {
   templateUrl: './calendrier.component.html',
   styleUrl: './calendrier.component.scss',
 })
-export class CalendrierComponent implements AfterViewInit {
+export class CalendrierComponent implements OnInit, AfterViewInit {
   private readonly ngZone = inject(NgZone);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly eventsService = inject(EventsService);
 
   @ViewChild('fullCal') private fullCal?: FullCalendarComponent;
 
@@ -88,10 +85,25 @@ export class CalendrierComponent implements AfterViewInit {
   protected readonly modalDateLabel = signal('');
   protected readonly modalEvents = signal<PadelCalendarEvent[]>([]);
 
+  /** Données issues de `GET /events` */
+  protected readonly allEvents = signal<PadelCalendarEvent[]>([]);
+  protected readonly eventsLoading = signal(true);
+  protected readonly eventsLoadError = signal(false);
+
+  protected readonly nextThreeEvents = computed(() => {
+    const list = this.allEvents();
+    const startOfToday = this.stripTime(new Date());
+    const t0 = startOfToday.getTime();
+    return [...list]
+      .filter((ev) => this.eventDebut(ev).getTime() >= t0)
+      .sort((a, b) => this.eventDebut(a).getTime() - this.eventDebut(b).getTime())
+      .slice(0, 3);
+  });
+
   /** Mois affiché (1–12), synchronisé avec FullCalendar */
-  protected readonly toolbarMonth = signal(5);
+  protected readonly toolbarMonth = signal(new Date().getMonth() + 1);
   /** Année affichée */
-  protected readonly toolbarYear = signal(2026);
+  protected readonly toolbarYear = signal(new Date().getFullYear());
 
   protected readonly monthOptions: { value: number; label: string }[] = [
     { value: 1, label: 'Janvier' },
@@ -109,8 +121,8 @@ export class CalendrierComponent implements AfterViewInit {
   ];
 
   protected readonly yearOptions: number[] = Array.from(
-    { length: 12 },
-    (_, i) => 2022 + i
+    { length: 22 },
+    (_, i) => 2014 + i
   );
 
   protected readonly viewMonthYearTitle = computed(() => {
@@ -122,272 +134,18 @@ export class CalendrierComponent implements AfterViewInit {
     }).format(new Date(y, m - 1, 1));
   });
 
-  protected readonly allEvents: PadelCalendarEvent[] = [
-    {
-      id: '1',
-      title: 'Open Dakar — Finale hommes (live)',
-      venue: 'TGS Arena · Almadies',
-      tier: 'National',
-      accent: 'var(--red)',
-      start: '2026-04-19',
-      coverImageUrl: 'https://picsum.photos/seed/padel-open-dakar/800/420',
-      timeLabel: '20 h 45',
-      match: 'Open Dakar — finale hommes · court central (retransmission live)',
-      descriptionHtml:
-        '<p><strong>Finale hommes</strong> en direct. Ouverture des portes dès 18&nbsp;h&nbsp;; billetterie sur place et restauration partenaires.</p>',
-    },
-    {
-      id: '2',
-      title: 'Championnat féminin — Finale',
-      venue: 'Dakar Padel Center',
-      tier: 'National',
-      accent: 'var(--orange)',
-      start: '2026-04-20',
-      coverImageUrl: 'https://picsum.photos/seed/padel-finale-fem/800/420',
-      timeLabel: '18 h 00',
-      match: 'Championnat féminin — finale · tableau principal dames',
-      descriptionHtml:
-        '<p>Tableau final féminin. Retransmission des demi-finales sur écran géant dans le hall d’accueil.</p>',
-    },
-    {
-      id: '3',
-      title: 'WPT Africa Series Dakar',
-      venue: 'TGS Arena · Almadies',
-      tier: 'WPT',
-      accent: 'var(--coral)',
-      start: '2026-06-07',
-      endExclusive: '2026-06-09',
-      coverImageUrl: 'https://picsum.photos/seed/padel-wpt-africa/800/420',
-      timeLabel: 'À partir de 9 h (3 jours)',
-      match: 'WPT Africa Series Dakar — qualifications & tableau principal',
-      descriptionHtml:
-        '<p>Série internationale sur trois jours&nbsp;: qualifications, tableau principal et animations.</p><ul><li>Village partenaires</li><li>Restauration sur place</li></ul>',
-    },
-    {
-      id: '4',
-      title: 'Circuit régional — Étape Thiès',
-      venue: 'Thiès Padel Club',
-      tier: 'Régional',
-      accent: 'var(--green)',
-      start: '2026-06-14',
-      coverImageUrl: 'https://picsum.photos/seed/padel-thies-circuit/800/420',
-      timeLabel: '14 h – 22 h',
-      match: 'Circuit régional — étape Thiès · Open & P250',
-      descriptionHtml:
-        '<p>Étape du circuit régional. Inscriptions closes la veille à minuit&nbsp;; consignes vestiaires sur le site du club.</p>',
-    },
-    {
-      id: '5',
-      title: 'Open Saly — clôture des inscriptions',
-      venue: 'Saly Padel Club',
-      tier: 'National',
-      accent: 'var(--violet)',
-      start: '2026-06-28',
-      coverImageUrl: 'https://picsum.photos/seed/padel-saly/800/420',
-      timeLabel: 'Jusqu’à minuit (en ligne)',
-      match: 'Open Saly — clôture des inscriptions équipes & paiement',
-      descriptionHtml:
-        '<p>Dernier jour pour valider votre équipe pour l’Open Saly. Vérifier le règlement et les catégories sur le formulaire en ligne.</p>',
-    },
-    /* Mai 2026 — données de démo pour le rendu calendrier */
-    {
-      id: 'may-01',
-      title: 'Ligue Dakar — Journée 4 (soir)',
-      venue: 'Yoff Padel',
-      tier: 'Ligue',
-      accent: 'var(--green)',
-      start: '2026-05-01',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-01/800/420',
-      timeLabel: '19 h 30',
-      match: 'Ligue Dakar — journée 4 · rencontres par niveau (soir)',
-      descriptionHtml:
-        '<p>Rencontres de ligue en soirée. <em>Format</em>&nbsp;: matchs au meilleur des deux sets gagnants.</p>',
-    },
-    {
-      id: 'may-03',
-      title: 'Clinic technique — vibora & sorties de grille',
-      venue: 'Club Almadies',
-      tier: 'Coaching',
-      accent: 'var(--blue)',
-      start: '2026-05-03',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-03/800/420',
-      timeLabel: '10 h 00',
-      match: 'Clinic technique — vibora & sorties de grille · groupe 12 joueurs',
-      descriptionHtml:
-        '<p>Atelier encadré (2&nbsp;h). Prévoir tenue de sport et eau. Niveau intermédiaire recommandé.</p>',
-    },
-    {
-      id: 'may-05',
-      title: 'Tournoi corporate BNP · demi-finales',
-      venue: 'Dakar Padel Center',
-      tier: 'Corporate',
-      accent: 'var(--violet)',
-      start: '2026-05-05',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-05/800/420',
-      timeLabel: '19 h 00',
-      match: 'Tournoi corporate BNP — demi-finales messieurs',
-      descriptionHtml:
-        '<p>Demi-finales du tournoi entreprise. Accès réservé aux équipes qualifiées et invités badge.</p>',
-    },
-    {
-      id: 'may-08',
-      title: 'Grand Prix Jeunes U16 — phase de poules',
-      venue: 'TGS Arena',
-      tier: 'Jeunes',
-      accent: 'var(--orange)',
-      start: '2026-05-08',
-      endExclusive: '2026-05-11',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-jeunes/800/420',
-      timeLabel: 'Toute la journée (4 jours)',
-      match: 'Grand Prix Jeunes U16 — phase de poules · terrains A à D',
-      descriptionHtml:
-        '<p>Phase de poules sur quatre jours. <strong>Présence obligatoire</strong> au briefing du premier jour à 8&nbsp;h&nbsp;30.</p>',
-    },
-    {
-      id: 'may-10',
-      title: 'Soirée découverte padel (gratuit)',
-      venue: 'Saly Padel Club',
-      tier: 'Initiation',
-      accent: 'var(--green)',
-      start: '2026-05-10',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-10/800/420',
-      timeLabel: '17 h 30',
-      match: 'Soirée découverte padel — rotation courts & initiations courtes',
-      descriptionHtml:
-        '<p>Initiation gratuite, matériel prêté. Places limitées&nbsp;: inscription sur liste à l’accueil du club.</p>',
-    },
-    {
-      id: 'may-12a',
-      title: 'Point presse Fédération — saison 2026',
-      venue: 'Siège Fédération · Dakar',
-      tier: 'Médias',
-      accent: 'var(--blue)',
-      start: '2026-05-12',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-12a/800/420',
-      timeLabel: '11 h 00',
-      match: 'Point presse Fédération — présentation calendrier & partenaires 2026',
-      descriptionHtml:
-        '<p>Conférence de presse (45&nbsp;min) puis questions. <strong>Accréditation</strong> obligatoire pour les médias.</p>',
-    },
-    {
-      id: 'may-12b',
-      title: 'Match exhibition Diallo / Sow vs invités',
-      venue: 'TGS Arena',
-      tier: 'Show',
-      accent: 'var(--red)',
-      start: '2026-05-12',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-12b/800/420',
-      timeLabel: '21 h 00',
-      match: 'Match exhibition — Diallo / Sow vs paire invitée (show)',
-      descriptionHtml:
-        '<p>Match exhibition en soirée. Ambiance musicale et buvette ouverte dès 19&nbsp;h.</p>',
-    },
-    {
-      id: 'may-15',
-      title: 'Circuit Thiès — tableau principal J1',
-      venue: 'Thiès Padel Club',
-      tier: 'Régional',
-      accent: 'var(--green)',
-      start: '2026-05-15',
-      endExclusive: '2026-05-17',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-thies/800/420',
-      timeLabel: '9 h 00 (3 jours)',
-      match: 'Circuit Thiès — tableau principal · journée 1',
-      descriptionHtml:
-        '<p>Jour 1 du tableau principal. Planning affiché au tableau d’information du club.</p>',
-    },
-    {
-      id: 'may-17',
-      title: 'Live Q&A Instagram — tirage au sort Open',
-      venue: 'En ligne',
-      tier: 'Digital',
-      accent: 'var(--blue)',
-      start: '2026-05-17',
-      timeLabel: '20 h 30',
-      match: 'Live Instagram — tirage au sort Open + FAQ communauté',
-      descriptionHtml:
-        '<p>Session live sur Instagram&nbsp;: tirage au sort et réponses aux questions. Compte officiel <strong>&#64;padeldemo</strong> (fictif).</p>',
-    },
-    {
-      id: 'may-20',
-      title: 'Padel Business Cup — finale',
-      venue: 'Radisson Blu · Dakar',
-      tier: 'Corporate',
-      accent: 'var(--violet)',
-      start: '2026-05-20',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-business/800/420',
-      timeLabel: '18 h 30',
-      match: 'Padel Business Cup — finale & remise des trophées',
-      descriptionHtml:
-        '<p>Finale et cocktail networking. Tenue cocktail souhaitée après les matchs.</p>',
-    },
-    {
-      id: 'may-22',
-      title: 'Stage intensif 3 jours (niveau 4+)',
-      venue: 'Mbour Beach Padel',
-      tier: 'Coaching',
-      accent: 'var(--blue)',
-      start: '2026-05-22',
-      endExclusive: '2026-05-25',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-stage/800/420',
-      timeLabel: '9 h 00 (stage 3 jours)',
-      match: 'Stage intensif niveau 4+ — journée 1/3 (Mbour Beach Padel)',
-      descriptionHtml:
-        '<p>Stage résidentiel. Hébergement non inclus — liste d’hébergements partenaires envoyée après inscription.</p>',
-    },
-    {
-      id: 'may-24',
-      title: 'Championnat mixte clubs — quart de finale',
-      venue: 'Yoff Padel',
-      tier: 'National',
-      accent: 'var(--red)',
-      start: '2026-05-24',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-mixte/800/420',
-      timeLabel: '16 h 00',
-      match: 'Championnat mixte clubs — quarts de finale',
-      descriptionHtml:
-        '<p>Quarts de finale du championnat mixte. Règlement complet disponible au secrétariat.</p>',
-    },
-    {
-      id: 'may-28',
-      title: 'APP Tour — retransmission finale Miami (fan zone)',
-      venue: 'Club Almadies',
-      tier: 'International',
-      accent: 'var(--coral)',
-      start: '2026-05-28',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-app/800/420',
-      timeLabel: '22 h 00 (retransmission)',
-      match: 'APP Tour — fan zone finale Miami · écran géant',
-      descriptionHtml:
-        '<p>Grande fan zone avec écran géant. Snacks et boissons à la carte.</p>',
-    },
-    {
-      id: 'may-31',
-      title: 'Clôture du mois — tournoi loisirs P250',
-      venue: 'Dakar Padel Center',
-      tier: 'Loisirs',
-      accent: 'var(--green)',
-      start: '2026-05-31',
-      coverImageUrl: 'https://picsum.photos/seed/padel-may-31/800/420',
-      timeLabel: '9 h – 18 h',
-      match: 'Tournoi loisirs P250 — phases finales & clôture du mois',
-      descriptionHtml:
-        '<p>Tournoi loisirs de clôture du mois. Remise des prix prévue en fin de journée.</p>',
-    },
-  ];
-
-  protected readonly calendarOptions: CalendarOptions = {
+  protected calendarOptions: CalendarOptions = {
     plugins: [dayGridPlugin, interactionPlugin],
     initialView: 'dayGridMonth',
     locale: frLocale,
     firstDay: 1,
-    initialDate: '2026-05-01',
+    initialDate: new Date(),
     headerToolbar: false,
     height: 'auto',
     fixedWeekCount: false,
     selectable: false,
     dayMaxEvents: 4,
-    events: mapPadelToFullCalendar(this.allEvents),
+    events: mapPadelToFullCalendar([]),
     datesSet: (info) => {
       const d = info.view.currentStart;
       this.ngZone.run(() => {
@@ -408,12 +166,45 @@ export class CalendrierComponent implements AfterViewInit {
     },
   };
 
+  ngOnInit(): void {
+    this.eventsService.findAll().subscribe({
+      next: (rows) => {
+        const mapped = rows.map((dto) => mapEventDtoToPadel(dto));
+        this.ngZone.run(() => {
+          this.allEvents.set(mapped);
+          this.calendarOptions = {
+            ...this.calendarOptions,
+            events: mapPadelToFullCalendar(mapped),
+          };
+          this.eventsLoading.set(false);
+          this.eventsLoadError.set(false);
+          queueMicrotask(() => {
+            try {
+              this.fullCal?.getApi().refetchEvents();
+            } catch {
+              /* composant pas encore prêt */
+            }
+          });
+        });
+      },
+      error: () => {
+        this.ngZone.run(() => {
+          this.eventsLoadError.set(true);
+          this.eventsLoading.set(false);
+        });
+      },
+    });
+  }
+
   ngAfterViewInit(): void {
     const api = this.fullCal?.getApi();
     if (api) {
       const d = api.getDate();
       this.toolbarMonth.set(d.getMonth() + 1);
       this.toolbarYear.set(d.getFullYear());
+      if (this.allEvents().length > 0) {
+        queueMicrotask(() => this.fullCal?.getApi().refetchEvents());
+      }
     }
   }
 
@@ -444,51 +235,51 @@ export class CalendrierComponent implements AfterViewInit {
   }
 
   protected eventsForDate(date: Date): PadelCalendarEvent[] {
-    return this.allEvents.filter((e) => this.isDateInEvent(date, e));
+    return this.allEvents().filter((e) => this.isDateInEvent(date, e));
   }
 
-  /** 3 prochains événements (par date de début), à partir d’aujourd’hui. */
-  protected get nextThreeEvents(): PadelCalendarEvent[] {
-    const startOfToday = this.stripTime(new Date());
-    return [...this.allEvents]
-      .filter((ev) => this.parseIsoLocal(ev.start).getTime() >= startOfToday.getTime())
-      .sort(
-        (a, b) => this.parseIsoLocal(a.start).getTime() - this.parseIsoLocal(b.start).getTime()
-      )
-      .slice(0, 3);
+  private modalDateFr(d: Date): string {
+    return new Intl.DateTimeFormat('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(d);
+  }
+
+  private modalHeureFr(d: Date): string {
+    return new Intl.DateTimeFormat('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(d);
   }
 
   protected formatEventStartShort(ev: PadelCalendarEvent): string {
+    const d = this.eventDebut(ev);
     const datePart = new Intl.DateTimeFormat('fr-FR', {
       weekday: 'short',
       day: 'numeric',
       month: 'short',
       year: 'numeric',
-    }).format(this.parseIsoLocal(ev.start));
-    const t = ev.timeLabel?.trim();
-    return t ? `${datePart} · ${t}` : datePart;
+    }).format(d);
+    const heure = this.modalHeureFr(d);
+    return `${datePart} · ${heure}`;
   }
 
-  /** Date (ou plage) affichée dans le modal, indépendamment du jour cliqué. */
-  protected formatModalEventDate(ev: PadelCalendarEvent): string {
-    const start = this.parseIsoLocal(ev.start);
-    const longFmt: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    };
-    if (!ev.endExclusive) {
-      return new Intl.DateTimeFormat('fr-FR', longFmt).format(start);
+  /** Modal : `Debut : <date> - <heure>` */
+  protected formatModalDebutLine(ev: PadelCalendarEvent): string {
+    const d = this.eventDebut(ev);
+    return `Debut : ${this.modalDateFr(d)} - ${this.modalHeureFr(d)}`;
+  }
+
+  /** Modal : `Fin : <date> - <heure>` ou tiret si pas de fin. */
+  protected formatModalFinLine(ev: PadelCalendarEvent): string {
+    const f = ev.fin?.trim();
+    if (!f) {
+      return 'Fin : —';
     }
-    const endEx = this.parseIsoLocal(ev.endExclusive);
-    const endIncl = new Date(endEx.getFullYear(), endEx.getMonth(), endEx.getDate() - 1);
-    if (this.stripTime(start).getTime() === this.stripTime(endIncl).getTime()) {
-      return new Intl.DateTimeFormat('fr-FR', longFmt).format(start);
-    }
-    const from = new Intl.DateTimeFormat('fr-FR', longFmt).format(start);
-    const to = new Intl.DateTimeFormat('fr-FR', longFmt).format(endIncl);
-    return `Du ${from} au ${to}`;
+    const d = new Date(f);
+    return `Fin : ${this.modalDateFr(d)} - ${this.modalHeureFr(d)}`;
   }
 
   protected modalMatchLine(ev: PadelCalendarEvent): string {
@@ -496,7 +287,7 @@ export class CalendrierComponent implements AfterViewInit {
   }
 
   protected openModalFromUpcoming(ev: PadelCalendarEvent): void {
-    this.ngZone.run(() => this.openModalForDate(this.parseIsoLocal(ev.start)));
+    this.ngZone.run(() => this.openModalForDate(this.stripTime(this.eventDebut(ev))));
   }
 
   protected eventBadgeAccent(arg: EventContentArg): string {
@@ -542,20 +333,22 @@ export class CalendrierComponent implements AfterViewInit {
   }
 
   private isDateInEvent(day: Date, ev: PadelCalendarEvent): boolean {
-    const dayT = this.stripTime(day).getTime();
-    const startT = this.parseIsoLocal(ev.start).getTime();
-    const endT = ev.endExclusive
-      ? this.parseIsoLocal(ev.endExclusive).getTime()
-      : startT + 86400000;
-    return dayT >= startT && dayT < endT;
+    const ds = this.stripTime(day).getTime();
+    const de = ds + 86400000;
+    const evStart = this.eventDebut(ev).getTime();
+    const fin = ev.fin?.trim();
+    if (!fin) {
+      return evStart >= ds && evStart < de;
+    }
+    const evEnd = new Date(fin).getTime();
+    return evStart < de && evEnd > ds;
   }
 
   private stripTime(d: Date): Date {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   }
 
-  private parseIsoLocal(ymd: string): Date {
-    const [y, m, day] = ymd.split('-').map(Number);
-    return new Date(y, m - 1, day);
+  private eventDebut(ev: PadelCalendarEvent): Date {
+    return new Date(ev.debut);
   }
 }
