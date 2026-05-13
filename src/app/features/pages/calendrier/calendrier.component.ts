@@ -100,9 +100,9 @@ export class CalendrierComponent implements OnInit, AfterViewInit {
       .slice(0, 3);
   });
 
-  /** Mois affiché (1–12), synchronisé avec FullCalendar */
+  /** Mois affiché (1–12), synchronisé avec FullCalendar — mois civil courant par défaut. */
   protected readonly toolbarMonth = signal(new Date().getMonth() + 1);
-  /** Année affichée */
+  /** Année affichée — année courante par défaut. */
   protected readonly toolbarYear = signal(new Date().getFullYear());
 
   protected readonly monthOptions: { value: number; label: string }[] = [
@@ -120,10 +120,8 @@ export class CalendrierComponent implements OnInit, AfterViewInit {
     { value: 12, label: 'Décembre' },
   ];
 
-  protected readonly yearOptions: number[] = Array.from(
-    { length: 22 },
-    (_, i) => 2014 + i
-  );
+  /** Années proposées : à partir de 2014 jusqu’à au moins l’année courante + 2. */
+  protected readonly yearOptions: number[] = CalendrierComponent.buildYearOptions();
 
   protected readonly viewMonthYearTitle = computed(() => {
     const y = this.toolbarYear();
@@ -139,7 +137,8 @@ export class CalendrierComponent implements OnInit, AfterViewInit {
     initialView: 'dayGridMonth',
     locale: frLocale,
     firstDay: 1,
-    initialDate: new Date(),
+    /** 1er jour du mois courant (évite toute ambiguïté fuseau / « milieu de mois »). */
+    initialDate: CalendrierComponent.startOfCurrentMonth(),
     headerToolbar: false,
     height: 'auto',
     fixedWeekCount: false,
@@ -350,5 +349,16 @@ export class CalendrierComponent implements OnInit, AfterViewInit {
 
   private eventDebut(ev: PadelCalendarEvent): Date {
     return new Date(ev.debut);
+  }
+
+  private static startOfCurrentMonth(): Date {
+    const n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), 1);
+  }
+
+  private static buildYearOptions(): number[] {
+    const start = 2014;
+    const end = Math.max(start + 21, new Date().getFullYear() + 2);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   }
 }

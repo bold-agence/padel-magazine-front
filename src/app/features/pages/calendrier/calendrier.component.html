@@ -79,25 +79,18 @@
                 </button>
                 <label class="cal-fc-toolbar-label">
                   <span class="visually-hidden">Mois</span>
-                  <select
-                    class="cal-fc-select"
-                    [value]="toolbarMonth()"
-                    (change)="onToolbarMonthChange($event)"
-                  >
+                  <!-- selected sur les options : [value] sur le select natif + @for est souvent ignoré par le navigateur -->
+                  <select class="cal-fc-select" (change)="onToolbarMonthChange($event)">
                     @for (opt of monthOptions; track opt.value) {
-                      <option [value]="opt.value">{{ opt.label }}</option>
+                      <option [value]="opt.value" [selected]="opt.value === toolbarMonth()">{{ opt.label }}</option>
                     }
                   </select>
                 </label>
                 <label class="cal-fc-toolbar-label">
                   <span class="visually-hidden">Année</span>
-                  <select
-                    class="cal-fc-select"
-                    [value]="toolbarYear()"
-                    (change)="onToolbarYearChange($event)"
-                  >
+                  <select class="cal-fc-select" (change)="onToolbarYearChange($event)">
                     @for (y of yearOptions; track y) {
-                      <option [value]="y">{{ y }}</option>
+                      <option [value]="y" [selected]="y === toolbarYear()">{{ y }}</option>
                     }
                   </select>
                 </label>
