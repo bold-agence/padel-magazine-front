@@ -56,12 +56,15 @@
       </li>
       <li><a routerLink="/videos" routerLinkActive="active">Vidéos</a></li>
     </ul>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <a
-        routerLink="/apropos"
-        style="font-size:12px;color:var(--gray);font-family:var(--f-cond);text-transform:uppercase;letter-spacing:.06em;"
-        >À propos</a
-      >
+    <div class="nav-secondary">
+      <div class="services-menu">
+        <button type="button" class="services-trigger">Services</button>
+        <div class="services-dropdown">
+          <a href="#!">Offres stage et formations</a>
+          <a href="#!">Offres d'emploi de padel</a>
+        </div>
+      </div>
+      <a routerLink="/apropos">À propos</a>
     </div>
   </div>
 </nav>
