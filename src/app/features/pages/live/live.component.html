@@ -19,14 +19,29 @@
           <div class="live-screen" [class.live-screen--embed]="timeLeft.isLive && airingLive()">
             @if (timeLeft.isLive && airingLive(); as fl) {
               @if (liveEmbedSrc(fl); as embedSrc) {
-                <iframe
-                  class="live-iframe"
-                  [src]="embedSrc"
-                  [attr.title]="'Direct — ' + fl.event.title"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowfullscreen
-                  loading="eager"
-                ></iframe>
+                @if (!livePlaybackStarted()) {
+                  <div class="live-play-gate">
+                    <button
+                      type="button"
+                      class="live-play-gate__btn"
+                      (click)="startLivePlayback()"
+                      [attr.aria-label]="'Lancer la vidéo — ' + fl.event.title"
+                    >
+                      <span class="live-play-gate__pulse" aria-hidden="true"></span>
+                      <span class="live-play-gate__icon" aria-hidden="true">▶</span>
+                    </button>
+                    <p class="live-play-gate__label">Live en cours</p>
+                  </div>
+                } @else {
+                  <iframe
+                    class="live-iframe"
+                    [src]="embedSrc"
+                    [attr.title]="'Direct — ' + fl.event.title"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                    loading="eager"
+                  ></iframe>
+                }
               } @else {
                 <div class="inner live-onair-fallback">
                   <div class="next-label">Direct en cours</div>
@@ -56,12 +71,7 @@
                   <div class="cell"><div class="n">{{ timeLeft.minutes }}</div><div class="l">MIN</div></div>
                   <div class="cell"><div class="n">{{ timeLeft.seconds }}</div><div class="l">SEC</div></div>
                 </div>
-                <div class="actions">
-                  <button type="button" class="btn btn-danger" (click)="notifyMe()">🔔 Être notifié</button>
-                  <a [href]="youtubeSubscribeHref()" target="_blank" rel="noopener noreferrer" class="btn btn-outline yt-link"
-                    >YouTube · S'abonner</a
-                  >
-                </div>
+                
               </div>
             }
           </div>

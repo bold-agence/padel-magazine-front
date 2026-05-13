@@ -16,6 +16,12 @@ import {
   LiveDto,
   LivesService,
 } from '../../../core/services/lives.service';
+import {
+  findAiringLive,
+  liveBroadcastDate,
+  pickUpcoming,
+  toLiveEmbedUrl,
+} from '../../../core/utils/live-scheduling.util';
 
 @Component({
   selector: 'app-live-component',
@@ -34,11 +40,12 @@ export class LiveComponent implements OnInit, OnDestroy {
   protected readonly channelSettings = signal<LiveChannelSettingsDto | null>(null);
   /** Live actuellement entre heure de début et heure de fin (iframe + « À propos »). */
   protected readonly airingLive = signal<LiveDto | null>(null);
+  /** L’iframe ne s’affiche qu’après clic sur lecture (pas d’autoplay). */
+  protected readonly livePlaybackStarted = signal(false);
+  private airingEmbedSessionLiveId: string | null = null;
 
   /** Prochains lives (événement dans le futur). */
-  protected readonly upcomingLives = computed(() =>
-    this.pickUpcoming(this.lives(), 5),
-  );
+  protected readonly upcomingLives = computed(() => pickUpcoming(this.lives(), 5));
 
   /** Derniers replays disponibles. */
   protected readonly replayLives = computed(() =>
@@ -184,7 +191,7 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   /** URL sécurisée pour l’iframe quand le direct est en cours (YouTube → embed). */
   protected liveEmbedSrc(live: LiveDto): SafeResourceUrl | null {
-    const embed = this.toLiveEmbedUrl(live.liveUrl);
+    const embed = toLiveEmbedUrl(live.liveUrl);
     if (!embed) return null;
     let safe = this.trustedEmbedByUrl.get(embed);
     if (!safe) {
@@ -194,11 +201,24 @@ export class LiveComponent implements OnInit, OnDestroy {
     return safe;
   }
 
+  protected startLivePlayback(): void {
+    this.livePlaybackStarted.set(true);
+  }
+
+  private syncLivePlaybackGate(airing: LiveDto | null): void {
+    const id = airing?.id ?? null;
+    if (id !== this.airingEmbedSessionLiveId) {
+      this.airingEmbedSessionLiveId = id;
+      this.livePlaybackStarted.set(false);
+    }
+  }
+
   private tickCountdown(): void {
     const lives = this.lives();
     this.ngZone.run(() => {
-      const airing = this.findAiringLive(lives);
+      const airing = findAiringLive(lives);
       if (airing) {
+        this.syncLivePlaybackGate(airing);
         this.airingLive.set(airing);
         this.countdownTargetMs = 0;
         this.timeLeft = {
@@ -211,10 +231,11 @@ export class LiveComponent implements OnInit, OnDestroy {
         return;
       }
 
+      this.syncLivePlaybackGate(null);
       this.airingLive.set(null);
-      const upcoming = this.pickUpcoming(lives, 5);
+      const upcoming = pickUpcoming(lives, 5);
       const next = upcoming[0] ?? null;
-      this.countdownTargetMs = next ? this.liveBroadcastDate(next).getTime() : 0;
+      this.countdownTargetMs = next ? liveBroadcastDate(next).getTime() : 0;
 
       if (!this.countdownTargetMs) {
         this.timeLeft = {
@@ -255,18 +276,6 @@ export class LiveComponent implements OnInit, OnDestroy {
     });
   }
 
-  /** 5 prochains : diffusion (`jour événement` + `startTime`) dans le futur. */
-  private pickUpcoming(lives: LiveDto[], limit: number): LiveDto[] {
-    const now = Date.now();
-    return [...lives]
-      .filter((l) => this.liveBroadcastDate(l).getTime() > now)
-      .sort(
-        (a, b) =>
-          this.liveBroadcastDate(a).getTime() - this.liveBroadcastDate(b).getTime(),
-      )
-      .slice(0, limit);
-  }
-
   /** 5 derniers avec replay, tri par date d’événement décroissante. */
   private pickReplays(lives: LiveDto[], limit: number): LiveDto[] {
     return [...lives]
@@ -276,98 +285,5 @@ export class LiveComponent implements OnInit, OnDestroy {
           new Date(b.event.startAt).getTime() - new Date(a.event.startAt).getTime(),
       )
       .slice(0, limit);
-  }
-
-  /** Date + heure de début du live (jour de l’événement + startTime). */
-  private liveBroadcastDate(live: LiveDto): Date {
-    return this.liveClockOnEventDay(live, live.startTime);
-  }
-
-  /** Fin du créneau live (jour événement + endTime, ou +1 h si pas de fin). */
-  private liveBroadcastEndDate(live: LiveDto): Date {
-    const start = this.liveBroadcastDate(live);
-    if (live.endTime?.trim()) {
-      let end = this.liveClockOnEventDay(live, live.endTime);
-      if (end.getTime() <= start.getTime()) {
-        end = new Date(end.getTime() + 86400000);
-      }
-      return end;
-    }
-    return new Date(start.getTime() + 3600000);
-  }
-
-  private liveClockOnEventDay(live: LiveDto, timeStr: string): Date {
-    const ev = new Date(live.event.startAt);
-    const parts = timeStr.trim().split(':');
-    const hh = parseInt(parts[0] ?? '0', 10);
-    const mm = parseInt(parts[1] ?? '0', 10);
-    return new Date(ev.getFullYear(), ev.getMonth(), ev.getDate(), hh, mm, 0, 0);
-  }
-
-  private findAiringLive(lives: LiveDto[]): LiveDto | null {
-    const now = Date.now();
-    const candidates = lives.filter((l) => {
-      const s = this.liveBroadcastDate(l).getTime();
-      const e = this.liveBroadcastEndDate(l).getTime();
-      return now >= s && now < e;
-    });
-    if (candidates.length === 0) return null;
-    candidates.sort(
-      (a, b) => this.liveBroadcastDate(a).getTime() - this.liveBroadcastDate(b).getTime(),
-    );
-    return candidates[0] ?? null;
-  }
-
-  /**
-   * URL utilisable en iframe (YouTube watch / live / youtu.be → embed).
-   * Autres URLs https renvoyées telles quelles.
-   */
-  private toLiveEmbedUrl(liveUrl: string): string | null {
-    const raw = liveUrl?.trim();
-    if (!raw) return null;
-    try {
-      const u = new URL(raw);
-      if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
-      const host = u.hostname.replace(/^www\./, '');
-
-      if (host === 'youtu.be') {
-        const id = u.pathname.replace(/^\//, '').split('/')[0];
-        return id ? `https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1` : null;
-      }
-
-      if (host === 'youtube.com' || host === 'm.youtube.com') {
-        if (u.pathname.startsWith('/embed/')) {
-          const base = `https://www.youtube.com${u.pathname}${u.search}`;
-          return base.includes('autoplay=') ? base : `${base}${u.search ? '&' : '?'}autoplay=1`;
-        }
-        if (u.pathname === '/watch') {
-          const id = u.searchParams.get('v');
-          return id
-            ? `https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1`
-            : null;
-        }
-        if (u.pathname.startsWith('/live/')) {
-          const parts = u.pathname.split('/').filter(Boolean);
-          const id = parts[1];
-          return id
-            ? `https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1`
-            : null;
-        }
-        if (u.pathname.startsWith('/shorts/')) {
-          const parts = u.pathname.split('/').filter(Boolean);
-          const id = parts[1];
-          return id
-            ? `https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1`
-            : null;
-        }
-      }
-    } catch {
-      return null;
-    }
-
-    if (/^https?:\/\//i.test(raw)) {
-      return raw;
-    }
-    return null;
   }
 }
