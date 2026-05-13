@@ -10,86 +10,167 @@
 </section>
 
 <main class="container">
-  <div class="live-layout">
-    <div>
-      <div class="live-stage">
-        <div class="live-screen">
-          <div class="inner">
-            <div class="logo-mark"><span>PM</span></div>
-            <div class="next-label">Prochain live</div>
-            <h2>OPEN DAKAR — FINALE</h2>
-            <div class="dt">Samedi 19 Avril 2026 · 15h00 GMT</div>
-            <div class="live-cd">
-              @if (timeLeft.isLive) {
-                <div class="cell">
-                  <div class="n">LIVE</div>
-                  <div class="l">EN DIRECT</div>
-                </div>
+  @if (loadError()) {
+    <p class="live-page-msg">Impossible de charger les lives. Réessayez plus tard.</p>
+  } @else {
+    <div class="live-layout">
+      <div>
+        <div class="live-stage">
+          <div class="live-screen" [class.live-screen--embed]="timeLeft.isLive && airingLive()">
+            @if (timeLeft.isLive && airingLive(); as fl) {
+              @if (liveEmbedSrc(fl); as embedSrc) {
+                <iframe
+                  class="live-iframe"
+                  [src]="embedSrc"
+                  [attr.title]="'Direct — ' + fl.event.title"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen
+                  loading="eager"
+                ></iframe>
               } @else {
-                <div class="cell"><div class="n">{{ timeLeft.days }}</div><div class="l">JOURS</div></div>
-                <div class="cell"><div class="n">{{ timeLeft.hours }}</div><div class="l">HEURES</div></div>
-                <div class="cell"><div class="n">{{ timeLeft.minutes }}</div><div class="l">MIN</div></div>
-                <div class="cell"><div class="n">{{ timeLeft.seconds }}</div><div class="l">SEC</div></div>
+                <div class="inner live-onair-fallback">
+                  <div class="next-label">Direct en cours</div>
+                  <h2>{{ fl.event.title }}</h2>
+                  <a [href]="fl.liveUrl" target="_blank" rel="noopener noreferrer" class="btn btn-danger"
+                    >Ouvrir le live dans un nouvel onglet</a
+                  >
+                </div>
+              }
+            } @else {
+              <div class="inner">
+                <div class="logo-mark"><span>PM</span></div>
+                <div class="next-label">Prochain live</div>
+                @if (loading()) {
+                  <h2>Chargement…</h2>
+                  <div class="dt">—</div>
+                } @else if (featuredLive(); as flHero) {
+                  <h2>{{ flHero.event.title }}</h2>
+                  <div class="dt">{{ formatFeaturedSubtitle(flHero) }}</div>
+                } @else {
+                  <h2>Aucun live à venir</h2>
+                  <div class="dt">Revenez plus tard pour la prochaine diffusion.</div>
+                }
+                <div class="live-cd">
+                  <div class="cell"><div class="n">{{ timeLeft.days }}</div><div class="l">JOURS</div></div>
+                  <div class="cell"><div class="n">{{ timeLeft.hours }}</div><div class="l">HEURES</div></div>
+                  <div class="cell"><div class="n">{{ timeLeft.minutes }}</div><div class="l">MIN</div></div>
+                  <div class="cell"><div class="n">{{ timeLeft.seconds }}</div><div class="l">SEC</div></div>
+                </div>
+                <div class="actions">
+                  <button type="button" class="btn btn-danger" (click)="notifyMe()">🔔 Être notifié</button>
+                  <a [href]="youtubeSubscribeHref()" target="_blank" rel="noopener noreferrer" class="btn btn-outline yt-link"
+                    >YouTube · S'abonner</a
+                  >
+                </div>
+              </div>
+            }
+          </div>
+          <div class="live-bar">
+            <div class="live-tag">
+              <span class="dot-p"></span>
+              @if (timeLeft.isLive && airingLive()) {
+                En direct
+              } @else if (featuredLive()) {
+                En attente · Prochain direct dans quelques heures
+              } @else if (!loading()) {
+                Aucune diffusion programmée pour le moment
+              } @else {
+                Chargement…
               }
             </div>
-            <div class="actions">
-              <button class="btn btn-danger" (click)="notifyMe()">🔔 Être notifié</button>
-              <a href="#" class="btn btn-outline yt-link">YouTube · S'abonner</a>
+            <div class="channel">
+              {{ channelSettings()?.channelName?.trim() || 'Chaîne YouTube Padel Magazine Sénégal' }}
             </div>
           </div>
         </div>
-        <div class="live-bar">
-          <div class="live-tag"><span class="dot-p"></span>En attente · Prochain direct dans quelques heures</div>
-          <div class="channel">Chaîne @PadelMagazineSN</div>
-        </div>
+
+        <div class="sec-head red section-gap"><h2>Programmation des diffusions</h2></div>
+        @if (loading()) {
+          <p class="live-inline-hint">Chargement du programme…</p>
+        } @else if (upcomingLives().length === 0) {
+          <p class="live-inline-hint">Aucune diffusion à venir pour le moment.</p>
+        } @else {
+          <table class="data-table program-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Heure</th>
+                <th>Match</th>
+                <th>Tournoi</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (lv of upcomingLives(); track lv.id) {
+                <tr>
+                  <td>{{ formatEventDateProgram(lv.event) }}</td>
+                  <td>{{ formatProgramLiveTime(lv) }}</td>
+                  <td><b>{{ lv.event.title }}</b></td>
+                  <td>{{ tournamentLabel(lv) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
       </div>
 
-      <div class="sec-head red section-gap"><h2>Programmation des diffusions</h2></div>
-      <table class="data-table program-table">
-        <thead><tr><th>Date</th><th>Heure GMT</th><th>Match</th><th>Tournoi</th></tr></thead>
-        <tbody>
-          <tr><td>Sam 19 Avr</td><td>15h00</td><td><b>A. Diallo/M. Sow vs B. Fall/K. Traoré</b></td><td>Open Dakar · Finale</td></tr>
-          <tr><td>Dim 20 Avr</td><td>16h00</td><td><b>F. Mbaye vs A. Ba</b></td><td>Champ. Féminin · Finale</td></tr>
-          <tr><td>Sam 26 Avr</td><td>14h00</td><td><b>Circuit Dakar · 1/2 finales</b></td><td>Circuit Dakar</td></tr>
-          <tr><td>Sam 7 Juin</td><td>18h00</td><td><b>WPT Africa Series Dakar — Ouverture</b></td><td>WPT Exhibition</td></tr>
-        </tbody>
-      </table>
+      <aside class="live-side">
+        <div class="widget red">
+          <div class="widget-head"><h3>À propos du live</h3></div>
+          @if (loading()) {
+            <p class="about-text">Chargement…</p>
+          } @else if (displayLive(); as fl) {
+            <p class="about-text">{{ fl.event.title }}</p>
+            <div class="about-meta">
+              📅 {{ formatAboutEventDate(fl) }}<br />
+              ⏰ {{ formatAboutLiveTime(fl) }}<br />
+              📍 {{ fl.event.venue }}
+            </div>
+            @if (aboutDescriptionSafe(fl); as html) {
+              <div class="about-desc" [innerHTML]="html"></div>
+            }
+          } @else {
+            <p class="about-text">Aucun live à venir pour le moment.</p>
+          }
+        </div>
+
+        <div class="widget">
+          <div class="widget-head"><h3>Chaîne YouTube</h3></div>
+          <p class="yt-text">Abonnez-vous pour être notifié à chaque diffusion.</p>
+          <a [href]="youtubeSubscribeHref()" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-block"
+            >▶ S'abonner</a
+          >
+        </div>
+
+        <div class="widget">
+          <div class="widget-head"><h3>Replays disponibles</h3></div>
+          @if (loading()) {
+            <p class="live-inline-hint">Chargement…</p>
+          } @else if (replayLives().length === 0) {
+            <p class="live-inline-hint">Aucun replay pour le moment.</p>
+          } @else {
+            @for (lv of replayLives(); track lv.id) {
+              <a
+                class="archive-item archive-item--link"
+                [href]="lv.replayUrl!"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div class="thumb">
+                  @if (coverUrl(lv); as src) {
+                    <img [src]="src" [alt]="lv.event.title" width="120" height="68" loading="lazy" />
+                  } @else {
+                    <div class="ph court" aria-hidden="true"></div>
+                  }
+                </div>
+                <div>
+                  <h4>{{ lv.event.title }}</h4>
+                  <div class="m">{{ tournamentLabel(lv) }} · {{ formatEventDateProgram(lv.event) }}</div>
+                </div>
+              </a>
+            }
+          }
+        </div>
+      </aside>
     </div>
-
-    <aside class="live-side">
-      <div class="widget red">
-        <div class="widget-head"><h3>À propos du live</h3></div>
-        <p class="about-text">
-          Suivez avec nous le plus grand évènement de padel jamais organisé au Sénégal !
-        </p>
-        <div class="about-meta">
-          📅 Samedi 19 Avril 2026<br />
-          ⏰ 15h00 GMT · 20h30 Dakar<br />
-          📍 TGS Arena, Almadies
-        </div>
-      </div>
-
-      <div class="widget">
-        <div class="widget-head"><h3>Chaîne YouTube</h3></div>
-        <p class="yt-text">Abonnez-vous pour être notifié à chaque diffusion.</p>
-        <a href="#" class="btn btn-danger btn-block">▶ S'abonner</a>
-      </div>
-
-      <div class="widget">
-        <div class="widget-head"><h3>Replays disponibles</h3></div>
-        <div class="archive-item">
-          <div class="thumb"><div class="ph court" data-label=""></div></div>
-          <div><h4>Open Dakar · 1/2 Diallo vs Gueye</h4><div class="m">1h48 · 10 Avr</div></div>
-        </div>
-        <div class="archive-item">
-          <div class="thumb"><div class="ph violet" data-label=""></div></div>
-          <div><h4>Champ. U18 · Finale Diallo/Mbaye</h4><div class="m">1h22 · 11 Avr</div></div>
-        </div>
-        <div class="archive-item">
-          <div class="thumb"><div class="ph sunset" data-label=""></div></div>
-          <div><h4>Open Saly · Finale Fall/Camara</h4><div class="m">2h14 · 3 Avr</div></div>
-        </div>
-      </div>
-    </aside>
-  </div>
+  }
 </main>
