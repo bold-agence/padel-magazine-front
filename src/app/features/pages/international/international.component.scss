@@ -207,6 +207,13 @@
   flex-shrink: 0;
 }
 
+.podium-card .av img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .podium-card .info h4 {
   font-family: var(--f-display);
   font-size: 18px;
@@ -216,6 +223,49 @@
 .podium-card .info .pt {
   font-size: 12px;
   color: var(--gray);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dot-sep {
+  color: rgba(44, 44, 42, 0.35);
+}
+
+.country-flag {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.ranking-state {
+  margin: 0 0 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  padding: 18px 20px;
+  color: var(--gray);
+  font-size: 15px;
+  text-align: center;
+}
+
+.ranking-source-link-wrap {
+  text-align: center;
+}
+.ranking-source-link {
+  display: inline-flex;
+  text-align: center;
+  margin: 0 0 24px;
+  font-family: var(--f-cond);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--coral);
+}
+
+.ranking-source-link:hover {
+  color: var(--ink);
 }
 
 .data-table {
@@ -336,6 +386,17 @@
   margin: 0 0 16px;
   color: var(--gray);
   font-size: 15px;
+}
+
+.results-state {
+  margin: 0 0 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  padding: 18px 20px;
+  color: var(--gray);
+  font-size: 15px;
+  text-align: center;
 }
 
 @media (max-width: 1024px) {

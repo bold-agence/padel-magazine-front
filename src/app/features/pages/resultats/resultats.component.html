@@ -11,47 +11,96 @@
 
 <main class="container">
   <div class="tabs-nav">
-    <button class="on">Derniers résultats</button>
-    <button>Par tournoi</button>
-    <button>Par joueur</button>
+    <button type="button" class="on">Derniers résultats</button>
+    <button type="button">Par tournoi</button>
+    <button type="button">Par joueur</button>
   </div>
 
   <div class="chips">
-    <button class="chip on">Hommes</button>
-    <button class="chip">Femmes</button>
-    <button class="chip">U18</button>
-    <button class="chip">U15</button>
+    @for (chip of categoryChips; track chip.value) {
+      <button
+        type="button"
+        class="chip"
+        [class.on]="activeCategory === chip.value"
+        (click)="setCategory(chip.value)"
+      >
+        {{ chip.label }}
+      </button>
+    }
   </div>
 
   <div class="layout">
     <div class="main-col">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Tournoi</th>
-            <th>Tour</th>
-            <th>Vainqueurs</th>
-            <th>Score</th>
-            <th>Perdants</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (result of results; track result.date + result.tournament + result.round) {
-            <tr>
-              <td>{{ result.date }}</td>
-              <td><span class="cat" [style.background]="result.color"></span>{{ result.tournament }}</td>
-              <td>{{ result.round }}</td>
-              <td><b>{{ result.winners }}</b></td>
-              <td class="score">{{ result.score }}</td>
-              <td>{{ result.losers }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-      <div class="pagination">
-        <span class="on">1</span><a href="#">2</a><a href="#">3</a><a href="#">›</a>
+      <div class="table-wrap">
+        @if (isLoading) {
+          <div class="result-state">Chargement des derniers résultats...</div>
+        } @else if (loadError) {
+          <div class="result-state">{{ loadError }}</div>
+        } @else if (!results.length) {
+          <div class="result-state">Aucun résultat disponible pour le moment.</div>
+        } @else {
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Période</th>
+                <th>Tournoi</th>
+                <th>Tour</th>
+                <th>Vainqueurs</th>
+                <th>Score</th>
+                <th>Finalistes</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (result of results; track result.id) {
+                <tr>
+                  <td>{{ result.periodLabel }}</td>
+                  <td>
+                    <!-- <span class="cat" [style.background]="result.dotColor"></span> -->
+                    {{ result.tournamentName }}
+                    @if (result.location) {
+                      <span class="location" style="display: block;">{{ result.location }}</span>
+                    }
+                  </td>
+                  <td>{{ result.round }}</td>
+                  <td><b>{{ result.winners }}</b></td>
+                  <td class="score">{{ result.score }}</td>
+                  <td>{{ result.losers }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
       </div>
+
+      @if (totalPages > 1 && !isLoading && !loadError) {
+        <div class="pagination" aria-label="Pagination des derniers résultats">
+          <button
+            type="button"
+            [disabled]="!hasPreviousPage"
+            (click)="goToPage(currentPage - 1)"
+            aria-label="Page précédente"
+          >
+            ‹
+          </button>
+          @for (page of pageNumbers; track page) {
+            <button
+              type="button"
+              [class.on]="page === currentPage"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          }
+          <button
+            type="button"
+            [disabled]="!hasNextPage"
+            (click)="goToPage(currentPage + 1)"
+            aria-label="Page suivante"
+          >
+            ›
+          </button>
+        </div>
+      }
     </div>
 
     <app-sidebar />

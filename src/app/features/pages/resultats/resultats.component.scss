@@ -123,13 +123,18 @@
   min-width: 0;
 }
 
-.data-table {
+.table-wrap {
   width: 100%;
-  border-collapse: collapse;
   background: #fff;
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow-x: auto;
   border: 1px solid var(--line);
+}
+
+.data-table {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
   font-size: 14px;
 }
 
@@ -137,7 +142,7 @@
   background: #2c2c2a;
   color: #fff;
   text-align: left;
-  padding: 12px 14px;
+  padding: 14px 12px;
   font-family: var(--f-cond);
   font-weight: 700;
   font-size: 12px;
@@ -146,8 +151,9 @@
 }
 
 .data-table td {
-  padding: 12px 14px;
+  padding: 12px 10px;
   border-bottom: 1px solid var(--line);
+  color: var(--ink);
 }
 
 .data-table tr:last-child td {
@@ -161,7 +167,8 @@
 .data-table .score {
   font-family: var(--f-display);
   color: var(--orange);
-  font-weight: 700;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .data-table .cat {
@@ -173,6 +180,13 @@
   vertical-align: middle;
 }
 
+.result-state {
+  padding: 42px 18px;
+  text-align: center;
+  color: var(--gray);
+  font-weight: 600;
+}
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -180,8 +194,7 @@
   margin: 40px 0 20px;
 }
 
-.pagination a,
-.pagination span {
+.pagination button {
   min-width: 38px;
   height: 38px;
   display: inline-flex;
@@ -201,9 +214,24 @@
   border-color: var(--green);
 }
 
-.pagination a:hover {
+.pagination button:hover:not(:disabled) {
   border-color: var(--green);
   color: var(--green);
+}
+
+.pagination button.on:hover {
+  color: #fff;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.data-table .location {
+  font-size: 11px;
+  color: var(--gray);
+  font-weight: 600;
 }
 
 @media (max-width: 1024px) {
@@ -215,6 +243,15 @@
 @media (max-width: 768px) {
   .layout {
     grid-template-columns: 1fr;
+  }
+
+  .data-table {
+    font-size: 15px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 14px 12px;
   }
 
   .page-intro h1 {

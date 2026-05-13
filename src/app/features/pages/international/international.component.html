@@ -11,106 +11,174 @@
     <div class="main-col">
       <div class="sec-head coral">
         <h2>Top 10 Mondial Premier Padel - Hommes</h2>
-        <a
-          href="https://www.padelfip.com/fip-rankings/"
-          target="_blank"
-          class="see-all"
-        >
-          Voir tout →
-        </a>
       </div>
-      <div class="podium-carousel-wrap">
-        <button
-          type="button"
-          class="podium-nav podium-nav-prev"
-          aria-label="Voir les paires précédentes"
-          (click)="scrollPodiumHommes(-1)"
-        >
-          ‹
-        </button>
-        <div
-          #podiumTrackHommes
-          class="podium-carousel"
-          tabindex="0"
-          role="region"
-          aria-label="Top 10 mondial messieurs, défilement horizontal"
-          (keydown)="onPodiumHommesKeydown($event)"
-        >
-          @for (e of top10; track e.rank) {
-            <div class="podium-card" [class.gold]="e.tier === 'gold'" [class.silver]="e.tier === 'silver'" [class.bronze]="e.tier === 'bronze'" [class.default-rank]="e.tier === 'default'">
-              <div class="medal">{{ e.rank }}</div>
-              <div class="av"><div [class]="'ph ' + e.phClass" data-label="64"></div></div>
-              <div class="info"><h4>{{ e.team }}</h4><div class="pt">{{ e.points }}</div></div>
-            </div>
-          }
+      @if (isLoadingRankings) {
+        <p class="ranking-state">Chargement du classement...</p>
+      } @else if (!top10.length) {
+        <p class="ranking-state">{{ rankingsError || 'Classement hommes actuellement indisponible.' }}</p>
+      } @else {
+        <div class="podium-carousel-wrap">
+          <button
+            type="button"
+            class="podium-nav podium-nav-prev"
+            aria-label="Voir les paires précédentes"
+            (click)="scrollPodiumHommes(-1)"
+          >
+            ‹
+          </button>
+          <div
+            #podiumTrackHommes
+            class="podium-carousel"
+            tabindex="0"
+            role="region"
+            aria-label="Top 10 mondial messieurs, défilement horizontal"
+            (keydown)="onPodiumHommesKeydown($event)"
+          >
+            @for (e of top10; track e.rank) {
+              <div class="podium-card" [class.gold]="e.tier === 'gold'" [class.silver]="e.tier === 'silver'" [class.bronze]="e.tier === 'bronze'" [class.default-rank]="e.tier === 'default'">
+                <div class="medal">{{ e.rank }}</div>
+                <div class="av">
+                  @if (e.playerImageUrl) {
+                    <img [src]="e.playerImageUrl" [alt]="e.team" />
+                  } @else {
+                    <div [class]="'ph ' + e.phClass" data-label="64"></div>
+                  }
+                </div>
+                <div class="info">
+                  <h4>{{ e.team }}</h4>
+                  <div class="pt">
+                    @if (e.countryCode) {
+                      <span>{{ e.countryCode }}</span>
+                      @if (e.countryFlag) {
+                        <span class="country-flag">{{ e.countryFlag }}</span>
+                      }
+                      <span class="dot-sep">•</span>
+                    }
+                    <span>{{ e.points }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+          <button
+            type="button"
+            class="podium-nav podium-nav-next"
+            aria-label="Voir les paires suivantes"
+            (click)="scrollPodiumHommes(1)"
+          >
+            ›
+          </button>
         </div>
-        <button
-          type="button"
-          class="podium-nav podium-nav-next"
-          aria-label="Voir les paires suivantes"
-          (click)="scrollPodiumHommes(1)"
-        >
-          ›
-        </button>
-      </div>
+      }
 
       <div class="sec-head coral podium-block-after">
         <h2>Top 10 Mondial Premier Padel — Féminin</h2>
+      </div>
+      @if (isLoadingRankings) {
+        <p class="ranking-state">Chargement du classement...</p>
+      } @else if (!top10Feminin.length) {
+        <p class="ranking-state">{{ rankingsError || 'Classement féminin actuellement indisponible.' }}</p>
+      } @else {
+        <div class="podium-carousel-wrap">
+          <button
+            type="button"
+            class="podium-nav podium-nav-prev"
+            aria-label="Voir les paires précédentes (féminin)"
+            (click)="scrollPodiumFeminin(-1)"
+          >
+            ‹
+          </button>
+          <div
+            #podiumTrackFeminin
+            class="podium-carousel"
+            tabindex="0"
+            role="region"
+            aria-label="Top 10 féminin, défilement horizontal"
+            (keydown)="onPodiumFemininKeydown($event)"
+          >
+            @for (e of top10Feminin; track e.rank) {
+              <div class="podium-card" [class.gold]="e.tier === 'gold'" [class.silver]="e.tier === 'silver'" [class.bronze]="e.tier === 'bronze'" [class.default-rank]="e.tier === 'default'">
+                <div class="medal">{{ e.rank }}</div>
+                <div class="av">
+                  @if (e.playerImageUrl) {
+                    <img [src]="e.playerImageUrl" [alt]="e.team" />
+                  } @else {
+                    <div [class]="'ph ' + e.phClass" data-label="64"></div>
+                  }
+                </div>
+                <div class="info">
+                  <h4>{{ e.team }}</h4>
+                  <div class="pt">
+                    @if (e.countryCode) {
+                      <span>{{ e.countryCode }}</span>
+                      @if (e.countryFlag) {
+                        <span class="country-flag">{{ e.countryFlag }}</span>
+                      }
+                      <span class="dot-sep">•</span>
+                    }
+                    <span>{{ e.points }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+          <button
+            type="button"
+            class="podium-nav podium-nav-next"
+            aria-label="Voir les paires suivantes (féminin)"
+            (click)="scrollPodiumFeminin(1)"
+          >
+            ›
+          </button>
+        </div>
+      }
+      <div class="ranking-source-link-wrap">
         <a
           href="https://www.padelfip.com/fip-rankings/"
           target="_blank"
-          class="see-all"
+          rel="noopener"
+          class="ranking-source-link"
         >
-          Voir tout →
+          Cliquer ici pour consulter le classement entier →
         </a>
       </div>
-      <div class="podium-carousel-wrap">
-        <button
-          type="button"
-          class="podium-nav podium-nav-prev"
-          aria-label="Voir les paires précédentes (féminin)"
-          (click)="scrollPodiumFeminin(-1)"
-        >
-          ‹
-        </button>
-        <div
-          #podiumTrackFeminin
-          class="podium-carousel"
-          tabindex="0"
-          role="region"
-          aria-label="Top 10 féminin, défilement horizontal"
-          (keydown)="onPodiumFemininKeydown($event)"
-        >
-          @for (e of top10Feminin; track e.rank) {
-            <div class="podium-card" [class.gold]="e.tier === 'gold'" [class.silver]="e.tier === 'silver'" [class.bronze]="e.tier === 'bronze'" [class.default-rank]="e.tier === 'default'">
-              <div class="medal">{{ e.rank }}</div>
-              <div class="av"><div [class]="'ph ' + e.phClass" data-label="64"></div></div>
-              <div class="info"><h4>{{ e.team }}</h4><div class="pt">{{ e.points }}</div></div>
-            </div>
-          }
-        </div>
-        <button
-          type="button"
-          class="podium-nav podium-nav-next"
-          aria-label="Voir les paires suivantes (féminin)"
-          (click)="scrollPodiumFeminin(1)"
-        >
-          ›
-        </button>
+
+      <div class="sec-head coral section-spacing">
+        <h2>Derniers résultats Premier Padel</h2>
+        <a routerLink="/resultats" class="see-all">Voir plus →</a>
       </div>
-
-      <div class="sec-head coral section-spacing"><h2>Derniers résultats Premier Padel</h2></div>
-      <table class="data-table">
-        <thead>
-          <tr><th>Date</th><th>Tournoi</th><th>Vainqueurs</th><th>Score</th><th>Finalistes</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>7 Avr</td><td>Mexico Open</td><td><b>Galán / Lebrón 🇪🇸</b></td><td class="score">6-4, 7-6</td><td>Chingotto / Tello</td></tr>
-          <tr><td>24 Mar</td><td>Sao Paulo Premier</td><td><b>Coello / Yanguas 🇪🇸</b></td><td class="score">7-5, 6-3</td><td>Galán / Lebrón</td></tr>
-          <tr><td>17 Mar</td><td>Reus Open</td><td><b>Galán / Lebrón 🇪🇸</b></td><td class="score">6-2, 6-4</td><td>Lima / Tapia</td></tr>
-        </tbody>
-      </table>
-
+      @if (isLoadingLatestResults) {
+        <p class="results-state">Chargement des derniers résultats...</p>
+      } @else if (latestResultsError) {
+        <p class="results-state">{{ latestResultsError }}</p>
+      } @else if (!latestResults.length) {
+        <p class="results-state">Aucun résultat disponible pour le moment.</p>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Période</th>
+              <th>Tournoi</th>
+              <th>Tour</th>
+              <th>Vainqueurs</th>
+              <th>Score</th>
+              <th>Perdants</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (result of latestResults; track result.id) {
+              <tr>
+                <td>{{ result.periodLabel }}</td>
+                <td>{{ result.tournamentName }}</td>
+                <td>{{ result.round }}</td>
+                <td><b>{{ result.winners }}</b></td>
+                <td class="score">{{ result.score }}</td>
+                <td>{{ result.losers }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
 
       <div class="sec-head coral section-spacing">
         <h2>Articles internationaux</h2>
