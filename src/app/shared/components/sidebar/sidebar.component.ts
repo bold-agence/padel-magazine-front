@@ -1,11 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ArticleModel } from '../../../core/models/article.model';
 import { ArticlesService } from '../../../core/services/articles.service';
 import {
   AdImageItem,
   ClientContentService,
 } from '../../../core/services/client-content.service';
+import { LiveDto, LivesService } from '../../../core/services/lives.service';
+import {
+  findAiringLive,
+  pickUpcoming,
+} from '../../../core/utils/live-scheduling.util';
 
 type PopularItem = {
   cat: string;
@@ -19,7 +25,7 @@ type PopularItem = {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
@@ -32,14 +38,22 @@ export class SidebarComponent implements OnInit, OnChanges {
   protected topSidebarAd?: AdImageItem;
   protected bottomSidebarAd?: AdImageItem;
 
+  /** Même règle que l’accueil / page Live : en direct si créneau en cours, sinon prochain live. */
+  protected sidebarNextLive: LiveDto | null = null;
+  protected sidebarNextLiveIsAiring = false;
+  protected sidebarLiveLoading = true;
+  protected sidebarLiveError = false;
+
   constructor(
     private readonly articlesService: ArticlesService,
     private readonly clientContentService: ClientContentService,
+    private readonly livesService: LivesService,
   ) {}
 
   ngOnInit(): void {
     this.loadPopular();
     this.loadAds();
+    this.loadSidebarNextLive();
   }
 
   ngOnChanges(): void {
@@ -68,6 +82,78 @@ export class SidebarComponent implements OnInit, OnChanges {
         this.isLoadingPopular = false;
       },
     });
+  }
+
+  private loadSidebarNextLive(): void {
+    this.sidebarLiveLoading = true;
+    this.sidebarLiveError = false;
+    this.livesService.findAll().subscribe({
+      next: (lives) => {
+        const airing = findAiringLive(lives);
+        if (airing) {
+          this.sidebarNextLive = airing;
+          this.sidebarNextLiveIsAiring = true;
+        } else {
+          this.sidebarNextLive = pickUpcoming(lives, 1)[0] ?? null;
+          this.sidebarNextLiveIsAiring = false;
+        }
+        this.sidebarLiveLoading = false;
+      },
+      error: () => {
+        this.sidebarNextLive = null;
+        this.sidebarNextLiveIsAiring = false;
+        this.sidebarLiveError = true;
+        this.sidebarLiveLoading = false;
+      },
+    });
+  }
+
+  protected formatSidebarEventDates(live: LiveDto): string {
+    const start = new Date(live.event.startAt);
+    const endRaw = live.event.endAt;
+    const end = endRaw ? new Date(endRaw) : null;
+    if (!end || Number.isNaN(end.getTime())) {
+      return new Intl.DateTimeFormat('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(start);
+    }
+    const sameCalendarDay =
+      start.getFullYear() === end.getFullYear() &&
+      start.getMonth() === end.getMonth() &&
+      start.getDate() === end.getDate();
+    if (sameCalendarDay) {
+      return new Intl.DateTimeFormat('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(start);
+    }
+    const shortDay = new Intl.DateTimeFormat('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+    });
+    const withYear = new Intl.DateTimeFormat('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+    return `${shortDay.format(start)}–${withYear.format(end)}`;
+  }
+
+  protected formatSidebarLiveClock(startTime: string): string {
+    const parts = startTime.trim().split(':');
+    const h = parts[0] ?? '0';
+    const m = (parts[1] ?? '00').padStart(2, '0');
+    return `${h}h${m}`;
+  }
+
+  protected formatSidebarProgramLiveTime(live: LiveDto): string {
+    const start = this.formatSidebarLiveClock(live.startTime);
+    const end = live.endTime?.trim();
+    if (!end) return start;
+    return `${start} – ${this.formatSidebarLiveClock(end)}`;
   }
 
   private loadAds(): void {

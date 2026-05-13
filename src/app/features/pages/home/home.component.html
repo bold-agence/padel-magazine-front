@@ -62,6 +62,8 @@
 
   <div class="layout">
     <div class="main-col">
+
+
       <div class="sec-head">
         <h2>Actualités Sénégal</h2>
         <a routerLink="/actualites" class="see-all">Voir tout →</a>
@@ -83,90 +85,230 @@
         }
       </div>
 
-      <div class="sec-head orange" style="margin-top:40px;">
-        <h2>Derniers résultats</h2>
-        <a href="#" class="see-all">Tous les résultats →</a>
+     
+
+      <!-- Copie du bloc « Derniers résultats Premier Padel » (page International) -->
+      <div class="sec-head orange " >
+        <h2>Derniers résultats </h2>
+        <a routerLink="/resultats" class="see-all">Voir tous les résultats →</a>
       </div>
-      <div class="scoreboard">
-        <div class="score-row">
-          <div class="p">A. Diallo / M. Sow</div>
-          <div class="s">6-3</div><div class="s">6-4</div>
-          <div class="p loser">B. Fall / K. Traoré</div>
-          <div class="t">Open Dakar · Finale</div>
-        </div>
-        <div class="score-row">
-          <div class="p">F. Mbaye</div>
-          <div class="s">7-5</div><div class="s">6-2</div>
-          <div class="p loser">A. Diouf</div>
-          <div class="t">Champ. Féminin · 1/2</div>
-        </div>
-        <div class="score-row">
-          <div class="p">O. Diallo / I. Ndiaye</div>
-          <div class="s">7-6</div><div class="s">6-3</div>
-          <div class="p loser">C. Ba / T. Fall</div>
-          <div class="t">Circuit Dakar · 1/4</div>
-        </div>
-      </div>
+      @if (isLoadingLatestResults) {
+        <p class="results-state">Chargement des derniers résultats...</p>
+      } @else if (latestResultsError) {
+        <p class="results-state">{{ latestResultsError }}</p>
+      } @else if (!premierPadelLatestResults.length) {
+        <p class="results-state">Aucun résultat disponible pour le moment.</p>
+      } @else {
+        <table class="data-table home-premier-results-table">
+          <thead>
+            <tr>
+              <th>Période</th>
+              <th>Tournoi</th>
+              <th>Tour</th>
+              <th>Vainqueurs</th>
+              <th>Score</th>
+              <th>Perdants</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (result of premierPadelLatestResults; track result.id) {
+              <tr>
+                <td>{{ result.periodLabel }}</td>
+                <td>{{ result.tournamentName }}</td>
+                <td>{{ result.round }}</td>
+                <td><b>{{ result.winners }}</b></td>
+                <td class="score">{{ result.score }}</td>
+                <td>{{ result.losers }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
 
       <div class="sec-head red" style="margin-top:40px;">
         <h2>Live Stream</h2>
-        <a href="#" class="see-all">Tous les événements →</a>
+        <a routerLink="/live" class="see-all">Tous les événements →</a>
       </div>
-      <div class="live-card">
-        <div class="live-head">
-          <div class="live-label"><span class="pulse"></span> Prochain Live</div>
-          <div style="font-size:12px;color:var(--gray);">Chaîne YouTube @PadelMagazineSN</div>
+      @if (homeLiveLoading) {
+        <div class="live-card">
+          <p class="home-live-state">Chargement du live…</p>
         </div>
-        <div class="live-body">
-          <div class="live-player">
-            <div class="ph charcoal" data-label="YouTube embed 16:9">
-              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;flex-direction:column;gap:12px;">
-                <div style="width:80px;height:80px;border-radius:50%;background:rgba(226,75,74,.2);border:2px solid var(--red);display:flex;align-items:center;justify-content:center;font-size:28px;">▶</div>
-                <div style="font-family:var(--f-display);font-size:22px;letter-spacing:.04em;">OPEN DAKAR · FINALE</div>
-                <div id="countdown" style="display:flex;gap:14px;font-family:var(--f-display);"></div>
+      } @else if (homeLiveLoadError) {
+        <div class="live-card">
+          <p class="home-live-state">Impossible de charger les lives pour le moment.</p>
+        </div>
+      } @else if (displayHomeLive(); as hl) {
+        <div class="live-card">
+          <div class="live-head">
+            <div class="live-label">
+              <span class="pulse"></span>
+              @if (homeLiveTimeLeft.isLive) {
+                En direct
+              } @else {
+                Prochain live
+              }
+            </div>
+            <div class="live-channel-line">{{ homeLiveChannelLine() }}</div>
+          </div>
+          <div class="live-body">
+            <div class="live-player" [class.live-player--embed]="homeLiveTimeLeft.isLive && homeLiveEmbedSrc(hl)">
+              @if (homeLiveTimeLeft.isLive && homeLiveEmbedSrc(hl); as embedSrc) {
+                @if (!homeLiveEmbedStarted) {
+                  <div class="home-live-play-gate">
+                    <button
+                      type="button"
+                      class="home-live-play-gate__btn"
+                      (click)="startHomeLivePlayback()"
+                      [attr.aria-label]="'Lancer la vidéo — ' + hl.event.title"
+                    >
+                      <span class="home-live-play-gate__pulse" aria-hidden="true"></span>
+                      <span class="home-live-play-gate__icon" aria-hidden="true">▶</span>
+                    </button>
+                    <p class="home-live-play-gate__label">Live en cours</p>
+                  </div>
+                } @else {
+                  <iframe
+                    class="home-live-iframe"
+                    [src]="embedSrc"
+                    [attr.title]="'Direct — ' + hl.event.title"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                    loading="eager"
+                  ></iframe>
+                }
+              } @else if (homeLiveTimeLeft.isLive) {
+                <div class="ph charcoal" data-label="YouTube">
+                  <div class="home-live-ph-inner">
+                    <a
+                      class="home-live-open-link"
+                      [href]="hl.liveUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Ouvrir le direct →</a
+                    >
+                  </div>
+                </div>
+              } @else {
+                <div class="ph charcoal home-live-ph-wrap" data-label="YouTube embed 16:9">
+                  @if (homeLiveCoverUrl(hl); as coverSrc) {
+                    <img class="home-live-cover-bg" [src]="coverSrc" alt="" />
+                  }
+                  <div class="home-live-ph-inner">
+                    <div class="home-live-play-icon" aria-hidden="true">▶</div>
+                    <div class="home-live-hero-title">{{ hl.event.title }}</div>
+                    <div class="home-live-countdown">
+                      <div class="home-live-countdown-cell">
+                        <div class="home-live-countdown-num">{{ homeLiveTimeLeft.days }}</div>
+                        <div class="home-live-countdown-lbl">JOURS</div>
+                      </div>
+                      <div class="home-live-countdown-cell">
+                        <div class="home-live-countdown-num">{{ homeLiveTimeLeft.hours }}</div>
+                        <div class="home-live-countdown-lbl">HRS</div>
+                      </div>
+                      <div class="home-live-countdown-cell">
+                        <div class="home-live-countdown-num">{{ homeLiveTimeLeft.minutes }}</div>
+                        <div class="home-live-countdown-lbl">MIN</div>
+                      </div>
+                      <div class="home-live-countdown-cell">
+                        <div class="home-live-countdown-num">{{ homeLiveTimeLeft.seconds }}</div>
+                        <div class="home-live-countdown-lbl">SEC</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+            <div class="live-info home-live-below">
+              <h3 class="home-live-title">{{ hl.event.title }}</h3>
+              <div class="event-meta home-live-meta-row">
+                <span class="home-live-meta-item"
+                  ><span class="home-live-meta-ic" aria-hidden="true">📅</span
+                  >{{ formatHomeLiveEventDate(hl) }}</span
+                >
+                <span class="home-live-meta-item"
+                  ><span class="home-live-meta-ic" aria-hidden="true">⏰</span
+                  >{{ formatHomeLiveProgramTime(hl) }}</span
+                >
+                <span class="home-live-meta-item"
+                  ><span class="home-live-meta-ic" aria-hidden="true">📍</span
+                  >{{ hl.event.venue }}</span
+                >
+              </div>
+              @if (homeLiveDescriptionTeaser(hl); as teaser) {
+                <p class="home-live-teaser">{{ teaser }}</p>
+              }
+              <div class="home-live-actions">
+                <a routerLink="/live" class="btn btn-danger">Voir la page Live</a>
+                <a
+                  [href]="homeLiveYoutubeSubscribeHref()"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline"
+                  >S’abonner à la chaîne</a
+                >
               </div>
             </div>
           </div>
-          <div class="live-info">
-            <h3>Open Dakar — Finale Hommes</h3>
-            <div class="event-meta">
-              <div><span>📅</span> Samedi 19 Avril 2026</div>
-              <div><span>⏰</span> 15h00 GMT · Dakar</div>
-              <div><span>📍</span> TGS Arena — Almadies</div>
-            </div>
-            <p style="margin:0;color:var(--gray);font-size:14px;line-height:1.6;">Diffusion en direct du match qui consacrera le champion de la 4e édition de l'Open Dakar.</p>
-            <a href="#" class="btn btn-danger">Activer le rappel</a>
-          </div>
         </div>
-      </div>
+      } @else {
+        <div class="live-card">
+          <p class="home-live-state">Aucun live programmé pour le moment.</p>
+        </div>
+      }
 
       <div class="sec-head violet" style="margin-top:40px;">
         <h2>Classements</h2>
         <a routerLink="/classements" class="see-all">Classement complet →</a>
       </div>
       <div class="widget violet" style="padding:24px;">
-        <div class="rank-grid">
-          <div class="rank-col">
-            <h4>🇸🇳 Sénégal · Top 5 Hommes</h4>
-            <ul class="rank-list">
-              <li><span class="r">1</span><div><div class="n">Maher Hachem</div><div class="p">FS Padel</div></div><span class="p">3 400 pts</span></li>
-              <li><span class="r">2</span><div><div class="n">Youssef Ait</div><div class="p">FS Padel</div></div><span class="p">2 900 pts</span></li>
-              <li><span class="r">3</span><div><div class="n">Hamoude El Hadi</div><div class="p">FS Padel</div></div><span class="p">2 800 pts</span></li>
-              <li><span class="r">3</span><div><div class="n">Omar Ka</div><div class="p">FS Padel</div></div><span class="p">2 800 pts</span></li>
-              <li><span class="r">5</span><div><div class="n">Karim Karrit</div><div class="p">FS Padel</div></div><span class="p">2 650 pts</span></li>
-            </ul>
+        @if (homeRankingsLoading) {
+          <p class="home-rankings-state">Chargement des classements…</p>
+        } @else if (homeRankingsError) {
+          <p class="home-rankings-state">{{ homeRankingsError }}</p>
+        } @else if (!homeMenTop5.length && !homeWomenTop5.length) {
+          <p class="home-rankings-state">Aucun classement pour le moment.</p>
+        } @else {
+          <div class="rank-grid">
+            <div class="rank-col">
+              <h4>🇸🇳 {{ homeMenTitle }} · Top 5</h4>
+              @if (homeMenTop5.length) {
+                <ul class="rank-list">
+                  @for (row of homeMenTop5; track row.id) {
+                    <li>
+                      <span class="r">{{ row.rank }}</span>
+                      <div>
+                        <div class="n">{{ row.name }}</div>
+                        <div class="p">{{ row.subtitle }}</div>
+                      </div>
+                      <span class="p">{{ row.pointsLabel }}</span>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="home-rankings-empty">Classement hommes indisponible.</p>
+              }
+            </div>
+            <div class="rank-col">
+              <h4>🇸🇳 {{ homeWomenTitle }} · Top 5</h4>
+              @if (homeWomenTop5.length) {
+                <ul class="rank-list">
+                  @for (row of homeWomenTop5; track row.id) {
+                    <li>
+                      <span class="r">{{ row.rank }}</span>
+                      <div>
+                        <div class="n">{{ row.name }}</div>
+                        <div class="p">{{ row.subtitle }}</div>
+                      </div>
+                      <span class="p">{{ row.pointsLabel }}</span>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="home-rankings-empty">Classement femmes indisponible.</p>
+              }
+            </div>
           </div>
-          <div class="rank-col">
-            <h4>🇸🇳 Sénégal · Top 5 Femmes</h4>
-            <ul class="rank-list">
-              <li><span class="r">1</span><div><div class="n">Marina Fakhry</div><div class="p">FS Padel</div></div><span class="p">1 550 pts</span></li>
-              <li><span class="r">2</span><div><div class="n">Gwendoline Laurent Daw</div><div class="p">FS Padel</div></div><span class="p">1 473 pts</span></li>
-              <li><span class="r">3</span><div><div class="n">Karine Ghozayel</div><div class="p">FS Padel</div></div><span class="p">1 450 pts</span></li>
-              <li><span class="r">4</span><div><div class="n">Mélina Fawaz</div><div class="p">FS Padel</div></div><span class="p">1 360 pts</span></li>
-              <li><span class="r">5</span><div><div class="n">Maya Issa</div><div class="p">FS Padel</div></div><span class="p">1 053 pts</span></li>
-            </ul>
-          </div>
-        </div>
+        }
       </div>
 
       <div class="sec-head blue" style="margin-top:40px;">
@@ -192,22 +334,40 @@
 
       <div class="sec-head" style="margin-top:40px;">
         <h2>Portraits</h2>
-        <a href="#" class="see-all">Tous les portraits →</a>
+        <a routerLink="/portraits" class="see-all">Tous les portraits →</a>
       </div>
-      <div class="portraits">
-        <a href="#" class="portrait-card">
-          <div class="av"><div class="ph court" data-label="80"></div></div>
-          <div class="info"><h4>Abdoulaye Diallo</h4><div class="meta"><strong>N°1 Sénégal ♂</strong><br>1 420 pts · Almadies</div></div>
-        </a>
-        <a href="#" class="portrait-card">
-          <div class="av"><div class="ph violet" data-label="80"></div></div>
-          <div class="info"><h4>Aminata Ba</h4><div class="meta"><strong>N°1 Sénégal ♀</strong><br>1 380 pts · Almadies</div></div>
-        </a>
-        <a href="#" class="portrait-card">
-          <div class="av"><div class="ph sunset" data-label="80"></div></div>
-          <div class="info"><h4>Oumar Diallo</h4><div class="meta"><strong>Espoir U18</strong><br>890 pts · Almadies</div></div>
-        </a>
-      </div>
+      @if (homePortraitsLoading) {
+        <p class="home-portraits-state">Chargement des portraits…</p>
+      } @else if (homePortraitsError) {
+        <p class="home-portraits-state">{{ homePortraitsError }}</p>
+      } @else if (!homeTopPortraits.length) {
+        <p class="home-portraits-state">Aucun portrait pour le moment.</p>
+      } @else {
+        <div class="portraits">
+          @for (p of homeTopPortraits; track p.id; let i = $index) {
+            <a
+              class="portrait-card"
+              [attr.href]="getHomePortraitArticleLink(p) || '#'"
+              (click)="onHomePortraitClick($event, p)"
+            >
+              <div class="av">
+                @if (getHomePortraitPhotoUrl(p); as photoUrl) {
+                  <img [src]="photoUrl" [alt]="p.player.name" class="home-portrait-img" />
+                } @else {
+                  <div [class]="'ph ' + homePortraitPhClass(i)" data-label="80"></div>
+                }
+              </div>
+              <div class="info">
+                <h4>{{ p.player.name }}</h4>
+                <div class="meta">
+                  <strong>{{ p.category.libelle || '—' }}</strong><br />
+                  {{ p.pointNumber.toLocaleString('fr-FR') }} pts · {{ p.player.club?.title || '—' }}
+                </div>
+              </div>
+            </a>
+          }
+        </div>
+      }
 
       <div class="sec-head coral" style="margin-top:40px;">
         <h2>International · WPT / APP Tour</h2>

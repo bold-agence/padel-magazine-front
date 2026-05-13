@@ -83,18 +83,33 @@
   </div>
 
   <div class="event-card">
-    <div
-      style="font-family:var(--f-cond);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:8px;"
-    >
-      Prochain événement
-    </div>
-    <h3>WPT Africa Series Dakar</h3>
-    <ul class="event-meta-list">
-      <li>📅 7–8 Juin 2026</li>
-      <li>📍 TGS Arena, Dakar</li>
-      <li>⏰ 14h00 GMT</li>
-    </ul>
-    <a href="#" class="btn btn-danger btn-block">Voir le live →</a>
+    @if (sidebarLiveLoading) {
+      <div class="event-card__eyebrow">Prochain événement</div>
+      <p class="event-card__state">Chargement…</p>
+      <a routerLink="/live" class="btn btn-danger btn-block">Page live →</a>
+    } @else if (sidebarLiveError) {
+      <div class="event-card__eyebrow">Prochain événement</div>
+      <p class="event-card__state">Impossible de charger la programmation.</p>
+      <a routerLink="/live" class="btn btn-danger btn-block">Voir la page live →</a>
+    } @else if (sidebarNextLive; as live) {
+      <div
+        class="event-card__eyebrow"
+        [class.event-card__eyebrow--airing]="sidebarNextLiveIsAiring"
+      >
+        {{ sidebarNextLiveIsAiring ? 'En direct' : 'Prochain événement' }}
+      </div>
+      <h3>{{ live.event.title }}</h3>
+      <ul class="event-meta-list">
+        <li>📅 {{ formatSidebarEventDates(live) }}</li>
+        <li>📍 {{ live.event.venue }}</li>
+        <li>⏰ {{ formatSidebarProgramLiveTime(live) }}</li>
+      </ul>
+      <a routerLink="/live" class="btn btn-danger btn-block">Voir le live →</a>
+    } @else {
+      <div class="event-card__eyebrow">Prochain événement</div>
+      <p class="event-card__state">Aucun live à venir pour le moment.</p>
+      <a routerLink="/live" class="btn btn-danger btn-block">Programme live →</a>
+    }
   </div>
 
   <div class="widget social-widget">

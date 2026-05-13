@@ -196,6 +196,27 @@
   margin-bottom: 20px;
 }
 
+.event-card__eyebrow {
+  font-family: var(--f-cond);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.event-card__eyebrow--airing {
+  color: var(--green);
+}
+
+.event-card__state {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--gray);
+  line-height: 1.5;
+}
+
 .event-card h3 {
   margin: 0 0 10px;
   font-family: var(--f-display);
