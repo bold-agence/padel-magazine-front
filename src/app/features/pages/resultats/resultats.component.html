@@ -11,9 +11,17 @@
 
 <main class="container">
   <div class="tabs-nav">
-    <button type="button" class="on">Derniers résultats</button>
-    <button type="button">Par tournoi</button>
-    <button type="button">Par joueur</button>
+    @if (!isLoadingScopes && !scopesError) {
+      @for (scope of scopes; track scope.id) {
+        <button
+          type="button"
+          [class.on]="activeScopeSlug === scope.slug"
+          (click)="setScope(scope.slug)"
+        >
+          <span>{{ scope.name }}</span>
+        </button>
+      }
+    }
   </div>
 
   <div class="chips">
@@ -32,7 +40,13 @@
   <div class="layout">
     <div class="main-col">
       <div class="table-wrap">
-        @if (isLoading) {
+        @if (isLoadingScopes) {
+          <div class="result-state">Chargement des classements...</div>
+        } @else if (scopesError) {
+          <div class="result-state">{{ scopesError }}</div>
+        } @else if (!scopes.length) {
+          <div class="result-state">Aucun classement de résultats disponible.</div>
+        } @else if (isLoading) {
           <div class="result-state">Chargement des derniers résultats...</div>
         } @else if (loadError) {
           <div class="result-state">{{ loadError }}</div>

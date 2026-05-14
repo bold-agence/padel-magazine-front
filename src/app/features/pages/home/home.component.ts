@@ -466,7 +466,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadPremierPadelLatestResults(): void {
     this.isLoadingLatestResults = true;
     this.latestResultsError = '';
-    this.latestResultsService.findPaginated(1, 3, 'all').subscribe({
+    this.latestResultsService.findPaginated(1, 3, 'all', 'international').subscribe({
       next: ({ items }) => {
         this.premierPadelLatestResults = items.map((item) => ({
           ...item,

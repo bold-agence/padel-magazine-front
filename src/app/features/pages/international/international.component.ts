@@ -141,7 +141,7 @@ export class InternationalComponent implements OnInit {
   private loadLatestResults(): void {
     this.isLoadingLatestResults = true;
     this.latestResultsError = '';
-    this.latestResultsService.findPaginated(1, 3, 'all').subscribe({
+    this.latestResultsService.findPaginated(1, 3, 'all', 'international').subscribe({
       next: ({ items }) => {
         this.latestResults = items.map((item) => ({
           ...item,

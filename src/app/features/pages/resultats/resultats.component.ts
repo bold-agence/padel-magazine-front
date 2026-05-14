@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import {
   LatestResult,
   LatestResultCategory,
+  LatestResultScope,
   LatestResultsService,
 } from '../../../core/services/latest-results.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
@@ -29,10 +30,14 @@ export class ResultatsComponent implements OnInit {
     { label: 'Femmes', value: 'women' },
   ];
 
+  protected scopes: LatestResultScope[] = [];
   protected results: ResultRow[] = [];
   protected isLoading = false;
+  protected isLoadingScopes = false;
   protected loadError = '';
+  protected scopesError = '';
   protected activeCategory: LatestResultCategory = 'all';
+  protected activeScopeSlug = '';
   protected currentPage = 1;
   protected readonly pageSize = 8;
   protected totalPages = 1;
@@ -42,12 +47,19 @@ export class ResultatsComponent implements OnInit {
   constructor(private readonly latestResultsService: LatestResultsService) {}
 
   ngOnInit(): void {
-    this.loadResults();
+    this.loadScopes();
   }
 
   protected setCategory(category: LatestResultCategory): void {
-    if (this.activeCategory === category || this.isLoading) return;
+    if (this.activeCategory === category || this.isLoading || this.isLoadingScopes) return;
     this.activeCategory = category;
+    this.currentPage = 1;
+    this.loadResults();
+  }
+
+  protected setScope(scopeSlug: string): void {
+    if (this.activeScopeSlug === scopeSlug || this.isLoading) return;
+    this.activeScopeSlug = scopeSlug;
     this.currentPage = 1;
     this.loadResults();
   }
@@ -78,11 +90,24 @@ export class ResultatsComponent implements OnInit {
   }
 
   private loadResults(): void {
+    if (!this.activeScopeSlug) {
+      this.results = [];
+      this.totalPages = 1;
+      this.hasNextPage = false;
+      this.hasPreviousPage = false;
+      return;
+    }
+
     this.isLoading = true;
     this.loadError = '';
 
     this.latestResultsService
-      .findPaginated(this.currentPage, this.pageSize, this.activeCategory)
+      .findPaginated(
+        this.currentPage,
+        this.pageSize,
+        this.activeCategory,
+        this.activeScopeSlug,
+      )
       .subscribe({
         next: ({ items, pagination }) => {
           this.results = items.map((item) => ({
@@ -109,6 +134,29 @@ export class ResultatsComponent implements OnInit {
           this.isLoading = false;
         },
       });
+  }
+
+  private loadScopes(): void {
+    this.isLoadingScopes = true;
+    this.scopesError = '';
+
+    this.latestResultsService.findScopes().subscribe({
+      next: (scopes) => {
+        this.scopes = scopes;
+        const defaultScope =
+          scopes.find((scope) => scope.slug === 'international') ?? scopes[0];
+        this.activeScopeSlug = defaultScope?.slug ?? '';
+        this.isLoadingScopes = false;
+        this.loadResults();
+      },
+      error: () => {
+        this.scopes = [];
+        this.results = [];
+        this.scopesError =
+          'Les classements de résultats sont actuellement indisponibles.';
+        this.isLoadingScopes = false;
+      },
+    });
   }
 
   private formatPeriodLabel(

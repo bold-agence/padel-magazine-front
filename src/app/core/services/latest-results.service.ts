@@ -5,6 +5,14 @@ import { environment } from '../../../environments/environment';
 
 export type LatestResultCategory = 'all' | 'men' | 'women';
 
+export type LatestResultScope = {
+  id: string;
+  name: string;
+  slug: string;
+  displayOrder: number;
+  isActive: boolean;
+};
+
 export type LatestResult = {
   id: string;
   tournamentName: string;
@@ -17,6 +25,7 @@ export type LatestResult = {
   score: string;
   losers: string;
   category: Exclude<LatestResultCategory, 'all'>;
+  scope: LatestResultScope;
   isPublished: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -47,6 +56,7 @@ type ApiEnvelope<T> = {
 })
 export class LatestResultsService {
   private readonly apiUrl = `${environment.apiUrl}/latest-results`;
+  private readonly scopesUrl = `${environment.apiUrl}/latest-result-scopes`;
 
   constructor(private readonly http: HttpClient) {}
 
@@ -54,16 +64,26 @@ export class LatestResultsService {
     page = 1,
     limit = 8,
     category: LatestResultCategory = 'all',
+    scope = 'all',
   ): Observable<PaginatedLatestResults> {
     const params = new HttpParams()
       .set('page', page)
       .set('limit', limit)
-      .set('category', category);
+      .set('category', category)
+      .set('scope', scope);
 
     return this.http
       .get<ApiEnvelope<PaginatedLatestResults> | PaginatedLatestResults>(
         this.apiUrl,
         { params },
+      )
+      .pipe(map((response) => this.unwrap(response)));
+  }
+
+  findScopes(): Observable<LatestResultScope[]> {
+    return this.http
+      .get<ApiEnvelope<LatestResultScope[]> | LatestResultScope[]>(
+        this.scopesUrl,
       )
       .pipe(map((response) => this.unwrap(response)));
   }
