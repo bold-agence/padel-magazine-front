@@ -36,7 +36,13 @@
             @for (entry of currentPodium; track entry.rank + entry.name) {
               <div class="podium-card {{ entry.medalClass }}">
                 <div class="medal">{{ entry.rank }}</div>
-                <div class="av"><div class="ph {{ entry.phClass }}" data-label="64"></div></div>
+                <div class="av">
+                  @if (entry.imageUrl) {
+                    <img [src]="entry.imageUrl" [alt]="''" loading="lazy" />
+                  } @else {
+                    <div class="ph {{ entry.phClass }}" data-label="64"></div>
+                  }
+                </div>
                 <div class="info">
                   <h4>{{ entry.name }}</h4>
                   <div class="pt">{{ entry.points }}</div>
