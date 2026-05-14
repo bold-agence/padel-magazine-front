@@ -25,6 +25,72 @@ export class ArticleComponent implements OnInit {
   protected errorMessage = '';
   protected article?: ArticleModel;
   protected relatedArticles: ArticleModel[] = [];
+  protected shareNotice = '';
+
+  private shareNoticeTimer?: ReturnType<typeof setTimeout>;
+
+  /** URL de la page (partage) — uniquement côté navigateur. */
+  protected get sharePageUrl(): string {
+    return typeof globalThis !== 'undefined' && 'location' in globalThis
+      ? globalThis.location.href
+      : '';
+  }
+
+  private get shareTitle(): string {
+    return this.article?.title?.trim() ?? 'Padel Magazine';
+  }
+
+  /** Texte copié pour tous les réseaux (même contenu que Facebook). */
+  private get shareClipboardBody(): string {
+    const url = this.sharePageUrl.trim();
+    if (!url) return `${this.shareTitle} — Padel Magazine`;
+    return `${this.shareTitle} — Padel Magazine\n${url}`;
+  }
+
+  /** Facebook ignore le param `quote` depuis des années — on copie le texte avant d'ouvrir. */
+  protected shareOnFacebook(): void {
+    const url = this.sharePageUrl;
+    if (!url) return;
+
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    const open = () => window.open(facebookUrl, '_blank', 'noopener,noreferrer');
+
+    this.copyForShare(
+      this.shareClipboardBody,
+      'Texte copié ! Collez-le dans votre publication Facebook.',
+      open,
+    );
+  }
+
+  /** Même logique que Facebook : texte dans le presse-papiers, puis fenêtre X avec l’URL. */
+  protected shareOnX(): void {
+    const url = this.sharePageUrl;
+    if (!url) return;
+
+    const xUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`;
+    const open = () => window.open(xUrl, '_blank', 'noopener,noreferrer');
+
+    this.copyForShare(
+      this.shareClipboardBody,
+      'Texte copié ! Collez-le dans votre post sur X si besoin.',
+      open,
+    );
+  }
+
+  /** Même logique : texte copié, puis partage LinkedIn (URL). */
+  protected shareOnLinkedIn(): void {
+    const url = this.sharePageUrl;
+    if (!url) return;
+
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+    const open = () => window.open(linkedInUrl, '_blank', 'noopener,noreferrer');
+
+    this.copyForShare(
+      this.shareClipboardBody,
+      'Texte copié ! Collez-le dans votre publication LinkedIn si besoin.',
+      open,
+    );
+  }
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -129,6 +195,45 @@ export class ArticleComponent implements OnInit {
         // no-op: ignore analytics failures
       },
     });
+  }
+
+  /** Instagram : Web Share sur mobile, sinon même flux que Facebook (copy + notice). */
+  protected shareOnInstagram(): void {
+    const url = this.sharePageUrl;
+    const text = this.shareClipboardBody;
+    if (!url) return;
+
+    const notice =
+      'Texte copié ! Collez-le dans Instagram (story, publication ou message).';
+
+    const nav = navigator as Navigator & { share?: (data: ShareData) => Promise<void> };
+    if (typeof nav.share === 'function') {
+      nav
+        .share({ title: this.shareTitle, text, url })
+        .catch(() => this.copyForShare(text, notice));
+    } else {
+      this.copyForShare(text, notice);
+    }
+  }
+
+  private copyForShare(text: string, notice: string, afterCopy?: () => void): void {
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(
+        () => {
+          this.setShareNotice(notice);
+          afterCopy?.();
+        },
+        () => window.prompt('Copiez ce texte :', text),
+      );
+    } else {
+      window.prompt('Copiez ce texte :', text);
+    }
+  }
+
+  private setShareNotice(msg: string): void {
+    this.shareNotice = msg;
+    clearTimeout(this.shareNoticeTimer);
+    this.shareNoticeTimer = setTimeout(() => (this.shareNotice = ''), 5000);
   }
 
   private getArticleCategories(article?: ArticleModel): ArticleCategoryModel[] {
