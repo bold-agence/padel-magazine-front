@@ -1,5 +1,5 @@
 .footer {
-  background: var(--charcoal);
+  background: #233d4c;
   color: #d4d4ce;
   border-top: 4px solid var(--green);
   padding: 48px 0 16px;
@@ -52,9 +52,8 @@
 }
 
 .footer .foot-logo img {
-  height: 40px;
+  height: 120px;
   margin-bottom: 14px;
-  filter: brightness(1.2);
 }
 
 .footer .tagline {
