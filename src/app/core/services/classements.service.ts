@@ -15,6 +15,9 @@ export type ClassementSummaryDto = {
   title: string;
   pointsNowLabel: string | null;
   pointsPrevLabel: string | null;
+  podiumFirstImageUrl: string | null;
+  podiumSecondImageUrl: string | null;
+  podiumThirdImageUrl: string | null;
   lineCount: number;
   updatedAt: string;
 };
@@ -38,6 +41,9 @@ export type ClassementDetailDto = {
   title: string;
   pointsNowLabel: string | null;
   pointsPrevLabel: string | null;
+  podiumFirstImageUrl: string | null;
+  podiumSecondImageUrl: string | null;
+  podiumThirdImageUrl: string | null;
   lines: ClassementLineDto[];
 };
 

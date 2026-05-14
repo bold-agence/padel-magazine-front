@@ -16,6 +16,7 @@ type PodiumEntry = {
   phClass: string;
   name: string;
   points: string;
+  imageUrl?: string | null;
 };
 
 export type RankingRow = {
@@ -174,7 +175,7 @@ export class ClassementsComponent implements OnInit {
 
   protected get currentPodium(): PodiumEntry[] {
     const d = this.currentDetail;
-    return d?.lines?.length ? this.buildPodium(d.lines) : [];
+    return d?.lines?.length ? this.buildPodium(d) : [];
   }
 
   protected get currentRanking(): RankingRow[] {
@@ -242,15 +243,22 @@ export class ClassementsComponent implements OnInit {
     }));
   }
 
-  private buildPodium(lines: ClassementLineDto[]): PodiumEntry[] {
+  private buildPodium(detail: ClassementDetailDto): PodiumEntry[] {
+    const lines = detail.lines;
     const sorted = [...lines].sort((a, b) => a.sortOrder - b.sortOrder);
     const medals: PodiumEntry['medalClass'][] = ['gold', 'silver', 'bronze'];
+    const urls = [
+      detail.podiumFirstImageUrl ?? null,
+      detail.podiumSecondImageUrl ?? null,
+      detail.podiumThirdImageUrl ?? null,
+    ];
     return sorted.slice(0, 3).map((line, i) => ({
       rank: line.rank,
       medalClass: medals[i] ?? 'bronze',
       phClass: PODIUM_PH[i % PODIUM_PH.length],
       name: line.playerName?.trim() || '—',
       points: this.formatPoints(line.pointsNow),
+      imageUrl: urls[i] ?? null,
     }));
   }
 
