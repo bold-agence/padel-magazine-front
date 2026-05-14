@@ -3,7 +3,7 @@
 }
 
 .topbar {
-  background: var(--charcoal);
+  background: #233d4c;
   color: #fff;
   font-size: 12px;
   height: 36px;
@@ -324,7 +324,7 @@
 }
 
 .ticker {
-  background: var(--red);
+  background: var(--charcoal);
   color: #fff;
   display: flex;
   align-items: stretch;
@@ -333,7 +333,7 @@
 }
 
 .ticker-label {
-  background: rgba(0, 0, 0, 0.15);
+  background: #ff5500c5;
   padding: 0 16px;
   display: flex;
   align-items: center;
@@ -361,6 +361,7 @@
   position: relative;
   display: flex;
   align-items: center;
+  background: #ff5500;
 }
 
 .ticker-move {
@@ -370,6 +371,11 @@
   animation: tickerScroll 60s linear infinite;
   padding-left: 20px;
   font-size: 14px;
+}
+
+.ticker-move span {
+  color: #fff;
+  opacity: 0.88;
 }
 
 .ticker-move span::before {

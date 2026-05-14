@@ -16,14 +16,15 @@
       <a routerLink="/coaching">Coaching</a>
       <a routerLink="/portraits">Portraits</a>
       <a routerLink="/international">International</a>
-      <a routerLink="/live">Live</a>
-      <a routerLink="/videos">Vidéos</a>
+
     </div>
     <div>
       <h4>Informations</h4>
       <a routerLink="/apropos">À propos</a>
       <a routerLink="/apropos" fragment="contact">Contact</a>
       <a routerLink="/apropos" fragment="pub">Publicité</a>
+            <a routerLink="/live">Live</a>
+      <a routerLink="/videos">Vidéos</a>
       <a href="#">Mentions légales</a>
       <a href="#">CGU</a>
     </div>
@@ -37,6 +38,7 @@
     </div>
   </div>
   <div class="sub-foot">
+    <span>Created by <a href="https://bold-agence.com" target="_blank" rel="noopener noreferrer">Bold</a></span>
     <span>© 2026 Padel Magazine Sénégal — Tous droits réservés.</span>
     <form class="mini-news" (submit)="miniNewsSubmit($event)">
       <input type="email" placeholder="votre@email.com" required />

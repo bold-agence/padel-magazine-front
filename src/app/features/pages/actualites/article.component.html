@@ -32,12 +32,36 @@
               </div>
             </div>
             <div class="share">
-              <a href="#" title="Facebook" (click)="$event.preventDefault()">f</a>
-              <a href="#" title="X / Twitter" (click)="$event.preventDefault()">X</a>
-              <a href="#" title="WhatsApp" (click)="$event.preventDefault()">W</a>
-              <a href="#" title="LinkedIn" (click)="$event.preventDefault()">in</a>
-              <a href="#" title="Copier" (click)="$event.preventDefault()">C</a>
+              <button
+                type="button"
+                title="Partager sur Facebook"
+                aria-label="Partager sur Facebook"
+                (click)="shareOnFacebook()"
+              >f</button>
+              <button
+                type="button"
+                title="Partager sur X"
+                aria-label="Partager sur X"
+                (click)="shareOnX()"
+              >X</button>
+              <button
+                type="button"
+                title="Partager sur LinkedIn"
+                aria-label="Partager sur LinkedIn"
+                (click)="shareOnLinkedIn()"
+              >in</button>
+              <button
+                type="button"
+                title="Partager sur Instagram"
+                aria-label="Partager sur Instagram"
+                (click)="shareOnInstagram()"
+              >
+                ◉
+              </button>
             </div>
+            @if (shareNotice) {
+              <p class="share-notice">{{ shareNotice }}</p>
+            }
           </div>
         </header>
 
