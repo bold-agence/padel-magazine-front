@@ -51,7 +51,7 @@ export const PAGES_ROUTES: Routes = [
         data: {
           title: 'Classements — Padel Magazine',
           description:
-            'Rankings officiels : Fédération Sénégalaise de Padel, WPT Mondial et APP Tour, mis à jour après chaque tournoi.',
+            'Rankings officiels : Fédération Sénégalaise de Padel, mis à jour après chaque tournoi.',
         },
         loadComponent: () =>
           import('./classements/classements.component').then((m) => m.ClassementsComponent),
