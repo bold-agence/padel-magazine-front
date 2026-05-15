@@ -1,0 +1,67 @@
+/* Bandeau d’en-tête des pages internes — référence : Actualités */
+.page-intro {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2a 100%);
+  color: #fff;
+  padding: 40px 0 36px;
+  border-bottom: 4px solid var(--orange-padel);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  /* Hauteur uniforme : référence Actualités (titre 1 ligne + chapô 2 lignes) */
+  min-height: 228px;
+}
+
+.page-intro::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(29, 158, 117, 0.08) 0 1px, transparent 1px 80px),
+    repeating-linear-gradient(0deg, rgba(29, 158, 117, 0.08) 0 1px, transparent 1px 80px);
+  pointer-events: none;
+}
+
+.page-intro .container {
+  position: relative;
+}
+
+.page-intro .crumb {
+  font-family: var(--f-cond);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 10px;
+}
+
+.page-intro .crumb a:hover {
+  color: var(--orange-padel);
+}
+
+.page-intro h1 {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 48px;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.page-intro p.lead {
+  max-width: 660px;
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 16px;
+  line-height: 1.6;
+  /* Réserve 2 lignes même si le texte tient sur une seule (ex. À propos) */
+  min-height: calc(1.6em * 2);
+}
+
+@media (max-width: 768px) {
+  .page-intro {
+    min-height: 200px;
+  }
+
+  .page-intro h1 {
+    font-size: 32px;
+  }
+}

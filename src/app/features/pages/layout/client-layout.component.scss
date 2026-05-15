@@ -20,6 +20,10 @@
   --f-display: 'Oswald', 'Bebas Neue', Impact, sans-serif;
   --f-body: 'Inter', -apple-system, 'Segoe UI', sans-serif;
   --f-cond: 'Barlow Condensed', 'Inter', sans-serif;
+  --orange-padel: #ff5501;
+  --orange-padel-dark: #e64a00;
+  --orange-padel-tint: #ff55011a;
+
 }
 
 * {
@@ -231,24 +235,24 @@ button {
 }
 
 .btn-primary {
-  background: var(--green);
+  background: var(--orange-padel);
   color: #fff;
 }
 
 .btn-primary:hover {
-  background: var(--green-dark);
+  background: var(--orange-padel-dark);
   color: #fff;
 }
 
 .btn-outline {
-  border: 1.5px solid var(--green);
-  color: var(--green);
+  border: 1.5px solid var(--orange-padel);
+  color: var(--orange-padel);
   background: #fff;
 }
 
 .btn-outline:hover {
-  background: var(--green-tint);
-  color: var(--green-dark);
+  background: var(--orange-padel-tint);
+  color: var(--orange-padel-dark);
 }
 
 .btn-danger {

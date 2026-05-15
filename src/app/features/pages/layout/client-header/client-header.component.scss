@@ -30,7 +30,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--green);
+  background: var(--orange-padel);
   display: inline-block;
 }
 
@@ -65,7 +65,7 @@
 }
 
 .socials a:hover {
-  background: var(--green);
+  background: var(--orange-padel);
   color: #fff;
 }
 
@@ -81,7 +81,7 @@
 
 .lang-switch .active {
   opacity: 1;
-  color: var(--green);
+  color: var(--orange-padel);
 }
 
 .header {
@@ -108,7 +108,7 @@
 }
 
 .logo img {
-  height: 80px;
+  height: 120px;
   width: auto;
 }
 
@@ -219,8 +219,8 @@
 
 .nav-links a:hover,
 .nav-links a.active {
-  color: var(--green);
-  border-bottom-color: var(--green);
+  color: var(--orange-padel);
+  border-bottom-color: var(--orange-padel);
 }
 
 .nav-secondary {
@@ -242,7 +242,7 @@
 .nav-secondary a:hover,
 .services-trigger:hover,
 .services-menu:focus-within .services-trigger {
-  color: var(--green);
+  color: var(--orange-padel);
 }
 
 .services-menu {
@@ -308,7 +308,7 @@
 
 .services-dropdown a:hover {
   background: var(--paper);
-  color: var(--green);
+  color: var(--orange-padel);
 }
 
 .nav-live-dot {

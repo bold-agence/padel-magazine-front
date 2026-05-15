@@ -1,21 +1,5 @@
 :host { display: block; }
 
-.page-intro {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2a 100%);
-  color: #fff; padding: 40px 0 36px; border-bottom: 4px solid var(--green); position: relative; overflow: hidden;
-}
-.page-intro::before {
-  content: ''; position: absolute; inset: 0;
-  background:
-    repeating-linear-gradient(90deg, rgba(29, 158, 117, 0.08) 0 1px, transparent 1px 80px),
-    repeating-linear-gradient(0deg, rgba(29, 158, 117, 0.08) 0 1px, transparent 1px 80px);
-  pointer-events: none;
-}
-.page-intro .container { position: relative; }
-.page-intro .crumb { font-family: var(--f-cond); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.6); margin-bottom: 10px; }
-.page-intro h1 { font-family: var(--f-display); font-weight: 700; font-size: 48px; margin: 0; letter-spacing: .02em; }
-.page-intro p.lead { max-width: 660px; margin: 10px 0 0; color: rgba(255,255,255,.75); font-size: 16px; line-height: 1.6; }
-
 .state-msg { padding: 24px 0; color: var(--gray); }
 
 .chips { display:flex; flex-wrap:wrap; gap:8px; margin:20px 0 28px; }
@@ -47,4 +31,4 @@
 .modal-close { position:absolute; top:-36px; right:0; color:#fff; font-size:24px; cursor:pointer; background:none; border:0; }
 
 @media (max-width: 1024px) { .card-grid-3 { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 768px) { .card-grid-3 { grid-template-columns: 1fr; } .page-intro h1 { font-size:32px; } }
+@media (max-width: 768px) { .card-grid-3 { grid-template-columns: 1fr; } }

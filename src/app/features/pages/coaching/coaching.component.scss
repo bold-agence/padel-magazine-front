@@ -2,63 +2,6 @@
   display: block;
 }
 
-.page-intro {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2a 100%);
-  color: #fff;
-  padding: 40px 0 36px;
-  border-bottom: 4px solid var(--green);
-  position: relative;
-  overflow: hidden;
-}
-
-.coaching-intro {
-  background: linear-gradient(135deg, #378add 0%, #1e4c85 100%);
-  border-bottom-color: var(--blue);
-}
-
-.page-intro::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    repeating-linear-gradient(90deg, rgba(29, 158, 117, 0.08) 0 1px, transparent 1px 80px),
-    repeating-linear-gradient(0deg, rgba(29, 158, 117, 0.08) 0 1px, transparent 1px 80px);
-  pointer-events: none;
-}
-
-.page-intro .container {
-  position: relative;
-}
-
-.page-intro .crumb {
-  font-family: var(--f-cond);
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 10px;
-}
-
-.page-intro .crumb a:hover {
-  color: var(--green);
-}
-
-.page-intro h1 {
-  font-family: var(--f-display);
-  font-weight: 700;
-  font-size: 48px;
-  margin: 0;
-  letter-spacing: 0.02em;
-}
-
-.page-intro p.lead {
-  max-width: 660px;
-  margin: 10px 0 0;
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 16px;
-  line-height: 1.6;
-}
-
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -302,7 +245,4 @@
     grid-template-columns: 1fr;
   }
 
-  .page-intro h1 {
-    font-size: 32px;
-  }
 }
