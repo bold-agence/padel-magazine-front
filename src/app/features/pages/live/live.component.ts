@@ -30,6 +30,9 @@ import {
   styleUrl: './live.component.scss',
 })
 export class LiveComponent implements OnInit, OnDestroy {
+  protected readonly liveLogoUrl =
+    '/images/' + encodeURIComponent('FAVIKON LIVE.png');
+
   private readonly livesService = inject(LivesService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly ngZone = inject(NgZone);

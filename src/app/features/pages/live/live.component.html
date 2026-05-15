@@ -53,7 +53,9 @@
               }
             } @else {
               <div class="inner">
-                <div class="logo-mark"><span>PM</span></div>
+                <div class="logo-mark">
+                  <img [src]="liveLogoUrl" alt="Padel Magazine Live" class="logo-mark-img" />
+                </div>
                 <div class="next-label">Prochain live</div>
                 @if (loading()) {
                   <h2>Chargement…</h2>
@@ -124,7 +126,7 @@
       </div>
 
       <aside class="live-side">
-        <div class="widget red">
+        <div class="widget orange">
           <div class="widget-head"><h3>À propos du live</h3></div>
           @if (loading()) {
             <p class="about-text">Chargement…</p>
@@ -143,7 +145,7 @@
           }
         </div>
 
-        <div class="widget">
+        <div class="widget slate">
           <div class="widget-head"><h3>Chaîne YouTube</h3></div>
           <p class="yt-text">Abonnez-vous pour être notifié à chaque diffusion.</p>
           <a [href]="youtubeSubscribeHref()" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-block"
@@ -151,7 +153,7 @@
           >
         </div>
 
-        <div class="widget">
+        <div class="widget slate">
           <div class="widget-head"><h3>Replays disponibles</h3></div>
           @if (loading()) {
             <p class="live-inline-hint">Chargement…</p>

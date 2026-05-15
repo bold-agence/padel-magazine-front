@@ -22,15 +22,22 @@
       </p>
       <p><b>Basé à Dakar. Écrit en français. Diffusé partout.</b></p>
     </div>
-    <div class="img"><div class="ph court" data-label="Équipe · 600×450"></div></div>
+    <div class="img">
+      <img [src]="heroImageUrl" alt="Le padel sénégalais mérite son magazine" class="about-hero-img" />
+    </div>
   </section>
 
   <div class="sec-head"><h2>L'équipe éditoriale</h2></div>
   <div class="team-grid">
-    <div class="team-card"><div class="photo"><div class="ph court" data-label="Photo"></div></div><h4>Mamadou Diop</h4><div class="role">Rédacteur en chef</div></div>
-    <div class="team-card"><div class="photo"><div class="ph charcoal" data-label="Photo"></div></div><h4>Fatou Ba</h4><div class="role">Journaliste · Portraits</div></div>
-    <div class="team-card"><div class="photo"><div class="ph violet" data-label="Photo"></div></div><h4>Ibrahima Ndiaye</h4><div class="role">Journaliste · International</div></div>
-    <div class="team-card"><div class="photo"><div class="ph blue" data-label="Photo"></div></div><h4>Carlos Vega</h4><div class="role">Coach · Technique</div></div>
+    @for (member of team; track member.name) {
+      <div class="team-card">
+        <div class="photo">
+          <img [src]="teamImageUrl(member.imageFile)" [alt]="member.name" class="team-photo-img" />
+        </div>
+        <h4>{{ member.name }}</h4>
+        <div class="role">{{ member.role }}</div>
+      </div>
+    }
   </div>
 
   <div class="sec-head orange section-gap" id="pub"><h2>Publicité · Tarifs</h2></div>
@@ -69,15 +76,21 @@
       <button type="submit" class="btn btn-primary send-btn">Envoyer</button>
     </form>
     <div>
-      <div class="map-placeholder">
-        <div class="map-pin"></div>
-        <div class="map-caption">📍 TGS Arena · Almadies, Dakar</div>
+      <div class="map-embed">
+        <iframe
+          [src]="safeMapEmbedUrl"
+          [title]="'Padel Magazine — ' + contactAddress"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        ></iframe>
+        
       </div>
       <div class="contact-meta">
         <b>Rédaction</b> · <a href="mailto:info@padelmagazine.sn">info@padelmagazine.sn</a
         ><br />
         <b>Publicité</b> · <a href="mailto:pub@padelmagazine.sn">pub@padelmagazine.sn</a><br />
-        <b>Adresse</b> · TGS Arena, Almadies, Dakar, Sénégal<br />
+        <b>Adresse</b> · {{ contactAddress }}<br />
         <b>Téléphone</b> · +221 33 XXX XX XX
       </div>
     </div>

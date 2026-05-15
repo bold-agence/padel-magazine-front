@@ -27,7 +27,7 @@ function resolveAccentHex(accent: string): string {
   }
   const map: Record<string, string> = {
     'var(--red)': '#e24b4a',
-    'var(--orange)': '#ef9f27',
+    'var(--orange)': '#ff5502',
     'var(--blue)': '#378add',
     'var(--violet)': '#7f77dd',
     'var(--coral)': '#d85a30',
