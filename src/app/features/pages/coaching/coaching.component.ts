@@ -36,7 +36,6 @@ export class CoachingComponent implements OnInit {
   protected activeTag = 'all';
   protected cards: CoachingCard[] = [];
   protected filteredCards: CoachingCard[] = [];
-  protected featuredCard?: CoachingCard;
   protected tagChips: TagChip[] = [{ id: 'all', label: 'Tout', value: 'all' }];
   protected currentPage = 1;
   protected totalPages = 1;
@@ -123,8 +122,7 @@ export class CoachingComponent implements OnInit {
       this.activeTag === 'all'
         ? this.cards
         : this.cards.filter((card) => card.tags.includes(this.activeTag));
-    this.featuredCard = source[0];
-    this.filteredCards = source.slice(1);
+    this.filteredCards = source;
   }
 
   private buildTagChips(cards: CoachingCard[]): TagChip[] {

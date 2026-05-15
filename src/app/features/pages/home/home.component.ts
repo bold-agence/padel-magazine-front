@@ -336,6 +336,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return resolvePublicMediaUrl(live.coverImageUrl ?? live.event.coverImageUrl);
   }
 
+  /** Titre affiché : nom de l’événement + tournoi à côté si renseigné. */
+  protected homeLiveEventTitleLine(live: LiveDto): string {
+    const eventTitle = live.event.title?.trim() || 'Événement';
+    const tournament = live.event.tournament?.label?.trim();
+    if (!tournament) return eventTitle;
+    return `${eventTitle} · ${tournament}`;
+  }
+
   protected formatHomeLiveEventDate(live: LiveDto): string {
     return new Intl.DateTimeFormat('fr-FR', {
       weekday: 'long',

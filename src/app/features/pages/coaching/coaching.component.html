@@ -28,28 +28,9 @@
         <p>{{ errorMessage }}</p>
       } @else if (isLoading) {
         <p>Chargement des articles coaching...</p>
-      } @else if (!featuredCard) {
+      } @else if (!filteredCards.length) {
         <p>Aucun article coaching disponible.</p>
       } @else {
-        <article class="card blue featured-card">
-          <div class="card-img featured-image">
-            <span class="badge coaching">Coaching · Featured</span>
-            @if (featuredCard.bannerImage) {
-              <img [src]="featuredCard.bannerImage" alt="image article coaching" class="cover-image" />
-            } @else {
-              <div class="ph blue" data-label="900×450"></div>
-            }
-          </div>
-          <div class="card-body featured-body">
-            <h3 class="card-title featured-title">
-              <a [href]="'/actualites/' + featuredCard.slug">{{ featuredCard.title }}</a>
-            </h3>
-            <div class="card-meta">
-              <span>{{ featuredCard.author }}</span><span class="dot"></span><span>{{ featuredCard.date }}</span><span class="dot"></span><span>{{ featuredCard.read }}</span>
-            </div>
-          </div>
-        </article>
-
         <div class="card-grid-3">
           @for (card of filteredCards; track card.slug) {
             <article class="card blue">
