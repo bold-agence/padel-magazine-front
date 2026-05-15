@@ -42,7 +42,7 @@ function mapPadelToFullCalendar(events: PadelCalendarEvent[]): EventInput[] {
     const endIso = fcTimedEndForCalendar(ev.debut, ev.fin);
     return {
       id: ev.id,
-      title: ev.title,
+      title: ev.calendarLabel,
       start: ev.debut,
       end: endIso,
       allDay: false,
@@ -95,7 +95,11 @@ export class CalendrierComponent implements OnInit, AfterViewInit {
     const startOfToday = this.stripTime(new Date());
     const t0 = startOfToday.getTime();
     return [...list]
-      .filter((ev) => this.eventDebut(ev).getTime() >= t0)
+      .filter((ev) => {
+        const startsTodayOrLater = this.eventDebut(ev).getTime() >= t0;
+        const spansToday = this.isDateInEvent(startOfToday, ev);
+        return startsTodayOrLater || spansToday;
+      })
       .sort((a, b) => this.eventDebut(a).getTime() - this.eventDebut(b).getTime())
       .slice(0, 3);
   });

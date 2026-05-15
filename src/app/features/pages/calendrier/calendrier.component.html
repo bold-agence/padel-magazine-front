@@ -22,21 +22,24 @@
       <section class="upcoming-events" aria-labelledby="upcoming-heading">
         <div class="upcoming-events-head">
           <h2 id="upcoming-heading">Prochains événements</h2>
-          <p class="upcoming-events-sub">Les trois prochaines dates à retenir (à partir d’aujourd’hui).</p>
+          <p class="upcoming-events-sub">
+            Les trois prochaines dates à retenir (à partir d’aujourd’hui, y compris les événements en
+            cours sur plusieurs jours).
+          </p>
         </div>
         @if (eventsLoading()) {
           <p class="upcoming-events-empty">Chargement des événements…</p>
         } @else if (eventsLoadError()) {
           <p class="upcoming-events-empty">Impossible de charger les événements. Réessayez plus tard.</p>
         } @else if (nextThreeEvents().length === 0) {
-          <p class="upcoming-events-empty">Aucun événement à venir pour le moment.</p>
+          <p class="upcoming-events-empty">Aucun événement à venir ni en cours pour le moment.</p>
         } @else {
           <div class="upcoming-grid">
             @for (ev of nextThreeEvents(); track ev.id) {
               <button type="button" class="upcoming-card" (click)="openModalFromUpcoming(ev)">
                 @if (ev.coverImageUrl) {
                   <div class="upcoming-card-cover">
-                    <img [src]="ev.coverImageUrl" [alt]="ev.title" width="640" height="360" loading="lazy" />
+                    <img [src]="ev.coverImageUrl" [alt]="ev.calendarLabel" width="640" height="360" loading="lazy" />
                   </div>
                 } @else {
                   <div class="upcoming-card-cover upcoming-card-cover--placeholder" aria-hidden="true"></div>
@@ -44,7 +47,7 @@
                 <div class="upcoming-card-body">
                   <span class="upcoming-card-tier" [style.--tier-color]="ev.accent">{{ ev.tier }}</span>
                   <span class="upcoming-card-date">{{ formatEventStartShort(ev) }}</span>
-                  <span class="upcoming-card-title">{{ ev.title }}</span>
+                  <span class="upcoming-card-title">{{ ev.calendarLabel }}</span>
                   <span class="upcoming-card-venue">{{ ev.venue }}</span>
                 </div>
               </button>
@@ -56,7 +59,7 @@
       <div class="calendar-wrap">
         <header class="calendar-panel-head">
           <div class="calendar-panel-head-text">
-            <span class="calendar-panel-title">Vue mensuelle</span>
+            <span class="calendar-panel-title">Calendrier des événements</span>
             <span class="calendar-panel-hint"
               >Pastilles personnalisées par niveau — cliquez sur un jour ou sur une pastille pour le
               détail.</span
@@ -152,7 +155,7 @@
                 <div class="cal-modal-item-cover">
                   <img
                     [src]="ev.coverImageUrl"
-                    [alt]="'Couverture : ' + ev.title"
+                    [alt]="'Couverture : ' + ev.calendarLabel"
                     width="800"
                     height="420"
                     loading="lazy"

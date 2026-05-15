@@ -216,18 +216,38 @@
         </div>
       }
 
-      <div class="sec-head coral section-spacing"><h2>Calendrier WPT à venir</h2></div>
-      <table class="data-table">
-        <thead>
-          <tr><th>Date</th><th>Tournoi</th><th>Lieu</th><th>Catégorie</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>25-30 Avr</td><td>WPT Miami Premier</td><td>Miami 🇺🇸</td><td>P1</td></tr>
-          <tr><td>9-14 Mai</td><td>WPT Madrid Master</td><td>Madrid 🇪🇸</td><td>Master</td></tr>
-          <tr><td>30 Mai-5 Juin</td><td>WPT Rome Open</td><td>Rome 🇮🇹</td><td>P1</td></tr>
-          <tr><td>7-8 Juin</td><td><b>WPT Africa Series Dakar</b></td><td>Dakar 🇸🇳</td><td>Exhibition</td></tr>
-        </tbody>
-      </table>
+      <div class="sec-head coral section-spacing">
+        <h2>Calendrier Premier Padel</h2>
+        <a routerLink="/calendrier" class="see-all">Calendrier complet →</a>
+      </div>
+      @if (isLoadingPremierCalendar) {
+        <p class="results-state">Chargement du calendrier Premier Padel…</p>
+      } @else if (premierPadelCalendarError) {
+        <p class="results-state">{{ premierPadelCalendarError }}</p>
+      } @else if (!premierPadelEvents.length) {
+        <p class="results-state">Aucun événement Premier Padel à venir pour le moment.</p>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Tournoi</th>
+              <th>Lieu</th>
+              <th>Catégorie</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ev of premierPadelEvents; track ev.id) {
+              <tr>
+                <td>{{ formatPremierPadelDateRange(ev) }}</td>
+                <td>{{ formatPremierPadelTournamentCell(ev) }}</td>
+                <td>{{ ev.venue }}</td>
+                <td>{{ ev.tournamentCategoryLabel || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
     </div>
 
     <app-sidebar />

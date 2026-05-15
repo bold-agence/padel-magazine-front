@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import type { PadelCalendarEvent } from '../models/padel-calendar-event.model';
@@ -18,6 +18,13 @@ export type TournamentDto = {
   description?: string | null;
 };
 
+export type TournamentCategoryDto = {
+  id: string;
+  label: string;
+  slug: string;
+  description?: string | null;
+};
+
 export type EventDto = {
   id: string;
   title: string;
@@ -28,6 +35,7 @@ export type EventDto = {
   descriptionHtml?: string | null;
   coverImageUrl?: string | null;
   tournament?: TournamentDto | null;
+  tournamentCategory?: TournamentCategoryDto | null;
 };
 
 export function resolvePublicMediaUrl(url?: string | null): string | undefined {
@@ -42,13 +50,25 @@ export function resolvePublicMediaUrl(url?: string | null): string | undefined {
 /** Mappe une ligne `GET /events` vers le modèle utilisé par FullCalendar et le modal. */
 export function mapEventDtoToPadel(dto: EventDto): PadelCalendarEvent {
   const tournamentLabel = dto.tournament?.label?.trim();
+  const categoryLabel = dto.tournamentCategory?.label?.trim();
   const tier = tournamentLabel || 'Événement';
   const accent = dto.tournament?.colorCode?.trim() || '#1d9e75';
-  const match = tournamentLabel ? `${tournamentLabel} — ${dto.title}` : dto.title;
+
+  const title = dto.title.trim();
+  const calendarLabel = categoryLabel ? `${title} | ${categoryLabel}` : title;
+
+  const match = categoryLabel
+    ? calendarLabel
+    : tournamentLabel
+      ? `${tournamentLabel} — ${title}`
+      : title;
 
   return {
     id: dto.id,
-    title: dto.title,
+    title,
+    calendarLabel,
+    tournamentCategoryLabel: categoryLabel || null,
+    tournamentLabel: tournamentLabel || null,
     venue: dto.venue,
     tier,
     accent,
@@ -68,12 +88,17 @@ export class EventsService {
 
   constructor(private readonly http: HttpClient) {}
 
-  findAll(tournamentId?: string): Observable<EventDto[]> {
-    const params = tournamentId?.trim()
-      ? { tournamentId: tournamentId.trim() }
-      : undefined;
+  findAll(options?: { tournamentId?: string; tournamentSlug?: string }): Observable<EventDto[]> {
+    let params = new HttpParams();
+    if (options?.tournamentId?.trim()) {
+      params = params.set('tournamentId', options.tournamentId.trim());
+    }
+    if (options?.tournamentSlug?.trim()) {
+      params = params.set('tournamentSlug', options.tournamentSlug.trim());
+    }
+    const httpParams = params.keys().length > 0 ? params : undefined;
     return this.http
-      .get<ApiEnvelope<EventDto[]> | EventDto[]>(this.baseUrl, { params })
+      .get<ApiEnvelope<EventDto[]> | EventDto[]>(this.baseUrl, { params: httpParams })
       .pipe(map((r) => this.unwrap(r)));
   }
 

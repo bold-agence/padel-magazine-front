@@ -1,7 +1,14 @@
 /** Modèle calendrier front (alimenté par l’API `events` + mapping). */
 export type PadelCalendarEvent = {
   id: string;
+  /** Titre brut de l’événement (API). */
   title: string;
+  /** Libellé affiché (cartes « à venir », pastilles) : « Titre | catégorie tournoi » si catégorie. */
+  calendarLabel: string;
+  /** Libellé du tournoi (API), si l’événement est rattaché à un tournoi. */
+  tournamentLabel?: string | null;
+  /** Libellé de la catégorie de tournoi (si renseignée). */
+  tournamentCategoryLabel?: string | null;
   venue: string;
   tier: string;
   accent: string;

@@ -14,6 +14,8 @@ import {
   LatestResult,
   LatestResultsService,
 } from '../../../core/services/latest-results.service';
+import type { PadelCalendarEvent } from '../../../core/models/padel-calendar-event.model';
+import { EventsService, mapEventDtoToPadel } from '../../../core/services/events.service';
 import {
   NewsCardBadge,
   NewsCardComponent,
@@ -52,6 +54,9 @@ type InternationalArticleCard = {
 type InternationalResultRow = LatestResult & {
   periodLabel: string;
 };
+
+/** Slug du tournoi « Premier Padel » (API / BO) — filtre `GET /events?tournamentSlug=`. */
+const PREMIER_PADEL_TOURNAMENT_SLUG = 'premier-padel';
 
 const COUNTRY_ALPHA3_TO_ALPHA2: Record<string, string> = {
   AND: 'AD',
@@ -107,17 +112,23 @@ export class InternationalComponent implements OnInit {
   protected latestResults: InternationalResultRow[] = [];
   protected isLoadingLatestResults = true;
   protected latestResultsError = '';
+  /** 5 prochains événements Premier Padel (slug tournoi). */
+  protected premierPadelEvents: PadelCalendarEvent[] = [];
+  protected isLoadingPremierCalendar = true;
+  protected premierPadelCalendarError = '';
 
   constructor(
     private readonly articlesService: ArticlesService,
     private readonly fipRankingsService: FipRankingsService,
     private readonly latestResultsService: LatestResultsService,
+    private readonly eventsService: EventsService,
   ) {}
 
   ngOnInit(): void {
     this.loadRankings();
     this.loadLatestResults();
     this.loadArticles();
+    this.loadPremierPadelCalendar();
   }
 
   private loadRankings(): void {
@@ -160,6 +171,89 @@ export class InternationalComponent implements OnInit {
         this.isLoadingLatestResults = false;
       },
     });
+  }
+
+  private loadPremierPadelCalendar(): void {
+    this.isLoadingPremierCalendar = true;
+    this.premierPadelCalendarError = '';
+    this.eventsService.findAll({ tournamentSlug: PREMIER_PADEL_TOURNAMENT_SLUG }).subscribe({
+      next: (rows) => {
+        const mapped = rows.map((dto) => mapEventDtoToPadel(dto));
+        this.premierPadelEvents = this.pickNextFiveCalendarEvents(mapped);
+        this.isLoadingPremierCalendar = false;
+      },
+      error: () => {
+        this.premierPadelEvents = [];
+        this.premierPadelCalendarError =
+          'Le calendrier Premier Padel est momentanément indisponible.';
+        this.isLoadingPremierCalendar = false;
+      },
+    });
+  }
+
+  /** Même règle que la page Calendrier (à venir + événements multi-jours englobant aujourd’hui). */
+  private pickNextFiveCalendarEvents(events: PadelCalendarEvent[]): PadelCalendarEvent[] {
+    const startOfToday = this.stripTime(new Date());
+    const t0 = startOfToday.getTime();
+    return [...events]
+      .filter((ev) => {
+        const startsTodayOrLater = this.eventDebut(ev).getTime() >= t0;
+        const spansToday = this.isDateInEvent(startOfToday, ev);
+        return startsTodayOrLater || spansToday;
+      })
+      .sort((a, b) => this.eventDebut(a).getTime() - this.eventDebut(b).getTime())
+      .slice(0, 5);
+  }
+
+  protected formatPremierPadelDateRange(ev: PadelCalendarEvent): string {
+    const start = this.eventDebut(ev);
+    const fin = ev.fin?.trim();
+    const end = fin ? new Date(fin) : null;
+    const monthShort = (d: Date) => {
+      const m = new Intl.DateTimeFormat('fr-FR', { month: 'short' })
+        .format(d)
+        .replace('.', '');
+      return m.charAt(0).toUpperCase() + m.slice(1);
+    };
+    if (!end || Number.isNaN(end.getTime())) {
+      return `${start.getDate()} ${monthShort(start)}`;
+    }
+    const sd = this.stripTime(start);
+    const ed = this.stripTime(end);
+    if (sd.getTime() === ed.getTime()) {
+      return `${start.getDate()} ${monthShort(start)}`;
+    }
+    if (sd.getMonth() === ed.getMonth() && sd.getFullYear() === ed.getFullYear()) {
+      return `${start.getDate()}-${end.getDate()} ${monthShort(start)}`;
+    }
+    return `${start.getDate()} ${monthShort(start)} – ${end.getDate()} ${monthShort(end)}`;
+  }
+
+  /** Colonne Tournoi : nom du tournoi + nom de l’événement. */
+  protected formatPremierPadelTournamentCell(ev: PadelCalendarEvent): string {
+    const t = ev.tournamentLabel?.trim();
+    if (!t) return ev.title;
+    return `${t} · ${ev.title}`;
+  }
+
+  private stripTime(d: Date): Date {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+
+  private eventDebut(ev: PadelCalendarEvent): Date {
+    return new Date(ev.debut);
+  }
+
+  private isDateInEvent(day: Date, ev: PadelCalendarEvent): boolean {
+    const ds = this.stripTime(day).getTime();
+    const de = ds + 86400000;
+    const evStart = this.eventDebut(ev).getTime();
+    const fin = ev.fin?.trim();
+    if (!fin) {
+      return evStart >= ds && evStart < de;
+    }
+    const evEnd = new Date(fin).getTime();
+    return evStart < de && evEnd > ds;
   }
 
   private loadArticles(): void {
