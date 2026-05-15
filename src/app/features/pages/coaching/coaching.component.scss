@@ -45,7 +45,7 @@
 
 .card-grid-3 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
@@ -230,10 +230,6 @@
   .layout {
     grid-template-columns: 1fr 280px;
   }
-
-  .card-grid-3 {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 @media (max-width: 768px) {
@@ -242,7 +238,12 @@
   }
 
   .card-grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .card-grid-3 {
     grid-template-columns: 1fr;
   }
-
 }
