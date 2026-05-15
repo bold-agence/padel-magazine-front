@@ -94,14 +94,21 @@
 }
 
 .footer .mini-news button {
-  background: var(--green);
+  background: #ff5500;
   color: #fff;
   font-weight: 600;
   padding: 8px 16px;
+  border: none;
   border-radius: 3px;
   font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.footer .mini-news button:hover {
+  background: #e64a00;
 }
 
 .back-top {
@@ -111,18 +118,21 @@
   z-index: 60;
   width: 46px;
   height: 46px;
+  border: none;
   border-radius: 50%;
-  background: var(--green);
+  background: #ff5500;
   color: #fff;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 18px rgba(29, 158, 117, 0.3);
+  box-shadow: 0 6px 18px rgba(255, 85, 0, 0.35);
   opacity: 0;
   pointer-events: none;
   transition:
     opacity 0.2s,
-    transform 0.2s;
+    transform 0.2s,
+    background 0.2s;
   font-size: 18px;
 }
 
@@ -132,8 +142,13 @@
 }
 
 .back-top:hover {
-  background: var(--green-dark);
+  background: #e64a00;
   transform: translateY(-2px);
+}
+
+.back-top:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 .cookie {
