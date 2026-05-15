@@ -1,3 +1,9 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
 .widget {
   background: #fff;
   border: 1px solid var(--line);
@@ -114,21 +120,29 @@
   align-items: center;
 }
 
+/* Largeur = colonne sidebar (340px desktop, 280px tablette) — format MPU 250px de haut */
 .ad-slot {
   background: repeating-linear-gradient(45deg, #f0efe8 0 10px, #e7e5de 10px 20px);
   border: 1px solid var(--line);
-  width: 300px;
+  width: 100%;
   max-width: 100%;
   height: 250px;
-  margin: 0 auto 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: 0 0 20px;
+  overflow: hidden;
   color: var(--gray);
   font-family: ui-monospace, monospace;
   font-size: 12px;
   position: relative;
   border-radius: 4px;
+}
+
+.ad-slot > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
 }
 
 .ad-slot a {
@@ -139,8 +153,11 @@
 
 .ad-slot img {
   width: 100%;
+  max-width: none;
+  min-width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
   border-radius: 4px;
 }
@@ -157,8 +174,8 @@
 }
 
 .newsletter-card {
-  background: var(--green-tint);
-  border: 1px solid rgba(29, 158, 117, 0.2);
+  background: var(--orange-padel-tint);
+  border: 1px solid rgba(35, 62, 76, 0.2);
   border-radius: var(--radius);
   padding: 20px;
   margin-bottom: 20px;
@@ -172,14 +189,14 @@
 
 .newsletter-card .sub {
   font-size: 13px;
-  color: var(--gray);
+  color: rgb(57, 57, 57);
   margin: 0 0 14px;
 }
 
 .newsletter-card input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid rgba(29, 158, 117, 0.3);
+  border: 1px solid rgb(173, 173, 173);
   border-radius: 4px;
   margin-bottom: 8px;
   font-size: 14px;
@@ -188,7 +205,7 @@
 
 .newsletter-card .priv {
   font-size: 10px;
-  color: var(--gray);
+  color: rgb(57, 57, 57);
   margin: 8px 0 0;
   line-height: 1.4;
 }
