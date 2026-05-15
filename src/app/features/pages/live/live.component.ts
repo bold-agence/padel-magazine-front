@@ -141,6 +141,14 @@ export class LiveComponent implements OnInit, OnDestroy {
     return live.event.tournament?.label?.trim() || '—';
   }
 
+  /** Nom de l’événement + tournoi à côté si renseigné. */
+  protected liveEventTitleLine(live: LiveDto): string {
+    const eventTitle = live.event.title?.trim() || 'Événement';
+    const tournament = live.event.tournament?.label?.trim();
+    if (!tournament) return eventTitle;
+    return `${eventTitle} · ${tournament}`;
+  }
+
   protected coverUrl(live: LiveDto): string | undefined {
     return resolvePublicMediaUrl(live.coverImageUrl ?? live.event.coverImageUrl);
   }

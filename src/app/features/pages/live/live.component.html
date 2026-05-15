@@ -45,7 +45,7 @@
               } @else {
                 <div class="inner live-onair-fallback">
                   <div class="next-label">Direct en cours</div>
-                  <h2>{{ fl.event.title }}</h2>
+                  <h2>{{ liveEventTitleLine(fl) }}</h2>
                   <a [href]="fl.liveUrl" target="_blank" rel="noopener noreferrer" class="btn btn-danger"
                     >Ouvrir le live dans un nouvel onglet</a
                   >
@@ -61,7 +61,7 @@
                   <h2>Chargement…</h2>
                   <div class="dt">—</div>
                 } @else if (featuredLive(); as flHero) {
-                  <h2>{{ flHero.event.title }}</h2>
+                  <h2>{{ liveEventTitleLine(flHero) }}</h2>
                   <div class="dt">{{ formatFeaturedSubtitle(flHero) }}</div>
                 } @else {
                   <h2>Aucun live à venir</h2>
@@ -131,7 +131,7 @@
           @if (loading()) {
             <p class="about-text">Chargement…</p>
           } @else if (displayLive(); as fl) {
-            <p class="about-text">{{ fl.event.title }}</p>
+            <p class="about-text">{{ liveEventTitleLine(fl) }}</p>
             <div class="about-meta">
               📅 {{ formatAboutEventDate(fl) }}<br />
               ⏰ {{ formatAboutLiveTime(fl) }}<br />

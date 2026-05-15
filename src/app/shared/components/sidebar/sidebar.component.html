@@ -106,7 +106,7 @@
       >
         {{ sidebarNextLiveIsAiring ? 'En direct' : 'Prochain événement' }}
       </div>
-      <h3>{{ live.event.title }}</h3>
+      <h3>{{ sidebarEventTitleLine(live) }}</h3>
       <ul class="event-meta-list">
         <li>📅 {{ formatSidebarEventDates(live) }}</li>
         <li>📍 {{ live.event.venue }}</li>

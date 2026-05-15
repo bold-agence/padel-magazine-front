@@ -112,6 +112,14 @@ export class SidebarComponent implements OnInit, OnChanges {
     });
   }
 
+  /** Nom de l’événement + tournoi à côté si renseigné (aligné accueil / live). */
+  protected sidebarEventTitleLine(live: LiveDto): string {
+    const eventTitle = live.event.title?.trim() || 'Événement';
+    const tournament = live.event.tournament?.label?.trim();
+    if (!tournament) return eventTitle;
+    return `${eventTitle} · ${tournament}`;
+  }
+
   protected formatSidebarEventDates(live: LiveDto): string {
     const start = new Date(live.event.startAt);
     const endRaw = live.event.endAt;

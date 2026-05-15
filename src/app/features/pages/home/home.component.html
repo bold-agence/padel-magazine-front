@@ -212,7 +212,7 @@
                   }
                   <div class="home-live-ph-inner">
                     <div class="home-live-play-icon" aria-hidden="true">▶</div>
-                    <div class="home-live-hero-title">{{ hl.event.title }}</div>
+                    <div class="home-live-hero-title">{{ homeLiveEventTitleLine(hl) }}</div>
                     <div class="home-live-countdown">
                       <div class="home-live-countdown-cell">
                         <div class="home-live-countdown-num">{{ homeLiveTimeLeft.days }}</div>
@@ -236,7 +236,7 @@
               }
             </div>
             <div class="live-info home-live-below">
-              <h3 class="home-live-title">{{ hl.event.title }}</h3>
+              <h3 class="home-live-title">{{ homeLiveEventTitleLine(hl) }}</h3>
               <div class="event-meta home-live-meta-row">
                 <span class="home-live-meta-item"
                   ><span class="home-live-meta-ic" aria-hidden="true">📅</span
