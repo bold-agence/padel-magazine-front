@@ -9,6 +9,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: '',
         data: {
+          pageKey: 'home',
           title: 'Padel Magazine — Le padel au Sénégal et en Afrique francophone',
           description:
             "Le premier magazine en ligne dédié au padel au Sénégal et en Afrique francophone. Actualités, résultats, classements, coaching et live.",
@@ -19,6 +20,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: 'actualites',
         data: {
+          pageKey: 'actualites',
           title: 'Actualités — Padel Magazine',
           description:
             "Toute l'actualité du padel au Sénégal et en Afrique francophone : tournois, clubs, transferts et fédération.",
@@ -29,6 +31,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: 'actualites/:slug',
         data: {
+          pageKey: 'actualites',
           title: 'Article — Padel Magazine',
           description:
             "Consultez le détail d'un article Padel Magazine : analyses, résultats et actualités du padel.",
@@ -39,6 +42,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: 'resultats',
         data: {
+          pageKey: 'resultats',
           title: 'Résultats — Padel Magazine',
           description:
             'Scores complets des tournois sénégalais et internationaux : Open Dakar, circuits régionaux, WPT et APP Tour.',
@@ -49,6 +53,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: 'classements',
         data: {
+          pageKey: 'classements',
           title: 'Classements — Padel Magazine',
           description:
             'Rankings officiels : Fédération Sénégalaise de Padel, mis à jour après chaque tournoi.',
@@ -59,6 +64,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: 'calendrier',
         data: {
+          pageKey: 'calendrier',
           title: 'Calendrier — Padel Magazine',
           description:
             'Calendrier des tournois et événements padel au Sénégal et à l’international : dates, lieux et niveaux.',
@@ -69,6 +75,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: 'coaching',
         data: {
+          pageKey: 'coaching',
           title: 'Coaching & Technique — Padel Magazine',
           description:
             'Conseils, exercices et tactiques pour progresser au padel, par nos coachs et experts internationaux.',
@@ -79,6 +86,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: 'portraits',
         data: {
+          pageKey: 'portraits',
           title: 'Portraits — Padel Magazine',
           description:
             'Les figures du padel sénégalais et international : parcours, statistiques et coups signature.',
@@ -89,6 +97,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: 'international',
         data: {
+          pageKey: 'international',
           title: 'International — Padel Magazine',
           description:
             'Le padel pro vu du Sénégal : résultats, calendrier et analyses des circuits mondiaux WPT et APP Tour.',
@@ -99,6 +108,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: 'live',
         data: {
+          pageKey: 'live',
           title: 'Live Stream — Padel Magazine',
           description:
             'Tous les matchs diffusés en direct sur la chaîne YouTube Padel Magazine Sénégal, avec replays et programmation.',
@@ -108,6 +118,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: 'videos',
         data: {
+          pageKey: 'videos',
           title: 'Vidéos — Padel Magazine',
           description:
             'Replays de matchs, interviews, coaching vidéo et highlights : tout le contenu vidéo Padel Magazine.',
@@ -117,6 +128,7 @@ export const PAGES_ROUTES: Routes = [
       {
         path: 'apropos',
         data: {
+          pageKey: 'apropos',
           title: 'À propos & Contact — Padel Magazine',
           description:
             "Découvrez l'équipe éditoriale de Padel Magazine, nos offres publicitaires et les moyens de nous contacter.",

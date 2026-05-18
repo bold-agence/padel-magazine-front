@@ -2,6 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable, shareReplay } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import {
+  DEFAULT_PUBLIC_PAGE_KEY,
+  PublicPageKey,
+} from '../constants/public-page-keys';
+import { resolvePublicMediaUrl } from './events.service';
 
 export type AdSlot =
   | 'header_main'
@@ -21,9 +26,15 @@ export type AdImageItem = {
   id: string;
   title: string;
   slot: AdSlot;
+  pageKey: PublicPageKey;
   imageUrl: string;
   targetUrl?: string | null;
   isActive: boolean;
+};
+
+export type ResolvedSidebarAds = {
+  top: AdImageItem | null;
+  bottom: AdImageItem | null;
 };
 
 type ApiEnvelope<T> = {
@@ -56,6 +67,17 @@ export class ClientContentService {
     );
   }
 
+  resolveSidebarAds(pageKey: PublicPageKey): Observable<ResolvedSidebarAds> {
+    const key = `sidebar-ads:${pageKey}`;
+    return this.getCachedRequest(key, () =>
+      this.http
+        .get<ApiEnvelope<ResolvedSidebarAds> | ResolvedSidebarAds>(
+          `${this.apiUrl}/sidebar-ads?pageKey=${encodeURIComponent(pageKey)}`,
+        )
+        .pipe(map((response) => this.normalizeSidebarAds(this.unwrap(response)))),
+    );
+  }
+
   findAdImages(slot?: AdSlot, activeOnly = true): Observable<AdImageItem[]> {
     const params = new URLSearchParams();
     if (slot) {
@@ -68,8 +90,20 @@ export class ClientContentService {
         .get<ApiEnvelope<AdImageItem[]> | AdImageItem[]>(
           `${this.apiUrl}/ad-images?${params.toString()}`,
         )
-        .pipe(map((response) => this.unwrap(response))),
+        .pipe(
+          map((response) =>
+            this.unwrap(response).map((item) => this.normalizeAdImage(item)),
+          ),
+        ),
     );
+  }
+
+  pickAdForPage(items: AdImageItem[], pageKey: PublicPageKey): AdImageItem | undefined {
+    const match =
+      items.find((item) => item.pageKey === pageKey) ??
+      items.find((item) => item.pageKey === DEFAULT_PUBLIC_PAGE_KEY) ??
+      items[0];
+    return match ? this.normalizeAdImage(match) : undefined;
   }
 
   private getCachedRequest<T>(
@@ -99,5 +133,21 @@ export class ClientContentService {
       return (response as ApiEnvelope<T>).data;
     }
     return response as T;
+  }
+
+  private normalizeSidebarAds(payload: ResolvedSidebarAds | null | undefined): ResolvedSidebarAds {
+    return {
+      top: payload?.top ? this.normalizeAdImage(payload.top) : null,
+      bottom: payload?.bottom ? this.normalizeAdImage(payload.bottom) : null,
+    };
+  }
+
+  private normalizeAdImage(item: AdImageItem): AdImageItem {
+    const imageUrl = resolvePublicMediaUrl(item.imageUrl) ?? item.imageUrl;
+    return {
+      ...item,
+      pageKey: item.pageKey ?? DEFAULT_PUBLIC_PAGE_KEY,
+      imageUrl,
+    };
   }
 }

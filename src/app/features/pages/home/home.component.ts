@@ -502,7 +502,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadHomeAds(): void {
     this.clientContentService.findAdImages('home_leaderboard', true).subscribe({
       next: (items) => {
-        this.homeLeaderboardAd = items[0];
+        this.homeLeaderboardAd = this.clientContentService.pickAdForPage(items, 'home');
       },
       error: () => {
         this.homeLeaderboardAd = undefined;

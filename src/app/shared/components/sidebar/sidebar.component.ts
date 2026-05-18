@@ -4,7 +4,13 @@ import {
   ArticleCategoryModel,
   ArticleModel,
 } from '../../../core/models/article.model';
-import { RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { filter } from 'rxjs';
+import {
+  PublicPageKey,
+  isPublicPageKey,
+  resolvePageKeyFromUrl,
+} from '../../../core/constants/public-page-keys';
 import { ArticlesService } from '../../../core/services/articles.service';
 import {
   AdImageItem,
@@ -53,12 +59,14 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
   protected newsletterSuccessMessage = '';
 
   private newsletterSuccessSubscription?: Subscription;
+  private routerSubscription?: Subscription;
 
   constructor(
     private readonly articlesService: ArticlesService,
     private readonly clientContentService: ClientContentService,
     private readonly livesService: LivesService,
     private readonly newsletterSubscribeService: NewsletterSubscribeService,
+    private readonly router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -68,7 +76,13 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
       },
     );
     this.loadPopular();
-    this.loadAds();
+    this.loadAds(this.router.url);
+    this.routerSubscription = this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        const url = (event as NavigationEnd).urlAfterRedirects;
+        this.loadAds(url);
+      });
     this.loadSidebarNextLive();
   }
 
@@ -180,20 +194,15 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     return `${start} – ${this.formatSidebarLiveClock(end)}`;
   }
 
-  private loadAds(): void {
-    this.clientContentService.findAdImages('sidebar_top', true).subscribe({
-      next: (items) => {
-        this.topSidebarAd = items[0];
+  private loadAds(url: string): void {
+    const pageKey = this.resolveActivePageKey(url);
+    this.clientContentService.resolveSidebarAds(pageKey).subscribe({
+      next: (ads) => {
+        this.topSidebarAd = ads.top ?? undefined;
+        this.bottomSidebarAd = ads.bottom ?? undefined;
       },
       error: () => {
         this.topSidebarAd = undefined;
-      },
-    });
-    this.clientContentService.findAdImages('sidebar_bottom', true).subscribe({
-      next: (items) => {
-        this.bottomSidebarAd = items[0];
-      },
-      error: () => {
         this.bottomSidebarAd = undefined;
       },
     });
@@ -255,9 +264,22 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.newsletterSuccessSubscription?.unsubscribe();
+    this.routerSubscription?.unsubscribe();
   }
 
   protected openNewsletterModal(): void {
     this.newsletterSubscribeService.open();
+  }
+
+  private resolveActivePageKey(url: string): PublicPageKey {
+    let route = this.router.routerState.snapshot.root;
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+    const fromRoute = route.data['pageKey'];
+    if (typeof fromRoute === 'string' && isPublicPageKey(fromRoute)) {
+      return fromRoute;
+    }
+    return resolvePageKeyFromUrl(url);
   }
 }
