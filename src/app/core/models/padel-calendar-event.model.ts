@@ -20,4 +20,8 @@ export type PadelCalendarEvent = {
   /** Ligne « match / tournoi » (modal) */
   match?: string;
   descriptionHtml?: string;
+  /** Noms des tags (filtrage calendrier). */
+  tagNames?: string[];
+  /** Identifiants des tags. */
+  tagIds?: string[];
 };

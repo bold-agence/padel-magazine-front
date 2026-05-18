@@ -10,12 +10,28 @@
 </section>
 
 <main class="container">
-  <!-- <div class="chips">
-    <button type="button" class="chip on">À venir</button>
-    <button type="button" class="chip">Sénégal</button>
-    <button type="button" class="chip">WPT / APP</button>
-    <button type="button" class="chip">Jeunes</button>
-  </div> -->
+  @if (eventTags().length) {
+    <div class="chips" role="group" aria-label="Filtrer par tag">
+      <button
+        type="button"
+        class="chip"
+        [class.on]="!selectedTagId()"
+        (click)="setTagFilter(null)"
+      >
+        Tous
+      </button>
+      @for (tag of eventTags(); track tag.id) {
+        <button
+          type="button"
+          class="chip"
+          [class.on]="selectedTagId() === tag.id"
+          (click)="setTagFilter(tag.id)"
+        >
+          {{ tag.name }}
+        </button>
+      }
+    </div>
+  }
 
   <div class="layout">
     <div class="main-col">

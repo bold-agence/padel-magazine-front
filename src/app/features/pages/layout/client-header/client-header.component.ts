@@ -16,12 +16,15 @@ import {
 export class ClientHeaderComponent implements OnInit {
   @Input() currentPage = 'home';
 
-  protected readonly dateFr = new Intl.DateTimeFormat('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(new Date());
+  protected readonly dateFr = (() => {
+    const formatted = new Intl.DateTimeFormat('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(new Date());
+    return formatted.charAt(0).toLocaleUpperCase('fr-FR') + formatted.slice(1);
+  })();
 
   protected isScrolled = false;
   protected headerAd?: AdImageItem;

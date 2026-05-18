@@ -162,17 +162,6 @@
   border-radius: 4px;
 }
 
-.ad-slot::before {
-  content: 'Publicité';
-  position: absolute;
-  top: -18px;
-  left: 0;
-  font-size: 10px;
-  color: var(--gray);
-  letter-spacing: 0.08em;
-  font-family: var(--f-body);
-}
-
 .newsletter-card {
   background: var(--orange-padel-tint);
   border: 1px solid rgba(35, 62, 76, 0.2);
@@ -292,11 +281,6 @@
 .social-widget .s-info .name {
   font-weight: 600;
   font-size: 13px;
-}
-
-.social-widget .s-info .count {
-  font-size: 11px;
-  color: var(--gray);
 }
 
 .social-widget .follow {

@@ -17,7 +17,11 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import frLocale from '@fullcalendar/core/locales/fr';
 import type { PadelCalendarEvent } from '../../../core/models/padel-calendar-event.model';
-import { EventsService, mapEventDtoToPadel } from '../../../core/services/events.service';
+import {
+  EventTagDto,
+  EventsService,
+  mapEventDtoToPadel,
+} from '../../../core/services/events.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 
 function resolveAccentHex(accent: string): string {
@@ -87,11 +91,22 @@ export class CalendrierComponent implements OnInit, AfterViewInit {
 
   /** Données issues de `GET /events` */
   protected readonly allEvents = signal<PadelCalendarEvent[]>([]);
+  protected readonly eventTags = signal<EventTagDto[]>([]);
+  protected readonly selectedTagId = signal<string | null>(null);
   protected readonly eventsLoading = signal(true);
   protected readonly eventsLoadError = signal(false);
 
+  protected readonly filteredEvents = computed(() => {
+    const tagId = this.selectedTagId();
+    const all = this.allEvents();
+    if (!tagId) {
+      return all;
+    }
+    return all.filter((ev) => ev.tagIds?.includes(tagId));
+  });
+
   protected readonly nextThreeEvents = computed(() => {
-    const list = this.allEvents();
+    const list = this.filteredEvents();
     const startOfToday = this.stripTime(new Date());
     const t0 = startOfToday.getTime();
     return [...list]
@@ -170,24 +185,23 @@ export class CalendrierComponent implements OnInit, AfterViewInit {
   };
 
   ngOnInit(): void {
+    this.eventsService.findAllTags().subscribe({
+      next: (tags) => {
+        this.ngZone.run(() => this.eventTags.set(tags));
+      },
+      error: () => {
+        this.ngZone.run(() => this.eventTags.set([]));
+      },
+    });
+
     this.eventsService.findAll().subscribe({
       next: (rows) => {
         const mapped = rows.map((dto) => mapEventDtoToPadel(dto));
         this.ngZone.run(() => {
           this.allEvents.set(mapped);
-          this.calendarOptions = {
-            ...this.calendarOptions,
-            events: mapPadelToFullCalendar(mapped),
-          };
           this.eventsLoading.set(false);
           this.eventsLoadError.set(false);
-          queueMicrotask(() => {
-            try {
-              this.fullCal?.getApi().refetchEvents();
-            } catch {
-              /* composant pas encore prêt */
-            }
-          });
+          this.syncCalendarEvents();
         });
       },
       error: () => {
@@ -196,6 +210,26 @@ export class CalendrierComponent implements OnInit, AfterViewInit {
           this.eventsLoading.set(false);
         });
       },
+    });
+  }
+
+  protected setTagFilter(tagId: string | null): void {
+    this.selectedTagId.set(tagId);
+    this.syncCalendarEvents();
+  }
+
+  private syncCalendarEvents(): void {
+    const mapped = mapPadelToFullCalendar(this.filteredEvents());
+    this.calendarOptions = {
+      ...this.calendarOptions,
+      events: mapped,
+    };
+    queueMicrotask(() => {
+      try {
+        this.fullCal?.getApi().refetchEvents();
+      } catch {
+        /* composant pas encore prêt */
+      }
     });
   }
 
@@ -238,7 +272,7 @@ export class CalendrierComponent implements OnInit, AfterViewInit {
   }
 
   protected eventsForDate(date: Date): PadelCalendarEvent[] {
-    return this.allEvents().filter((e) => this.isDateInEvent(date, e));
+    return this.filteredEvents().filter((e) => this.isDateInEvent(date, e));
   }
 
   private modalDateFr(d: Date): string {

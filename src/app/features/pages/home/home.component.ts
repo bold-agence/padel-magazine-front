@@ -19,6 +19,7 @@ import {
   ClassementSummaryDto,
   ClassementsService,
 } from '../../../core/services/classements.service';
+import { resolvePublicMediaUrl } from '../../../core/services/events.service';
 import {
   AdImageItem,
   ClientContentService,
@@ -32,7 +33,6 @@ import {
   LiveDto,
   LivesService,
 } from '../../../core/services/lives.service';
-import { resolvePublicMediaUrl } from '../../../core/services/events.service';
 import {
   PortraitItem,
   PortraitsService,
@@ -78,13 +78,17 @@ type HeroItem = {
   badges?: NewsCardBadge[];
 };
 
-/** Ligne affichée dans le widget Top 5 (accueil). */
+const HOME_RANKING_PH = ['court', 'charcoal', 'sunset'] as const;
+
+/** Ligne affichée dans le widget Top 3 (accueil). */
 type HomeRankingRow = {
   id: string;
   rank: number;
   name: string;
   pointsLabel: string;
   subtitle: string;
+  imageUrl: string | null;
+  phClass: string;
 };
 
 /** Même modèle que la page International (latest-results + libellé période). */
@@ -114,8 +118,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   protected homeRankingsError = '';
   protected homeMenTitle = 'Classement hommes';
   protected homeWomenTitle = 'Classement femmes';
-  protected homeMenTop5: HomeRankingRow[] = [];
-  protected homeWomenTop5: HomeRankingRow[] = [];
+  protected homeMenTop3: HomeRankingRow[] = [];
+  protected homeWomenTop3: HomeRankingRow[] = [];
 
   /** Top 3 portraits (API), tri par points décroissant — même source que la page Portraits. */
   protected homePortraitsLoading = true;
@@ -506,7 +510,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  /** Top 5 hommes / femmes — même API que la page Classements. */
+  /** Top 3 hommes / femmes — même API que la page Classements. */
   private loadHomeRankings(): void {
     this.homeRankingsLoading = true;
     this.homeRankingsError = '';
@@ -557,36 +561,44 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ): void {
     if (!detail) {
       if (side === 'men') {
-        this.homeMenTop5 = [];
+        this.homeMenTop3 = [];
         this.homeMenTitle = 'Classement hommes';
       } else {
-        this.homeWomenTop5 = [];
+        this.homeWomenTop3 = [];
         this.homeWomenTitle = 'Classement femmes';
       }
       return;
     }
     const title = detail.title?.trim() || (side === 'men' ? 'Hommes' : 'Femmes');
-    const rows = this.mapTop5RankingRows(detail.lines);
+    const rows = this.mapTop3RankingRows(detail);
     if (side === 'men') {
       this.homeMenTitle = title;
-      this.homeMenTop5 = rows;
+      this.homeMenTop3 = rows;
     } else {
       this.homeWomenTitle = title;
-      this.homeWomenTop5 = rows;
+      this.homeWomenTop3 = rows;
     }
   }
 
-  private mapTop5RankingRows(lines: ClassementLineDto[]): HomeRankingRow[] {
-    return [...lines]
-      .sort((a, b) => a.sortOrder - b.sortOrder)
-      .slice(0, 5)
-      .map((line) => ({
+  private mapTop3RankingRows(detail: ClassementDetailDto): HomeRankingRow[] {
+    const sorted = [...detail.lines].sort((a, b) => a.sortOrder - b.sortOrder);
+    const podiumUrls = [
+      detail.podiumFirstImageUrl,
+      detail.podiumSecondImageUrl,
+      detail.podiumThirdImageUrl,
+    ];
+    return sorted.slice(0, 3).map((line, i) => {
+      const rawUrl = podiumUrls[i] ?? null;
+      return {
         id: line.id,
         rank: line.rank,
         name: line.playerName?.trim() || '—',
         pointsLabel: `${line.pointsNow.toLocaleString('fr-FR')} pts`,
         subtitle: this.subtitleForClassementLine(line),
-      }));
+        imageUrl: rawUrl ? resolvePublicMediaUrl(rawUrl) ?? null : null,
+        phClass: HOME_RANKING_PH[i % HOME_RANKING_PH.length],
+      };
+    });
   }
 
   private subtitleForClassementLine(line: ClassementLineDto): string {

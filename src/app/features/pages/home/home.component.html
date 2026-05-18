@@ -71,7 +71,7 @@
           />
         </a>
       } @else {
-        <span>1280 × 90 — Leaderboard Publicité</span>
+        <span>1280 × 90 — Leaderboard</span>
       }
     </div>
   </div>
@@ -282,22 +282,29 @@
           <p class="home-rankings-state">Chargement des classements…</p>
         } @else if (homeRankingsError) {
           <p class="home-rankings-state">{{ homeRankingsError }}</p>
-        } @else if (!homeMenTop5.length && !homeWomenTop5.length) {
+        } @else if (!homeMenTop3.length && !homeWomenTop3.length) {
           <p class="home-rankings-state">Aucun classement pour le moment.</p>
         } @else {
           <div class="rank-grid">
             <div class="rank-col">
-              <h4>🇸🇳 {{ homeMenTitle }} · Top 5</h4>
-              @if (homeMenTop5.length) {
+              <h4>🇸🇳 {{ homeMenTitle }} · Top 3</h4>
+              @if (homeMenTop3.length) {
                 <ul class="rank-list">
-                  @for (row of homeMenTop5; track row.id) {
+                  @for (row of homeMenTop3; track row.id) {
                     <li>
                       <span class="r">{{ row.rank }}</span>
+                      <div class="rank-av">
+                        @if (row.imageUrl) {
+                          <img [src]="row.imageUrl" [alt]="row.name" loading="lazy" />
+                        } @else {
+                          <div class="ph {{ row.phClass }}" data-label=""></div>
+                        }
+                      </div>
                       <div>
                         <div class="n">{{ row.name }}</div>
                         <div class="p">{{ row.subtitle }}</div>
                       </div>
-                      <span class="p">{{ row.pointsLabel }}</span>
+                      <span class="pts">{{ row.pointsLabel }}</span>
                     </li>
                   }
                 </ul>
@@ -306,17 +313,24 @@
               }
             </div>
             <div class="rank-col">
-              <h4>🇸🇳 {{ homeWomenTitle }} · Top 5</h4>
-              @if (homeWomenTop5.length) {
+              <h4>🇸🇳 {{ homeWomenTitle }} · Top 3</h4>
+              @if (homeWomenTop3.length) {
                 <ul class="rank-list">
-                  @for (row of homeWomenTop5; track row.id) {
+                  @for (row of homeWomenTop3; track row.id) {
                     <li>
                       <span class="r">{{ row.rank }}</span>
+                      <div class="rank-av">
+                        @if (row.imageUrl) {
+                          <img [src]="row.imageUrl" [alt]="row.name" loading="lazy" />
+                        } @else {
+                          <div class="ph {{ row.phClass }}" data-label=""></div>
+                        }
+                      </div>
                       <div>
                         <div class="n">{{ row.name }}</div>
                         <div class="p">{{ row.subtitle }}</div>
                       </div>
-                      <span class="p">{{ row.pointsLabel }}</span>
+                      <span class="pts">{{ row.pointsLabel }}</span>
                     </li>
                   }
                 </ul>

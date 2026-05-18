@@ -25,6 +25,11 @@ export type TournamentCategoryDto = {
   description?: string | null;
 };
 
+export type EventTagDto = {
+  id: string;
+  name: string;
+};
+
 export type EventDto = {
   id: string;
   title: string;
@@ -36,6 +41,7 @@ export type EventDto = {
   coverImageUrl?: string | null;
   tournament?: TournamentDto | null;
   tournamentCategory?: TournamentCategoryDto | null;
+  tags?: EventTagDto[];
 };
 
 export function resolvePublicMediaUrl(url?: string | null): string | undefined {
@@ -77,6 +83,8 @@ export function mapEventDtoToPadel(dto: EventDto): PadelCalendarEvent {
     coverImageUrl: resolvePublicMediaUrl(dto.coverImageUrl),
     match,
     descriptionHtml: dto.descriptionHtml ?? undefined,
+    tagNames: (dto.tags ?? []).map((t) => t.name),
+    tagIds: (dto.tags ?? []).map((t) => t.id),
   };
 }
 
@@ -88,7 +96,11 @@ export class EventsService {
 
   constructor(private readonly http: HttpClient) {}
 
-  findAll(options?: { tournamentId?: string; tournamentSlug?: string }): Observable<EventDto[]> {
+  findAll(options?: {
+    tournamentId?: string;
+    tournamentSlug?: string;
+    tagId?: string;
+  }): Observable<EventDto[]> {
     let params = new HttpParams();
     if (options?.tournamentId?.trim()) {
       params = params.set('tournamentId', options.tournamentId.trim());
@@ -96,9 +108,18 @@ export class EventsService {
     if (options?.tournamentSlug?.trim()) {
       params = params.set('tournamentSlug', options.tournamentSlug.trim());
     }
+    if (options?.tagId?.trim()) {
+      params = params.set('tagId', options.tagId.trim());
+    }
     const httpParams = params.keys().length > 0 ? params : undefined;
     return this.http
       .get<ApiEnvelope<EventDto[]> | EventDto[]>(this.baseUrl, { params: httpParams })
+      .pipe(map((r) => this.unwrap(r)));
+  }
+
+  findAllTags(): Observable<EventTagDto[]> {
+    return this.http
+      .get<ApiEnvelope<EventTagDto[]> | EventTagDto[]>(`${this.baseUrl}/tags`)
       .pipe(map((r) => this.unwrap(r)));
   }
 

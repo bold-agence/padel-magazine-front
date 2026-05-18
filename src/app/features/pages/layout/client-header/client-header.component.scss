@@ -142,19 +142,6 @@
   border-radius: 4px;
 }
 
-.leaderboard::before {
-  content: 'Publicité';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--paper);
-  padding: 0 8px;
-  font-size: 10px;
-  color: var(--gray);
-  letter-spacing: 0.08em;
-}
-
 .header-right {
   display: flex;
   align-items: center;
