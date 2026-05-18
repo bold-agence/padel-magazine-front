@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import {
   ArticleCategoryModel,
   ArticleModel,
@@ -17,19 +15,8 @@ import {
   findAiringLive,
   pickUpcoming,
 } from '../../../core/utils/live-scheduling.util';
-import {
-  NewsletterSubscriberPayload,
-  NewsletterSubscribersService,
-} from '../../../core/services/newsletter-subscribers.service';
-
-type NewsletterFormState = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  acceptsEmails: boolean;
-  acceptsPrintMagazine: boolean;
-};
+import { NewsletterSubscribeService } from '../../../core/services/newsletter-subscribe.service';
+import { Subscription } from 'rxjs';
 
 type PopularItem = {
   cat: string;
@@ -44,11 +31,11 @@ type PopularItem = {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
-export class SidebarComponent implements OnInit, OnChanges {
+export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() excludeSlug?: string | null;
 
   protected isLoadingPopular = false;
@@ -63,20 +50,23 @@ export class SidebarComponent implements OnInit, OnChanges {
   protected sidebarLiveLoading = true;
   protected sidebarLiveError = false;
 
-  protected newsletterModalOpen = false;
-  protected newsletterSubmitting = false;
-  protected newsletterFormError = '';
   protected newsletterSuccessMessage = '';
-  protected newsletterForm: NewsletterFormState = this.createEmptyNewsletterForm();
+
+  private newsletterSuccessSubscription?: Subscription;
 
   constructor(
     private readonly articlesService: ArticlesService,
     private readonly clientContentService: ClientContentService,
     private readonly livesService: LivesService,
-    private readonly newsletterSubscribersService: NewsletterSubscribersService,
+    private readonly newsletterSubscribeService: NewsletterSubscribeService,
   ) {}
 
   ngOnInit(): void {
+    this.newsletterSuccessSubscription = this.newsletterSubscribeService.success$.subscribe(
+      (message) => {
+        this.newsletterSuccessMessage = message;
+      },
+    );
     this.loadPopular();
     this.loadAds();
     this.loadSidebarNextLive();
@@ -263,91 +253,11 @@ export class SidebarComponent implements OnInit, OnChanges {
     return `il y a ${diffDays}j`;
   }
 
+  ngOnDestroy(): void {
+    this.newsletterSuccessSubscription?.unsubscribe();
+  }
+
   protected openNewsletterModal(): void {
-    this.newsletterFormError = '';
-    this.newsletterForm = this.createEmptyNewsletterForm();
-    this.newsletterModalOpen = true;
-  }
-
-  protected closeNewsletterModal(): void {
-    if (this.newsletterSubmitting) {
-      return;
-    }
-    this.newsletterModalOpen = false;
-    this.newsletterFormError = '';
-  }
-
-  protected submitNewsletter(event: Event, form: NgForm): void {
-    event.preventDefault();
-    this.newsletterFormError = '';
-
-    const payload: NewsletterSubscriberPayload = {
-      firstName: this.newsletterForm.firstName.trim(),
-      lastName: this.newsletterForm.lastName.trim(),
-      email: this.newsletterForm.email.trim(),
-      phone: this.newsletterForm.phone.trim(),
-      acceptsEmails: this.newsletterForm.acceptsEmails,
-      acceptsPrintMagazine: this.newsletterForm.acceptsPrintMagazine,
-    };
-
-    if (!payload.firstName || !payload.lastName || !payload.email || !payload.phone) {
-      this.newsletterFormError = 'Veuillez remplir tous les champs obligatoires.';
-      form.control.markAllAsTouched();
-      return;
-    }
-
-    if (form.invalid) {
-      this.newsletterFormError = 'Veuillez remplir correctement tous les champs obligatoires.';
-      form.control.markAllAsTouched();
-      return;
-    }
-
-    if (!this.newsletterForm.acceptsEmails) {
-      this.newsletterFormError =
-        'Vous devez accepter de recevoir les communications par e-mail pour vous inscrire.';
-      return;
-    }
-
-    payload.acceptsEmails = true;
-
-    this.newsletterSubmitting = true;
-    this.newsletterSubscribersService.subscribe(payload).subscribe({
-      next: () => {
-        this.newsletterSubmitting = false;
-        this.newsletterModalOpen = false;
-        this.newsletterForm = this.createEmptyNewsletterForm();
-        this.newsletterSuccessMessage =
-          'Merci ! Votre inscription à la newsletter a bien été enregistrée.';
-      },
-      error: (err: HttpErrorResponse) => {
-        this.newsletterSubmitting = false;
-        const apiMessage =
-          typeof err.error?.message === 'string'
-            ? err.error.message
-            : Array.isArray(err.error?.message)
-              ? err.error.message.join(' ')
-              : '';
-        if (err.status === 409) {
-          this.newsletterFormError =
-            apiMessage || 'Cette adresse e-mail est déjà inscrite.';
-        } else if (apiMessage) {
-          this.newsletterFormError = apiMessage;
-        } else {
-          this.newsletterFormError =
-            'Une erreur est survenue. Veuillez réessayer dans quelques instants.';
-        }
-      },
-    });
-  }
-
-  private createEmptyNewsletterForm(): NewsletterFormState {
-    return {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      acceptsEmails: false,
-      acceptsPrintMagazine: false,
-    };
+    this.newsletterSubscribeService.open();
   }
 }

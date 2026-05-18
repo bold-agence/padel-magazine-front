@@ -81,16 +81,17 @@
 
 .footer .mini-news {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.footer .mini-news input {
-  padding: 8px 12px;
-  border-radius: 3px;
-  border: 1px solid #333;
-  background: #262626;
-  color: #fff;
+.footer .mini-news-text {
+  margin: 0;
   font-size: 12px;
+  line-height: 1.4;
+  color: #d4d4ce;
+  max-width: 220px;
 }
 
 .footer .mini-news button {

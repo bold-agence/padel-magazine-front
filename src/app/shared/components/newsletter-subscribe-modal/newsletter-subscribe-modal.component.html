@@ -1,0 +1,108 @@
+@if (modalOpen) {
+  <div
+    class="nl-modal-backdrop"
+    (click)="close()"
+    role="presentation"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="nl-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="nl-modal-title"
+  >
+    <div class="nl-modal-head">
+      <h2 id="nl-modal-title">Inscription newsletter</h2>
+      <button type="button" class="nl-modal-close" (click)="close()" aria-label="Fermer">
+        ×
+      </button>
+    </div>
+    <form class="nl-modal-body" #newsletterFormRef="ngForm" (ngSubmit)="submit($event, newsletterFormRef)">
+      @if (formError) {
+        <p class="nl-form-error" role="alert">{{ formError }}</p>
+      }
+      <label class="nl-field">
+        <span>Prénom <strong class="nl-required">(obligatoire)</strong></span>
+        <input
+          type="text"
+          name="firstName"
+          [(ngModel)]="form.firstName"
+          required
+          autocomplete="given-name"
+          aria-required="true"
+        />
+      </label>
+      <label class="nl-field">
+        <span>Nom <strong class="nl-required">(obligatoire)</strong></span>
+        <input
+          type="text"
+          name="lastName"
+          [(ngModel)]="form.lastName"
+          required
+          autocomplete="family-name"
+          aria-required="true"
+        />
+      </label>
+      <label class="nl-field">
+        <span>E-mail <strong class="nl-required">(obligatoire)</strong></span>
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="form.email"
+          required
+          email
+          autocomplete="email"
+          aria-required="true"
+          [class.nl-field-input--error]="emailAlreadyRegistered"
+          [attr.aria-invalid]="emailAlreadyRegistered"
+          (input)="emailAlreadyRegistered = false"
+        />
+        @if (emailAlreadyRegistered) {
+          <span class="nl-field-hint">Cette adresse est déjà utilisée pour une inscription.</span>
+        }
+      </label>
+      <label class="nl-field">
+        <span>Téléphone <strong class="nl-required">(obligatoire)</strong></span>
+        <input
+          type="tel"
+          name="phone"
+          [(ngModel)]="form.phone"
+          required
+          minlength="6"
+          autocomplete="tel"
+          aria-required="true"
+        />
+      </label>
+      <label class="nl-check nl-check--required">
+        <input
+          type="checkbox"
+          name="acceptsEmails"
+          [(ngModel)]="form.acceptsEmails"
+          required
+        />
+        <span
+          >J'accepte de recevoir les communications par e-mail
+          <strong>(obligatoire)</strong></span
+        >
+      </label>
+      <label class="nl-check">
+        <input
+          type="checkbox"
+          name="acceptsPrintMagazine"
+          [(ngModel)]="form.acceptsPrintMagazine"
+        />
+        <span>J'accepte de recevoir le magazine trimestriel en papier</span>
+      </label>
+      <div class="nl-modal-actions">
+        <button type="button" class="btn btn-ghost" (click)="close()">Annuler</button>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting">
+          @if (submitting) {
+            Envoi...
+          } @else {
+            Valider mon inscription
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+}

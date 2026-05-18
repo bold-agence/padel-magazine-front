@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NewsletterSubscribeService } from '../../../../core/services/newsletter-subscribe.service';
 
 @Component({
   selector: 'app-client-footer',
@@ -11,6 +12,10 @@ import { RouterLink } from '@angular/router';
 export class ClientFooterComponent {
   protected showBackTop = false;
 
+  constructor(
+    private readonly newsletterSubscribeService: NewsletterSubscribeService,
+  ) {}
+
   @HostListener('window:scroll')
   onWindowScroll(): void {
     this.showBackTop = window.scrollY > 400;
@@ -20,13 +25,7 @@ export class ClientFooterComponent {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  protected miniNewsSubmit(event: Event): void {
-    event.preventDefault();
-    const form = event.target as HTMLFormElement;
-    const input = form.querySelector('input');
-    if (input) {
-      input.value = '';
-    }
-    window.alert('Merci ! Vous recevrez notre prochaine newsletter très bientôt.');
+  protected openNewsletter(): void {
+    this.newsletterSubscribeService.open();
   }
 }

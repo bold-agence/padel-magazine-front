@@ -40,10 +40,10 @@
   <div class="sub-foot">
     <span>Created by <a href="https://bold-agence.com" target="_blank" rel="noopener noreferrer">Bold</a></span>
     <span>© 2026 Padel Magazine Sénégal — Tous droits réservés.</span>
-    <form class="mini-news" (submit)="miniNewsSubmit($event)">
-      <input type="email" placeholder="votre@email.com" required />
-      <button type="submit">S'abonner</button>
-    </form>
+    <div class="mini-news">
+      <p class="mini-news-text">L'actu padel sénégalaise, chaque semaine dans votre boîte mail.</p>
+      <button type="button" (click)="openNewsletter()">S'abonner</button>
+    </div>
   </div>
 </footer>
 

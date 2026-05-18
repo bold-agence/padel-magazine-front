@@ -5,11 +5,17 @@ import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/ro
 import { Subscription } from 'rxjs';
 import { ClientHeaderComponent } from './client-header/client-header.component';
 import { ClientFooterComponent } from './client-footer/client-footer.component';
+import { NewsletterSubscribeModalComponent } from '../../../shared/components/newsletter-subscribe-modal/newsletter-subscribe-modal.component';
 
 @Component({
   selector: 'app-client-layout',
   standalone: true,
-  imports: [RouterOutlet, ClientHeaderComponent, ClientFooterComponent],
+  imports: [
+    RouterOutlet,
+    ClientHeaderComponent,
+    ClientFooterComponent,
+    NewsletterSubscribeModalComponent,
+  ],
   templateUrl: './client-layout.component.html',
   styleUrl: './client-layout.component.scss',
   encapsulation: ViewEncapsulation.None,
