@@ -126,6 +126,23 @@
       </div>
 
       <aside class="live-side">
+        <div class="ad-slot">
+          @if (topSidebarAd?.imageUrl) {
+            <a
+              [href]="topSidebarAd?.targetUrl || '#'"
+              [attr.target]="topSidebarAd?.targetUrl ? '_blank' : null"
+              [attr.rel]="topSidebarAd?.targetUrl ? 'noopener noreferrer' : null"
+            >
+              <img
+                [src]="topSidebarAd?.imageUrl"
+                [alt]="topSidebarAd?.title || 'Publicite sidebar'"
+              />
+            </a>
+          } @else {
+            <span>300 × 250 — MPU #1</span>
+          }
+        </div>
+
         <div class="widget orange">
           <div class="widget-head"><h3>À propos du live</h3></div>
           @if (loading()) {
@@ -180,6 +197,23 @@
                 </div>
               </a>
             }
+          }
+        </div>
+
+        <div class="ad-slot">
+          @if (bottomSidebarAd?.imageUrl) {
+            <a
+              [href]="bottomSidebarAd?.targetUrl || '#'"
+              [attr.target]="bottomSidebarAd?.targetUrl ? '_blank' : null"
+              [attr.rel]="bottomSidebarAd?.targetUrl ? 'noopener noreferrer' : null"
+            >
+              <img
+                [src]="bottomSidebarAd?.imageUrl"
+                [alt]="bottomSidebarAd?.title || 'Publicite sidebar'"
+              />
+            </a>
+          } @else {
+            <span>300 × 250 — MPU #2</span>
           }
         </div>
       </aside>

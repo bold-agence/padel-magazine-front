@@ -12,6 +12,10 @@ import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-brows
 import { forkJoin } from 'rxjs';
 import { resolvePublicMediaUrl } from '../../../core/services/events.service';
 import {
+  AdImageItem,
+  ClientContentService,
+} from '../../../core/services/client-content.service';
+import {
   LiveChannelSettingsDto,
   LiveDto,
   LivesService,
@@ -34,6 +38,7 @@ export class LiveComponent implements OnInit, OnDestroy {
     '/images/' + encodeURIComponent('FAVIKON LIVE.png');
 
   private readonly livesService = inject(LivesService);
+  private readonly clientContentService = inject(ClientContentService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly ngZone = inject(NgZone);
 
@@ -58,6 +63,9 @@ export class LiveComponent implements OnInit, OnDestroy {
   /** Live mis en avant (countdown + « À propos »). */
   protected readonly featuredLive = computed(() => this.upcomingLives()[0] ?? null);
 
+  protected topSidebarAd?: AdImageItem;
+  protected bottomSidebarAd?: AdImageItem;
+
   protected timeLeft = {
     days: '00',
     hours: '00',
@@ -76,6 +84,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   private readonly trustedEmbedByUrl = new Map<string, SafeResourceUrl>();
 
   ngOnInit(): void {
+    this.loadSidebarAds();
     forkJoin({
       settings: this.livesService.getChannelSettings(),
       lives: this.livesService.findAll(),
@@ -296,5 +305,18 @@ export class LiveComponent implements OnInit, OnDestroy {
           new Date(b.event.startAt).getTime() - new Date(a.event.startAt).getTime(),
       )
       .slice(0, limit);
+  }
+
+  private loadSidebarAds(): void {
+    this.clientContentService.resolveSidebarAds('live').subscribe({
+      next: (ads) => {
+        this.topSidebarAd = ads.top ?? undefined;
+        this.bottomSidebarAd = ads.bottom ?? undefined;
+      },
+      error: () => {
+        this.topSidebarAd = undefined;
+        this.bottomSidebarAd = undefined;
+      },
+    });
   }
 }
