@@ -154,30 +154,32 @@
       } @else if (!latestResults.length) {
         <p class="results-state">Aucun résultat disponible pour le moment.</p>
       } @else {
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Période</th>
-              <th>Tournoi</th>
-              <th>Tour</th>
-              <th>Vainqueurs</th>
-              <th>Score</th>
-              <th>Perdants</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (result of latestResults; track result.id) {
+        <div class="international-table-wrap">
+          <table class="data-table">
+            <thead>
               <tr>
-                <td>{{ result.periodLabel }}</td>
-                <td>{{ result.tournamentName }}</td>
-                <td>{{ result.round }}</td>
-                <td><b>{{ result.winners }}</b></td>
-                <td class="score">{{ result.score }}</td>
-                <td>{{ result.losers }}</td>
+                <th>Période</th>
+                <th>Tournoi</th>
+                <th>Tour</th>
+                <th>Vainqueurs</th>
+                <th>Score</th>
+                <th>Perdants</th>
               </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (result of latestResults; track result.id) {
+                <tr>
+                  <td>{{ result.periodLabel }}</td>
+                  <td>{{ result.tournamentName }}</td>
+                  <td>{{ result.round }}</td>
+                  <td><b>{{ result.winners }}</b></td>
+                  <td class="score">{{ result.score }}</td>
+                  <td>{{ result.losers }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       }
 
       <div class="sec-head coral section-spacing">
@@ -227,26 +229,28 @@
       } @else if (!premierPadelEvents.length) {
         <p class="results-state">Aucun événement Premier Padel à venir pour le moment.</p>
       } @else {
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Tournoi</th>
-              <th>Lieu</th>
-              <th>Catégorie</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (ev of premierPadelEvents; track ev.id) {
+        <div class="international-table-wrap">
+          <table class="data-table">
+            <thead>
               <tr>
-                <td>{{ formatPremierPadelDateRange(ev) }}</td>
-                <td>{{ formatPremierPadelTournamentCell(ev) }}</td>
-                <td>{{ ev.venue }}</td>
-                <td>{{ ev.tournamentCategoryLabel || '—' }}</td>
+                <th>Date</th>
+                <th>Tournoi</th>
+                <th>Lieu</th>
+                <th>Catégorie</th>
               </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (ev of premierPadelEvents; track ev.id) {
+                <tr>
+                  <td>{{ formatPremierPadelDateRange(ev) }}</td>
+                  <td>{{ formatPremierPadelTournamentCell(ev) }}</td>
+                  <td>{{ ev.venue }}</td>
+                  <td>{{ ev.tournamentCategoryLabel || '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       }
     </div>
 

@@ -63,7 +63,7 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <ul class="nav-links" id="navLinks">
+    <ul class="nav-links" [class.open]="isMenuOpen">
       <li><a routerLink="/actualites" routerLinkActive="active">Actualités</a></li>
       <li><a routerLink="/resultats" routerLinkActive="active">Résultats</a></li>
       <li><a routerLink="/classements" routerLinkActive="active">Classements</a></li>

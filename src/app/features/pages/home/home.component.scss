@@ -407,7 +407,7 @@
 
 /* Table « Derniers résultats Premier Padel » (copie styles page International) */
 .home-premier-results-head {
-  margin-top: 28px;
+  margin-top: 40px;
 }
 
 .results-state {
@@ -421,13 +421,19 @@
   text-align: center;
 }
 
+.home-premier-results-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
 .home-premier-results-table.data-table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
-  background: #fff;
-  border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid var(--line);
   font-size: 14px;
 }
 
@@ -460,6 +466,7 @@
   font-family: var(--f-display);
   color: var(--orange);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .live-card {

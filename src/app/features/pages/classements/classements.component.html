@@ -52,34 +52,36 @@
         }
 
         @if (currentRanking.length) {
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Pos</th>
-                <th>Joueur</th>
-                <th>{{ pointsNowHeader }}</th>
-                <th>Tournois</th>
-                <th>Ancien pos</th>
-                <th>{{ pointsPrevHeader }}</th>
-                <th>Évol. pos</th>
-                <th>Évol. points</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (row of pagedRanking; track row.id) {
+          <div class="classements-table-wrap">
+            <table class="data-table">
+              <thead>
                 <tr>
-                  <td><b>{{ row.rank }}</b></td>
-                  <td>{{ row.player }}</td>
-                  <td class="score">{{ row.pointsNow }}</td>
-                  <td>{{ row.tournaments }}</td>
-                  <td>{{ row.previousRank }}</td>
-                  <td>{{ row.pointsPrev }}</td>
-                  <td>{{ row.rankDelta }}</td>
-                  <td>{{ row.pointsDelta }}</td>
+                  <th>Pos</th>
+                  <th>Joueur</th>
+                  <th>{{ pointsNowHeader }}</th>
+                  <th>Tournois</th>
+                  <th>Ancien pos</th>
+                  <th>{{ pointsPrevHeader }}</th>
+                  <th>Évol. pos</th>
+                  <th>Évol. points</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (row of pagedRanking; track row.id) {
+                  <tr>
+                    <td><b>{{ row.rank }}</b></td>
+                    <td>{{ row.player }}</td>
+                    <td class="score">{{ row.pointsNow }}</td>
+                    <td>{{ row.tournaments }}</td>
+                    <td>{{ row.previousRank }}</td>
+                    <td>{{ row.pointsPrev }}</td>
+                    <td>{{ row.rankDelta }}</td>
+                    <td>{{ row.pointsDelta }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         } @else {
           <p class="empty-msg">Aucune ligne pour ce classement. Importez un fichier Excel depuis l’administration.</p>
         }

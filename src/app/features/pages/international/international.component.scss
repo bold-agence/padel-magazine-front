@@ -215,13 +215,19 @@
   color: var(--ink);
 }
 
+.international-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
 .data-table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
-  background: #fff;
-  border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid var(--line);
   font-size: 14px;
 }
 
@@ -254,6 +260,7 @@
   font-family: var(--f-display);
   color: var(--orange);
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .card-grid-4 {

@@ -105,7 +105,7 @@
      
 
       <!-- Copie du bloc « Derniers résultats Premier Padel » (page International) -->
-      <div class="sec-head orange " >
+      <div class="sec-head orange home-premier-results-head">
         <h2>Derniers résultats </h2>
         <a routerLink="/resultats" class="see-all">Voir tous les résultats →</a>
       </div>
@@ -116,30 +116,32 @@
       } @else if (!premierPadelLatestResults.length) {
         <p class="results-state">Aucun résultat disponible pour le moment.</p>
       } @else {
-        <table class="data-table home-premier-results-table">
-          <thead>
-            <tr>
-              <th>Période</th>
-              <th>Tournoi</th>
-              <th>Tour</th>
-              <th>Vainqueurs</th>
-              <th>Score</th>
-              <th>Perdants</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (result of premierPadelLatestResults; track result.id) {
+        <div class="home-premier-results-table-wrap">
+          <table class="data-table home-premier-results-table">
+            <thead>
               <tr>
-                <td>{{ result.periodLabel }}</td>
-                <td>{{ result.tournamentName }}</td>
-                <td>{{ result.round }}</td>
-                <td><b>{{ result.winners }}</b></td>
-                <td class="score">{{ result.score }}</td>
-                <td>{{ result.losers }}</td>
+                <th>Période</th>
+                <th>Tournoi</th>
+                <th>Tour</th>
+                <th>Vainqueurs</th>
+                <th>Score</th>
+                <th>Perdants</th>
               </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (result of premierPadelLatestResults; track result.id) {
+                <tr>
+                  <td>{{ result.periodLabel }}</td>
+                  <td>{{ result.tournamentName }}</td>
+                  <td>{{ result.round }}</td>
+                  <td><b>{{ result.winners }}</b></td>
+                  <td class="score">{{ result.score }}</td>
+                  <td>{{ result.losers }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       }
 
       <div class="sec-head red" style="margin-top:40px;">

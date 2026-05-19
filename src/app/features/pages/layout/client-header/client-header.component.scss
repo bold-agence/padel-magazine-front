@@ -152,7 +152,9 @@
 .header-right {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 12px;
+  justify-self: end;
 }
 
 .icon-btn {
@@ -380,7 +382,7 @@
 
 @media (max-width: 1024px) {
   .header-inner {
-    grid-template-columns: auto auto;
+    grid-template-columns: 1fr auto;
   }
 
   .leaderboard {

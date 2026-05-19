@@ -1,5 +1,7 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, HostListener, inject, Input, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter } from 'rxjs';
 import {
   AdImageItem,
   BreakingNewsItem,
@@ -16,6 +18,10 @@ import {
 export class ClientHeaderComponent implements OnInit {
   @Input() currentPage = 'home';
 
+  private readonly router = inject(Router);
+
+  protected isMenuOpen = false;
+
   protected readonly dateFr = (() => {
     const formatted = new Intl.DateTimeFormat('fr-FR', {
       weekday: 'long',
@@ -30,7 +36,16 @@ export class ClientHeaderComponent implements OnInit {
   protected headerAd?: AdImageItem;
   protected breakingNews: BreakingNewsItem[] = [];
 
-  constructor(private readonly clientContentService: ClientContentService) {}
+  constructor(private readonly clientContentService: ClientContentService) {
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => {
+        this.isMenuOpen = false;
+      });
+  }
 
   ngOnInit(): void {
     this.clientContentService.findAdImages('header_main', true).subscribe({
@@ -57,8 +72,7 @@ export class ClientHeaderComponent implements OnInit {
   }
 
   protected toggleMenu(): void {
-    const navLinks = document.getElementById('navLinks');
-    navLinks?.classList.toggle('open');
+    this.isMenuOpen = !this.isMenuOpen;
   }
 
   protected search(): void {
