@@ -102,26 +102,28 @@
         } @else if (upcomingLives().length === 0) {
           <p class="live-inline-hint">Aucune diffusion à venir pour le moment.</p>
         } @else {
-          <table class="data-table program-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Heure</th>
-                <th>Match</th>
-                <th>Tournoi</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (lv of upcomingLives(); track lv.id) {
+          <div class="live-table-wrap">
+            <table class="data-table program-table">
+              <thead>
                 <tr>
-                  <td>{{ formatEventDateProgram(lv.event) }}</td>
-                  <td>{{ formatProgramLiveTime(lv) }}</td>
-                  <td><b>{{ lv.event.title }}</b></td>
-                  <td>{{ tournamentLabel(lv) }}</td>
+                  <th>Date</th>
+                  <th>Heure</th>
+                  <th>Match</th>
+                  <th>Tournoi</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (lv of upcomingLives(); track lv.id) {
+                  <tr>
+                    <td>{{ formatEventDateProgram(lv.event) }}</td>
+                    <td>{{ formatProgramLiveTime(lv) }}</td>
+                    <td><b>{{ lv.event.title }}</b></td>
+                    <td>{{ tournamentLabel(lv) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         }
       </div>
 

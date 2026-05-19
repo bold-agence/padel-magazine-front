@@ -54,28 +54,53 @@
       <button class="icon-btn" aria-label="Recherche" (click)="search()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       </button>
-      <button class="icon-btn hamburger" aria-label="Menu" (click)="toggleMenu()">
+      <button
+        type="button"
+        class="icon-btn hamburger"
+        aria-label="Menu"
+        [attr.aria-expanded]="isMenuOpen"
+        (click)="toggleMenu()"
+      >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
       </button>
     </div>
   </div>
 </header>
 
-<nav class="nav">
+<nav class="nav" [class.nav--menu-open]="isMenuOpen">
   <div class="nav-inner">
-    <ul class="nav-links" [class.open]="isMenuOpen">
-      <li><a routerLink="/actualites" routerLinkActive="active">Actualités</a></li>
-      <li><a routerLink="/resultats" routerLinkActive="active">Résultats</a></li>
-      <li><a routerLink="/classements" routerLinkActive="active">Classements</a></li>
-      <li><a routerLink="/calendrier" routerLinkActive="active">Calendrier</a></li>
-      <li><a routerLink="/coaching" routerLinkActive="active">Coaching</a></li>
-      <li><a routerLink="/portraits" routerLinkActive="active">Portraits</a></li>
-      <li><a routerLink="/international" routerLinkActive="active">International</a></li>
+    <div class="nav-menu" [class.open]="isMenuOpen">
+      <button type="button" class="nav-menu-close" aria-label="Fermer le menu" (click)="closeMenu()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6 6 18"/>
+        </svg>
+      </button>
+      <div class="nav-menu-scroll">
+        <ul class="nav-links">
+      <li><a routerLink="/actualites" routerLinkActive="active" (click)="closeMenu()">Actualités</a></li>
+      <li><a routerLink="/resultats" routerLinkActive="active" (click)="closeMenu()">Résultats</a></li>
+      <li><a routerLink="/classements" routerLinkActive="active" (click)="closeMenu()">Classements</a></li>
+      <li><a routerLink="/calendrier" routerLinkActive="active" (click)="closeMenu()">Calendrier</a></li>
+      <li><a routerLink="/coaching" routerLinkActive="active" (click)="closeMenu()">Coaching</a></li>
+      <li><a routerLink="/portraits" routerLinkActive="active" (click)="closeMenu()">Portraits</a></li>
+      <li><a routerLink="/international" routerLinkActive="active" (click)="closeMenu()">International</a></li>
       <li>
-        <a routerLink="/live" routerLinkActive="active">Live <span class="nav-live-dot"></span></a>
+        <a routerLink="/live" routerLinkActive="active" (click)="closeMenu()">Live <span class="nav-live-dot"></span></a>
       </li>
-      <li><a routerLink="/videos" routerLinkActive="active">Vidéos</a></li>
-    </ul>
+      <li><a routerLink="/videos" routerLinkActive="active" (click)="closeMenu()">Vidéos</a></li>
+      <li class="nav-mobile-only nav-services-mobile">
+        <span class="nav-services-label">Services</span>
+        <ul class="nav-services-sub">
+          <li><span class="nav-services-sub-item">Offres de stages et formations</span></li>
+          <li><span class="nav-services-sub-item">Offres d'emplois de Padel</span></li>
+        </ul>
+      </li>
+      <li class="nav-mobile-only">
+        <a routerLink="/apropos" routerLinkActive="active" (click)="closeMenu()">À propos</a>
+      </li>
+        </ul>
+      </div>
+    </div>
     <div class="nav-secondary">
       <div class="services-menu">
         <button type="button" class="services-trigger">Services</button>

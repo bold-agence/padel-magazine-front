@@ -43,7 +43,7 @@ export class ClientHeaderComponent implements OnInit {
         takeUntilDestroyed(),
       )
       .subscribe(() => {
-        this.isMenuOpen = false;
+        this.closeMenu();
       });
   }
 
@@ -71,8 +71,24 @@ export class ClientHeaderComponent implements OnInit {
     this.isScrolled = window.scrollY > 10;
   }
 
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.isMenuOpen) {
+      this.closeMenu();
+    }
+  }
+
   protected toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
+    this.setMenuOpen(!this.isMenuOpen);
+  }
+
+  protected closeMenu(): void {
+    this.setMenuOpen(false);
+  }
+
+  private setMenuOpen(open: boolean): void {
+    this.isMenuOpen = open;
+    document.body.style.overflow = open ? 'hidden' : '';
   }
 
   protected search(): void {
