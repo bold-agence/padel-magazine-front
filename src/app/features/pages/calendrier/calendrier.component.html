@@ -61,7 +61,7 @@
               <button type="button" class="upcoming-card" (click)="openModalFromUpcoming(ev)">
                 @if (ev.coverImageUrl) {
                   <div class="upcoming-card-cover">
-                    <img [src]="ev.coverImageUrl" [alt]="ev.calendarLabel" width="640" height="360" loading="lazy" />
+                    <img [src]="ev.coverImageUrl" [alt]="ev.calendarLabel" loading="lazy" decoding="async" />
                   </div>
                 } @else {
                   <div class="upcoming-card-cover upcoming-card-cover--placeholder" aria-hidden="true"></div>
