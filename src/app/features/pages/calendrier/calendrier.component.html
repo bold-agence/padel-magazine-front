@@ -9,7 +9,7 @@
   </div>
 </section>
 
-<main class="container">
+<ng-template #tagFilterChips>
   @if (eventTags().length) {
     <div class="chips" role="group" aria-label="Filtrer par tag">
       <button
@@ -32,6 +32,12 @@
       }
     </div>
   }
+</ng-template>
+
+<main class="container">
+  <div class="page-tag-filters">
+    <ng-container *ngTemplateOutlet="tagFilterChips" />
+  </div>
 
   <div class="layout">
     <div class="main-col">
@@ -81,9 +87,8 @@
               détail.</span
             >
           </div>
-          <div class="calendar-panel-legend" aria-hidden="true">
-            <span class="calendar-legend-item"><i class="calendar-legend-swatch today"></i>Aujourd’hui</span>
-            <span class="calendar-legend-item"><i class="calendar-legend-swatch event"></i>Avec événement</span>
+          <div class="calendar-panel-filters">
+            <ng-container *ngTemplateOutlet="tagFilterChips" />
           </div>
         </header>
         <div class="calendar-panel-body">

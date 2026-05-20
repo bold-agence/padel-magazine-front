@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -74,7 +75,7 @@ function fcTimedEndForCalendar(debutIso: string, finIso?: string | null): string
 @Component({
   selector: 'app-calendrier-component',
   standalone: true,
-  imports: [SidebarComponent, FullCalendarModule],
+  imports: [NgTemplateOutlet, SidebarComponent, FullCalendarModule],
   templateUrl: './calendrier.component.html',
   styleUrl: './calendrier.component.scss',
 })
