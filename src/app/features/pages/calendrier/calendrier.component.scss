@@ -189,12 +189,6 @@
   line-height: 1.35;
 }
 
-@media (max-width: 1024px) {
-  .upcoming-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (min-width: 1025px) and (max-width: 1180px) {
   .upcoming-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -203,6 +197,57 @@
 
   .upcoming-card-title {
     font-size: 14px;
+  }
+}
+
+/* 600–1024px : 2 colonnes */
+@media (max-width: 1024px) and (min-width: 600px) {
+  .upcoming-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* < 600px : liste horizontale compacte */
+@media (max-width: 599px) {
+  .upcoming-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .upcoming-card {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .upcoming-card-cover,
+  .upcoming-card-cover--placeholder {
+    width: 92px;
+    min-width: 92px;
+    max-width: 92px;
+  }
+
+  .upcoming-card-body {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .upcoming-card-title {
+    font-size: 15px;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .upcoming-card-venue {
+    font-size: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
 
