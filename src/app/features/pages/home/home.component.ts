@@ -44,6 +44,7 @@ import {
   pickUpcoming,
   toLiveEmbedUrl,
 } from '../../../core/utils/live-scheduling.util';
+import { AdSlotMediaComponent } from '../../../shared/components/ad-slot-media/ad-slot-media.component';
 import {
   NewsCardBadge,
   NewsCardComponent,
@@ -97,7 +98,7 @@ type HomePremierPadelResultRow = LatestResult & { periodLabel: string };
 @Component({
   selector: 'app-home-component',
   standalone: true,
-  imports: [SidebarComponent, NewsCardComponent, RouterLink],
+  imports: [SidebarComponent, NewsCardComponent, RouterLink, AdSlotMediaComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })

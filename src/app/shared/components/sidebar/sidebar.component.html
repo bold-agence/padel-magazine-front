@@ -2,7 +2,7 @@
   <div class="ad-slot">
     @if (topSidebarAd?.imageUrl) {
       <a [href]="topSidebarAd?.targetUrl || '#'" [attr.target]="topSidebarAd?.targetUrl ? '_blank' : null" [attr.rel]="topSidebarAd?.targetUrl ? 'noopener noreferrer' : null">
-        <img [src]="topSidebarAd?.imageUrl" [alt]="topSidebarAd?.title || 'Publicite sidebar'" />
+        <app-ad-slot-media [ad]="topSidebarAd" [alt]="topSidebarAd?.title || 'Publicite sidebar'" />
       </a>
     } @else {
       <span>300 × 250 — MPU #1</span>
@@ -143,7 +143,7 @@
   <div class="ad-slot">
     @if (bottomSidebarAd?.imageUrl) {
       <a [href]="bottomSidebarAd?.targetUrl || '#'" [attr.target]="bottomSidebarAd?.targetUrl ? '_blank' : null" [attr.rel]="bottomSidebarAd?.targetUrl ? 'noopener noreferrer' : null">
-        <img [src]="bottomSidebarAd?.imageUrl" [alt]="bottomSidebarAd?.title || 'Publicite sidebar'" />
+        <app-ad-slot-media [ad]="bottomSidebarAd" [alt]="bottomSidebarAd?.title || 'Publicite sidebar'" />
       </a>
     } @else {
       <span>300 × 250 — MPU #2</span>

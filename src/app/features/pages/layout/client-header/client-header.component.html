@@ -44,7 +44,7 @@
     <div class="leaderboard">
       @if (headerAd?.imageUrl) {
         <a [href]="headerAd?.targetUrl || '#'" [attr.target]="headerAd?.targetUrl ? '_blank' : null" [attr.rel]="headerAd?.targetUrl ? 'noopener noreferrer' : null">
-          <img [src]="headerAd?.imageUrl" [alt]="headerAd?.title || 'Publicite header'" />
+          <app-ad-slot-media [ad]="headerAd" [alt]="headerAd?.title || 'Publicite header'" />
         </a>
       } @else {
         <span>728 × 90 — Sponsor Leaderboard</span>
@@ -121,7 +121,7 @@
       [attr.target]="headerAd?.targetUrl ? '_blank' : null"
       [attr.rel]="headerAd?.targetUrl ? 'noopener noreferrer' : null"
     >
-      <img [src]="headerAd?.imageUrl" [alt]="headerAd?.title || 'Publicite header'" />
+      <app-ad-slot-media [ad]="headerAd" [alt]="headerAd?.title || 'Publicite header'" />
     </a>
   } @else {
     <span>728 × 90 — Sponsor Leaderboard</span>

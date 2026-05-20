@@ -26,10 +26,12 @@ import {
   pickUpcoming,
   toLiveEmbedUrl,
 } from '../../../core/utils/live-scheduling.util';
+import { AdSlotMediaComponent } from '../../../shared/components/ad-slot-media/ad-slot-media.component';
 
 @Component({
   selector: 'app-live-component',
   standalone: true,
+  imports: [AdSlotMediaComponent],
   templateUrl: './live.component.html',
   styleUrl: './live.component.scss',
 })

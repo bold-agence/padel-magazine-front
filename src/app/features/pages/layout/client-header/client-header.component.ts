@@ -7,11 +7,12 @@ import {
   BreakingNewsItem,
   ClientContentService,
 } from '../../../../core/services/client-content.service';
+import { AdSlotMediaComponent } from '../../../../shared/components/ad-slot-media/ad-slot-media.component';
 
 @Component({
   selector: 'app-client-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, AdSlotMediaComponent],
   templateUrl: './client-header.component.html',
   styleUrl: './client-header.component.scss',
 })

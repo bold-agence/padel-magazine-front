@@ -22,6 +22,7 @@ import {
   pickUpcoming,
 } from '../../../core/utils/live-scheduling.util';
 import { NewsletterSubscribeService } from '../../../core/services/newsletter-subscribe.service';
+import { AdSlotMediaComponent } from '../ad-slot-media/ad-slot-media.component';
 import { Subscription } from 'rxjs';
 
 type PopularItem = {
@@ -37,7 +38,7 @@ type PopularItem = {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, AdSlotMediaComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })

@@ -135,8 +135,8 @@
               [attr.target]="topSidebarAd?.targetUrl ? '_blank' : null"
               [attr.rel]="topSidebarAd?.targetUrl ? 'noopener noreferrer' : null"
             >
-              <img
-                [src]="topSidebarAd?.imageUrl"
+              <app-ad-slot-media
+                [ad]="topSidebarAd"
                 [alt]="topSidebarAd?.title || 'Publicite sidebar'"
               />
             </a>
@@ -209,8 +209,8 @@
               [attr.target]="bottomSidebarAd?.targetUrl ? '_blank' : null"
               [attr.rel]="bottomSidebarAd?.targetUrl ? 'noopener noreferrer' : null"
             >
-              <img
-                [src]="bottomSidebarAd?.imageUrl"
+              <app-ad-slot-media
+                [ad]="bottomSidebarAd"
                 [alt]="bottomSidebarAd?.title || 'Publicite sidebar'"
               />
             </a>

@@ -65,8 +65,8 @@
           [attr.target]="homeLeaderboardAd?.targetUrl ? '_blank' : null"
           [attr.rel]="homeLeaderboardAd?.targetUrl ? 'noopener noreferrer' : null"
         >
-          <img
-            [src]="homeLeaderboardAd?.imageUrl"
+          <app-ad-slot-media
+            [ad]="homeLeaderboardAd"
             [alt]="homeLeaderboardAd?.title || 'Publicite home leaderboard'"
           />
         </a>

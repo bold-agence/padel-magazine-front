@@ -28,6 +28,7 @@ export type AdImageItem = {
   slot: AdSlot;
   pageKey: PublicPageKey;
   imageUrl: string;
+  mobileImageUrl?: string | null;
   targetUrl?: string | null;
   isActive: boolean;
 };
@@ -144,10 +145,15 @@ export class ClientContentService {
 
   private normalizeAdImage(item: AdImageItem): AdImageItem {
     const imageUrl = resolvePublicMediaUrl(item.imageUrl) ?? item.imageUrl;
+    const mobileRaw = item.mobileImageUrl?.trim();
+    const mobileImageUrl = mobileRaw
+      ? resolvePublicMediaUrl(mobileRaw) ?? mobileRaw
+      : null;
     return {
       ...item,
       pageKey: item.pageKey ?? DEFAULT_PUBLIC_PAGE_KEY,
       imageUrl,
+      mobileImageUrl,
     };
   }
 }

@@ -154,15 +154,19 @@
   display: block;
 }
 
-.ad-slot img {
+.ad-slot img,
+.ad-slot app-ad-slot-media {
   width: 100%;
   max-width: none;
   min-width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
   display: block;
   border-radius: 4px;
+}
+
+.ad-slot img {
+  object-fit: cover;
+  object-position: center;
 }
 
 .widget { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:16px 20px; margin-bottom:20px; }
