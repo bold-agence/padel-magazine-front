@@ -143,8 +143,7 @@ export class ResultatsComponent implements OnInit {
     this.latestResultsService.findScopes().subscribe({
       next: (scopes) => {
         this.scopes = scopes;
-        const defaultScope =
-          scopes.find((scope) => scope.slug === 'international') ?? scopes[0];
+        const defaultScope = scopes[0];
         this.activeScopeSlug = defaultScope?.slug ?? '';
         this.isLoadingScopes = false;
         this.loadResults();
