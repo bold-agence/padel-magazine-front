@@ -69,7 +69,10 @@
                 <div class="upcoming-card-body">
                   <span class="upcoming-card-tier" [style.--tier-color]="ev.accent">{{ ev.tier }}</span>
                   <span class="upcoming-card-date">{{ formatEventStartShort(ev) }}</span>
-                  <span class="upcoming-card-title">{{ ev.calendarLabel }}</span>
+                  <span class="upcoming-card-title">{{ ev.title }}</span>
+                  @if (ev.tournamentCategoryLabel) {
+                    <span class="upcoming-card-categories">{{ ev.tournamentCategoryLabel }}</span>
+                  }
                   <span class="upcoming-card-venue">{{ ev.venue }}</span>
                 </div>
               </button>

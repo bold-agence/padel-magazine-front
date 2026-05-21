@@ -7,8 +7,9 @@ export type PadelCalendarEvent = {
   calendarLabel: string;
   /** Libellé du tournoi (API), si l’événement est rattaché à un tournoi. */
   tournamentLabel?: string | null;
-  /** Libellé de la catégorie de tournoi (si renseignée). */
+  /** Libellés des catégories jointes (affichage). */
   tournamentCategoryLabel?: string | null;
+  tournamentCategoryLabels?: string[];
   venue: string;
   tier: string;
   accent: string;

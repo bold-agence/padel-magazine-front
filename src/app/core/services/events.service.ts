@@ -40,6 +40,8 @@ export type EventDto = {
   descriptionHtml?: string | null;
   coverImageUrl?: string | null;
   tournament?: TournamentDto | null;
+  tournamentCategories?: TournamentCategoryDto[];
+  /** @deprecated — première catégorie */
   tournamentCategory?: TournamentCategoryDto | null;
   tags?: EventTagDto[];
 };
@@ -54,16 +56,29 @@ export function resolvePublicMediaUrl(url?: string | null): string | undefined {
 }
 
 /** Mappe une ligne `GET /events` vers le modèle utilisé par FullCalendar et le modal. */
+function resolveCategoryLabels(dto: EventDto): string[] {
+  if (dto.tournamentCategories?.length) {
+    return dto.tournamentCategories
+      .map((c) => c.label?.trim())
+      .filter((label): label is string => !!label);
+  }
+  const legacy = dto.tournamentCategory?.label?.trim();
+  return legacy ? [legacy] : [];
+}
+
 export function mapEventDtoToPadel(dto: EventDto): PadelCalendarEvent {
   const tournamentLabel = dto.tournament?.label?.trim();
-  const categoryLabel = dto.tournamentCategory?.label?.trim();
+  const categoryLabels = resolveCategoryLabels(dto);
+  const categoriesJoined = categoryLabels.join(' · ');
   const tier = tournamentLabel || 'Événement';
   const accent = dto.tournament?.colorCode?.trim() || '#1d9e75';
 
   const title = dto.title.trim();
-  const calendarLabel = categoryLabel ? `${title} | ${categoryLabel}` : title;
+  const calendarLabel = categoriesJoined
+    ? `${title} | ${categoriesJoined}`
+    : title;
 
-  const match = categoryLabel
+  const match = categoriesJoined
     ? calendarLabel
     : tournamentLabel
       ? `${tournamentLabel} — ${title}`
@@ -73,7 +88,8 @@ export function mapEventDtoToPadel(dto: EventDto): PadelCalendarEvent {
     id: dto.id,
     title,
     calendarLabel,
-    tournamentCategoryLabel: categoryLabel || null,
+    tournamentCategoryLabel: categoriesJoined || null,
+    tournamentCategoryLabels: categoryLabels,
     tournamentLabel: tournamentLabel || null,
     venue: dto.venue,
     tier,
