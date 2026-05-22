@@ -22,19 +22,20 @@
         @if (author || date || read) {
           <div class="card-meta">
             @if (author) {
-              <span>{{ author }}</span>
+              <span class="card-meta-author">{{ author }}</span>
             }
-            @if (author && date) {
-              <span class="dot"></span>
-            }
-            @if (date) {
-              <span>{{ date }}</span>
-            }
-            @if ((author || date) && read) {
-              <span class="dot"></span>
-            }
-            @if (read) {
-              <span>{{ read }}</span>
+            @if (date || read) {
+              <span class="card-meta-details">
+                @if (date) {
+                  <span>{{ date }}</span>
+                }
+                @if (date && read) {
+                  <span class="dot"></span>
+                }
+                @if (read) {
+                  <span>{{ read }}</span>
+                }
+              </span>
             }
           </div>
         }
@@ -62,19 +63,20 @@
       @if (author || date || read) {
         <div class="card-meta">
           @if (author) {
-            <span>{{ author }}</span>
+            <span class="card-meta-author">{{ author }}</span>
           }
-          @if (author && date) {
-            <span class="dot"></span>
-          }
-          @if (date) {
-            <span>{{ date }}</span>
-          }
-          @if ((author || date) && read) {
-            <span class="dot"></span>
-          }
-          @if (read) {
-            <span>{{ read }}</span>
+          @if (date || read) {
+            <span class="card-meta-details">
+              @if (date) {
+                <span>{{ date }}</span>
+              }
+              @if (date && read) {
+                <span class="dot"></span>
+              }
+              @if (read) {
+                <span>{{ read }}</span>
+              }
+            </span>
           }
         </div>
       }

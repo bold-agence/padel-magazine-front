@@ -17,7 +17,7 @@ export class AproposComponent {
   private readonly sanitizer = inject(DomSanitizer);
 
   protected readonly heroImageUrl = this.publicImage(
-    'Page À Propos  Le padel sénégalais mérite son magazine.jpg',
+    'A propos.jpeg',
   );
 
   protected readonly contactAddress = '15 rue Huart, Dakar, Sénégal';
