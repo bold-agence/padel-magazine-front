@@ -54,11 +54,6 @@
               <div class="pl-body">
                 <div class="rank">{{ p.category.libelle }}</div>
                 <h3>{{ p.player.name }}</h3>
-                <div class="meta">
-                  <b>{{ p.pointNumber }} pts</b>
-                  ·
-                  {{ p.player.club?.title || '—' }}
-                </div>
                 @if (p.signature) {
                   <span class="shot">{{ p.signature }}</span>
                 }
