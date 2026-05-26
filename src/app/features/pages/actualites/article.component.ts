@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { ArticlesService } from '../../../core/services/articles.service';
 import {
@@ -16,7 +15,7 @@ import {
 @Component({
   selector: 'app-article-component',
   standalone: true,
-  imports: [SidebarComponent, RouterLink, NewsCardComponent, DatePipe],
+  imports: [SidebarComponent, RouterLink, NewsCardComponent],
   templateUrl: './article.component.html',
   styleUrl: './article.component.scss',
 })
@@ -234,6 +233,26 @@ export class ArticleComponent implements OnInit {
     this.shareNotice = msg;
     clearTimeout(this.shareNoticeTimer);
     this.shareNoticeTimer = setTimeout(() => (this.shareNotice = ''), 5000);
+  }
+
+  protected formatArticleDate(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+    return date.toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  }
+
+  protected formatArticleDateShort(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
   }
 
   private getArticleCategories(article?: ArticleModel): ArticleCategoryModel[] {

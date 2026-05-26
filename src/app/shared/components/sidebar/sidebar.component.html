@@ -9,17 +9,33 @@
     }
   </div>
 
-  <div class="newsletter-card" id="newsletter">
-    <h3>Restez informé</h3>
-    <p class="sub">L'actu padel sénégalaise chaque semaine, dans votre boîte mail.</p>
-    <button type="button" class="btn btn-primary btn-block" (click)="openNewsletterModal()">
-      Je m'abonne
-    </button>
-    <p class="priv">
-      Inscrivez-vous pour recevoir l'actualité padel et, si vous le souhaitez, le magazine trimestriel en papier.
-    </p>
-    @if (newsletterSuccessMessage) {
-      <p class="priv newsletter-success">{{ newsletterSuccessMessage }}</p>
+  <div class="event-card">
+    @if (sidebarLiveLoading) {
+      <div class="event-card__eyebrow">Prochain événement</div>
+      <p class="event-card__state">Chargement…</p>
+      <a routerLink="/live" class="btn btn-danger btn-block">Page live →</a>
+    } @else if (sidebarLiveError) {
+      <div class="event-card__eyebrow">Prochain événement</div>
+      <p class="event-card__state">Impossible de charger la programmation.</p>
+      <a routerLink="/live" class="btn btn-danger btn-block">Voir la page live →</a>
+    } @else if (sidebarNextLive; as live) {
+      <div
+        class="event-card__eyebrow"
+        [class.event-card__eyebrow--airing]="sidebarNextLiveIsAiring"
+      >
+        {{ sidebarNextLiveIsAiring ? 'En direct' : 'Prochain événement' }}
+      </div>
+      <h3>{{ sidebarEventTitleLine(live) }}</h3>
+      <ul class="event-meta-list">
+        <li>📅 {{ formatSidebarEventDates(live) }}</li>
+        <li>📍 {{ live.event.venue }}</li>
+        <li>⏰ {{ formatSidebarProgramLiveTime(live) }}</li>
+      </ul>
+      <a routerLink="/live" class="btn btn-danger btn-block">Voir le live →</a>
+    } @else {
+      <div class="event-card__eyebrow">Prochain événement</div>
+      <p class="event-card__state">Aucun live à venir pour le moment.</p>
+      <a routerLink="/live" class="btn btn-danger btn-block">Programme live →</a>
     }
   </div>
 
@@ -91,33 +107,17 @@
     </ul>
   </div>
 
-  <div class="event-card">
-    @if (sidebarLiveLoading) {
-      <div class="event-card__eyebrow">Prochain événement</div>
-      <p class="event-card__state">Chargement…</p>
-      <a routerLink="/live" class="btn btn-danger btn-block">Page live →</a>
-    } @else if (sidebarLiveError) {
-      <div class="event-card__eyebrow">Prochain événement</div>
-      <p class="event-card__state">Impossible de charger la programmation.</p>
-      <a routerLink="/live" class="btn btn-danger btn-block">Voir la page live →</a>
-    } @else if (sidebarNextLive; as live) {
-      <div
-        class="event-card__eyebrow"
-        [class.event-card__eyebrow--airing]="sidebarNextLiveIsAiring"
-      >
-        {{ sidebarNextLiveIsAiring ? 'En direct' : 'Prochain événement' }}
-      </div>
-      <h3>{{ sidebarEventTitleLine(live) }}</h3>
-      <ul class="event-meta-list">
-        <li>📅 {{ formatSidebarEventDates(live) }}</li>
-        <li>📍 {{ live.event.venue }}</li>
-        <li>⏰ {{ formatSidebarProgramLiveTime(live) }}</li>
-      </ul>
-      <a routerLink="/live" class="btn btn-danger btn-block">Voir le live →</a>
-    } @else {
-      <div class="event-card__eyebrow">Prochain événement</div>
-      <p class="event-card__state">Aucun live à venir pour le moment.</p>
-      <a routerLink="/live" class="btn btn-danger btn-block">Programme live →</a>
+  <div class="newsletter-card" id="newsletter">
+    <h3>Restez informé</h3>
+    <p class="sub">L'actu padel sénégalaise chaque semaine, dans votre boîte mail.</p>
+    <button type="button" class="btn btn-primary btn-block" (click)="openNewsletterModal()">
+      Je m'abonne
+    </button>
+    <p class="priv">
+      Inscrivez-vous pour recevoir l'actualité padel et, si vous le souhaitez, le magazine trimestriel en papier.
+    </p>
+    @if (newsletterSuccessMessage) {
+      <p class="priv newsletter-success">{{ newsletterSuccessMessage }}</p>
     }
   </div>
 
@@ -126,17 +126,17 @@
     <div class="social-row">
       <span class="s-ico" style="background:#1877F2">f</span>
       <div class="s-info"><div class="name">Facebook</div></div>
-      <a href="#" class="follow">Suivre</a>
+      <a href="#" class="follow">S'abonner</a>
     </div>
     <div class="social-row">
       <span class="s-ico" style="background:linear-gradient(135deg,#FFC107,#E1306C,#833AB4)">◉</span>
       <div class="s-info"><div class="name">Instagram</div></div>
-      <a [href]="socialLinks.instagram" class="follow" target="_blank" rel="noopener noreferrer">Suivre</a>
+      <a [href]="socialLinks.instagram" class="follow" target="_blank" rel="noopener noreferrer">S'abonner</a>
     </div>
     <div class="social-row">
       <span class="s-ico" style="background:#FF0000">▶</span>
       <div class="s-info"><div class="name">YouTube</div></div>
-      <a [href]="socialLinks.youtube" class="follow" target="_blank" rel="noopener noreferrer">Suivre</a>
+      <a [href]="socialLinks.youtube" class="follow" target="_blank" rel="noopener noreferrer">S'abonner</a>
     </div>
   </div>
 

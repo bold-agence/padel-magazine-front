@@ -36,7 +36,7 @@
                 />
               </div>
               <div>
-                <b>{{ article.author }}</b><br /><span>{{ article.date | date: 'dd MMM yyyy' }} · {{ article.readingTime }}</span>
+                <b>{{ article.author }}</b><br /><span>{{ formatArticleDate(article.date) }} · {{ article.readingTime }}</span>
               </div>
             </div>
             <div class="share">
@@ -150,7 +150,7 @@
                 [phClass]="'court'"
                 [title]="related.title"
                 [author]="related.author"
-                [date]="(related.date | date: 'dd MMM') || ''"
+                [date]="formatArticleDateShort(related.date)"
                 [read]="related.readingTime"
                 [bannerImage]="related.bannerImage"
                 [link]="'/actualites/' + related.slug"
