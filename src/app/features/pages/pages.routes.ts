@@ -45,7 +45,7 @@ export const PAGES_ROUTES: Routes = [
           pageKey: 'resultats',
           title: 'Résultats — Padel Magazine',
           description:
-            'Scores complets des tournois sénégalais et internationaux : Open Dakar, circuits régionaux, WPT et APP Tour.',
+            'Scores complets des tournois sénégalais et internationaux : Open Dakar, circuits régionaux, Circuit FIP et Premier Padel.',
         },
         loadComponent: () =>
           import('./resultats/resultats.component').then((m) => m.ResultatsComponent),
