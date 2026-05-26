@@ -26,7 +26,15 @@
           <h1>{{ article.title }}</h1>
           <div class="art-meta">
             <div class="author">
-              <div class="av"><div class="ph court" data-label=""></div></div>
+              <div class="av">
+                <img
+                  src="/assets/logo-final-sans-fond.png"
+                  alt="Padel Magazine"
+                  class="author-logo"
+                  width="40"
+                  height="40"
+                />
+              </div>
               <div>
                 <b>{{ article.author }}</b><br /><span>{{ article.date | date: 'dd MMM yyyy' }} · {{ article.readingTime }}</span>
               </div>

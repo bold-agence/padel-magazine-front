@@ -13,10 +13,31 @@
 }
 
 .topbar .container {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+}
+
+.topbar-tagline {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 0 12px;
+  max-width: min(52vw, 520px);
+  text-align: center;
+  color: #d4d4ce;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
 }
 
 .topbar-left {
@@ -26,12 +47,23 @@
   color: #d4d4ce;
 }
 
+.topbar-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.topbar-date-short {
+  display: none;
+}
+
 .topbar-left .dot {
   width: 4px;
   height: 4px;
   border-radius: 50%;
   background: var(--orange-padel);
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .topbar-right {
@@ -562,12 +594,19 @@
 }
 
 @media (max-width: 768px) {
+  .topbar-tagline {
+    display: none;
+  }
   .topbar {
     font-size: 11px;
     height: 30px;
   }
 
-  .topbar-left span:first-child {
+  .topbar-date-full {
     display: none;
+  }
+
+  .topbar-date-short {
+    display: inline;
   }
 }

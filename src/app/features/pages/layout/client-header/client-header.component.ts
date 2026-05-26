@@ -34,6 +34,16 @@ export class ClientHeaderComponent implements OnInit {
     return formatted.charAt(0).toLocaleUpperCase('fr-FR') + formatted.slice(1);
   })();
 
+  /** Version courte pour la topbar mobile (ex. « Mar. 26 mai »). */
+  protected readonly dateFrShort = (() => {
+    const formatted = new Intl.DateTimeFormat('fr-FR', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    }).format(new Date());
+    return formatted.charAt(0).toLocaleUpperCase('fr-FR') + formatted.slice(1);
+  })();
+
   protected readonly socialLinks = SOCIAL_LINKS;
 
   protected isScrolled = false;

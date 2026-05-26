@@ -1,8 +1,15 @@
 <div class="topbar">
   <div class="container">
     <div class="topbar-left">
-      <span><span class="dot"></span> {{ dateFr }}</span>
+      <span class="topbar-date">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="topbar-date-full">{{ dateFr }}</span>
+        <span class="topbar-date-short">{{ dateFrShort }}</span>
+      </span>
     </div>
+    <p class="topbar-tagline">
+      Le premier média 100% dédié au padel au Sénégal et en Afrique de l'Ouest.
+    </p>
     <div class="topbar-right">
       <div class="socials" aria-label="Réseaux sociaux">
         <a href="#" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
