@@ -7,6 +7,7 @@ import {
   BreakingNewsItem,
   ClientContentService,
 } from '../../../../core/services/client-content.service';
+import { SOCIAL_LINKS } from '../../../../core/constants/social-links';
 import { AdSlotMediaComponent } from '../../../../shared/components/ad-slot-media/ad-slot-media.component';
 
 @Component({
@@ -32,6 +33,8 @@ export class ClientHeaderComponent implements OnInit {
     }).format(new Date());
     return formatted.charAt(0).toLocaleUpperCase('fr-FR') + formatted.slice(1);
   })();
+
+  protected readonly socialLinks = SOCIAL_LINKS;
 
   protected isScrolled = false;
   protected headerAd?: AdImageItem;

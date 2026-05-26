@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 import { forkJoin } from 'rxjs';
+import { SOCIAL_LINKS } from '../../../core/constants/social-links';
 import { resolvePublicMediaUrl } from '../../../core/services/events.service';
 import {
   AdImageItem,
@@ -203,7 +204,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   protected youtubeSubscribeHref(): string {
     const raw = this.channelSettings()?.channelUrl?.trim();
     const base =
-      raw && /^https?:\/\//i.test(raw) ? raw : 'https://www.youtube.com/';
+      raw && /^https?:\/\//i.test(raw) ? raw : SOCIAL_LINKS.youtube;
     if (/[?&]sub_confirmation=1(?:&|$)/.test(base)) {
       return base;
     }

@@ -19,6 +19,7 @@ import {
   ClassementSummaryDto,
   ClassementsService,
 } from '../../../core/services/classements.service';
+import { SOCIAL_LINKS } from '../../../core/constants/social-links';
 import { resolvePublicMediaUrl } from '../../../core/services/events.service';
 import {
   AdImageItem,
@@ -306,7 +307,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   protected homeLiveYoutubeSubscribeHref(): string {
     const raw = this.channelSettings?.channelUrl?.trim();
     const base =
-      raw && /^https?:\/\//i.test(raw) ? raw : 'https://www.youtube.com/';
+      raw && /^https?:\/\//i.test(raw) ? raw : SOCIAL_LINKS.youtube;
     if (/[?&]sub_confirmation=1(?:&|$)/.test(base)) {
       return base;
     }

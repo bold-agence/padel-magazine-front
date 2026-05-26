@@ -11,6 +11,7 @@ import {
   isPublicPageKey,
   resolvePageKeyFromUrl,
 } from '../../../core/constants/public-page-keys';
+import { SOCIAL_LINKS } from '../../../core/constants/social-links';
 import { ArticlesService } from '../../../core/services/articles.service';
 import {
   AdImageItem,
@@ -43,6 +44,8 @@ type PopularItem = {
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
+  protected readonly socialLinks = SOCIAL_LINKS;
+
   @Input() excludeSlug?: string | null;
 
   protected isLoadingPopular = false;

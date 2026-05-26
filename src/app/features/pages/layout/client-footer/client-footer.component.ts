@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SOCIAL_LINKS } from '../../../../core/constants/social-links';
 import { NewsletterSubscribeService } from '../../../../core/services/newsletter-subscribe.service';
 
 @Component({
@@ -10,6 +11,7 @@ import { NewsletterSubscribeService } from '../../../../core/services/newsletter
   styleUrl: './client-footer.component.scss',
 })
 export class ClientFooterComponent {
+  protected readonly socialLinks = SOCIAL_LINKS;
   protected showBackTop = false;
 
   constructor(
