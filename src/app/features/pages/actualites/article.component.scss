@@ -101,9 +101,16 @@
   align-items: center;
   justify-content: center;
   color: var(--gray);
-  font-size: 13px;
   border: 1px solid var(--line);
   box-sizing: border-box;
+  text-decoration: none;
+}
+
+.share a svg,
+.share button svg {
+  width: 14px;
+  height: 14px;
+  display: block;
 }
 
 .share button {

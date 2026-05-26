@@ -7,6 +7,7 @@ import {
   ArticleModel,
   ArticleSectionModel,
 } from '../../../core/models/article.model';
+import { SOCIAL_LINKS } from '../../../core/constants/social-links';
 import {
   NewsCardBadge,
   NewsCardComponent,
@@ -20,6 +21,8 @@ import {
   styleUrl: './article.component.scss',
 })
 export class ArticleComponent implements OnInit {
+  protected readonly socialLinks = SOCIAL_LINKS;
+
   protected isLoading = false;
   protected errorMessage = '';
   protected article?: ArticleModel;
