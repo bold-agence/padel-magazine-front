@@ -38,7 +38,7 @@ import { AdSlotMediaComponent } from '../../../shared/components/ad-slot-media/a
 })
 export class LiveComponent implements OnInit, OnDestroy {
   protected readonly liveLogoUrl =
-    '/images/' + encodeURIComponent('FAVIKON LIVE.png');
+    '/images/' + encodeURIComponent('logo live padel.png');
 
   private readonly livesService = inject(LivesService);
   private readonly clientContentService = inject(ClientContentService);
