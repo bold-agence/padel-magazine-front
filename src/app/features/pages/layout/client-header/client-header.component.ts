@@ -110,4 +110,11 @@ export class ClientHeaderComponent implements OnInit {
     this.isMenuOpen = open;
     document.body.style.overflow = open ? 'hidden' : '';
   }
+
+  protected search(): void {
+    const q = window.prompt('Rechercher dans Padel Magazine :');
+    if (q) {
+      window.alert(`Résultats pour « ${q} » — (démo)`);
+    }
+  }
 }

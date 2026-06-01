@@ -147,8 +147,7 @@
 }
 
 .logo img {
-  margin: 30px 0;
-  height: 54px;
+  height: 120px;
   width: auto;
 }
 
@@ -209,14 +208,9 @@
   color: var(--ink);
 }
 
-.icon-btn:hover:not(:disabled) {
+.icon-btn:hover {
   background: var(--paper);
   color: var(--green);
-}
-
-.icon-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
 }
 
 .nav {
@@ -605,10 +599,6 @@
 }
 
 @media (max-width: 768px) {
-  .logo img {
-    margin: 10px 0;
-  }
-
   .topbar-tagline {
     display: none;
   }
