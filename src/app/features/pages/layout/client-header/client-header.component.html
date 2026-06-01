@@ -48,12 +48,15 @@
     <a class="logo" routerLink="/" aria-label="Padel Magazine — Accueil">
       <img src="/assets/logo-final-sans-fond.png" alt="Padel Magazine" />
     </a>
-    <div class="leaderboard">
+    <div
+      class="leaderboard"
+      [class.leaderboard--placeholder]="headerAdResolved && !headerAd?.imageUrl"
+    >
       @if (headerAd?.imageUrl) {
         <a [href]="headerAd?.targetUrl || '#'" [attr.target]="headerAd?.targetUrl ? '_blank' : null" [attr.rel]="headerAd?.targetUrl ? 'noopener noreferrer' : null">
           <app-ad-slot-media [ad]="headerAd" [alt]="headerAd?.title || 'Publicite header'" />
         </a>
-      } @else {
+      } @else if (headerAdResolved) {
         <span>728 × 90 — Sponsor Leaderboard</span>
       }
     </div>
@@ -121,7 +124,11 @@
   </div>
 </nav>
 
-<div class="leaderboard nav-leaderboard" [class.nav-leaderboard--menu-open]="isMenuOpen">
+<div
+  class="leaderboard nav-leaderboard"
+  [class.nav-leaderboard--menu-open]="isMenuOpen"
+  [class.leaderboard--placeholder]="headerAdResolved && !headerAd?.imageUrl"
+>
   @if (headerAd?.imageUrl) {
     <a
       [href]="headerAd?.targetUrl || '#'"
@@ -130,7 +137,7 @@
     >
       <app-ad-slot-media [ad]="headerAd" [alt]="headerAd?.title || 'Publicite header'" />
     </a>
-  } @else {
+  } @else if (headerAdResolved) {
     <span>728 × 90 — Sponsor Leaderboard</span>
   }
 </div>

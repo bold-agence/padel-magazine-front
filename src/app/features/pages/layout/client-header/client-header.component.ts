@@ -1,7 +1,7 @@
 import { Component, HostListener, inject, Input, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { filter } from 'rxjs';
+import { filter, finalize } from 'rxjs';
 import {
   AdImageItem,
   BreakingNewsItem,
@@ -48,6 +48,7 @@ export class ClientHeaderComponent implements OnInit {
 
   protected isScrolled = false;
   protected headerAd?: AdImageItem;
+  protected headerAdResolved = false;
   protected breakingNews: BreakingNewsItem[] = [];
 
   constructor(private readonly clientContentService: ClientContentService) {
@@ -62,14 +63,19 @@ export class ClientHeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.clientContentService.findAdImages('header_main', true).subscribe({
-      next: (items) => {
-        this.headerAd = items[0];
-      },
-      error: () => {
-        this.headerAd = undefined;
-      },
-    });
+    this.clientContentService
+      .findAdImages('header_main', true)
+      .pipe(finalize(() => {
+        this.headerAdResolved = true;
+      }))
+      .subscribe({
+        next: (items) => {
+          this.headerAd = items[0];
+        },
+        error: () => {
+          this.headerAd = undefined;
+        },
+      });
     this.clientContentService.findBreakingNews(true).subscribe({
       next: (items) => {
         this.breakingNews = items;

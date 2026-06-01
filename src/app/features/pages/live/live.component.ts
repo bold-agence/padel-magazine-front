@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
-import { forkJoin } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { SOCIAL_LINKS } from '../../../core/constants/social-links';
 import { resolvePublicMediaUrl } from '../../../core/services/events.service';
 import {
@@ -68,6 +68,7 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   protected topSidebarAd?: AdImageItem;
   protected bottomSidebarAd?: AdImageItem;
+  protected liveSidebarAdsResolved = false;
 
   protected timeLeft = {
     days: '00',
@@ -311,15 +312,22 @@ export class LiveComponent implements OnInit, OnDestroy {
   }
 
   private loadSidebarAds(): void {
-    this.clientContentService.resolveSidebarAds('live').subscribe({
-      next: (ads) => {
-        this.topSidebarAd = ads.top ?? undefined;
-        this.bottomSidebarAd = ads.bottom ?? undefined;
-      },
-      error: () => {
-        this.topSidebarAd = undefined;
-        this.bottomSidebarAd = undefined;
-      },
-    });
+    this.clientContentService
+      .resolveSidebarAds('live')
+      .pipe(
+        finalize(() => {
+          this.liveSidebarAdsResolved = true;
+        }),
+      )
+      .subscribe({
+        next: (ads) => {
+          this.topSidebarAd = ads.top ?? undefined;
+          this.bottomSidebarAd = ads.bottom ?? undefined;
+        },
+        error: () => {
+          this.topSidebarAd = undefined;
+          this.bottomSidebarAd = undefined;
+        },
+      });
   }
 }

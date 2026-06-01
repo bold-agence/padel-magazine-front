@@ -163,7 +163,7 @@
   position: relative;
   overflow: hidden;
 
-  &:not(:has(a)) {
+  &--placeholder {
     background: repeating-linear-gradient(45deg, #f0efe8 0 12px, #e7e5de 12px 24px);
     border-color: var(--line);
     color: var(--gray);

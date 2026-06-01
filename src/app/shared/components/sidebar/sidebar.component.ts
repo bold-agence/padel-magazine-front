@@ -24,7 +24,7 @@ import {
 } from '../../../core/utils/live-scheduling.util';
 import { NewsletterSubscribeService } from '../../../core/services/newsletter-subscribe.service';
 import { AdSlotMediaComponent } from '../ad-slot-media/ad-slot-media.component';
-import { Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 
 type PopularItem = {
   cat: string;
@@ -53,6 +53,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
   protected activeTab: 'trending' | 'popular' = 'trending';
   protected topSidebarAd?: AdImageItem;
   protected bottomSidebarAd?: AdImageItem;
+  protected sidebarAdsResolved = false;
 
   /** Même règle que l’accueil / page Live : en direct si créneau en cours, sinon prochain live. */
   protected sidebarNextLive: LiveDto | null = null;
@@ -200,16 +201,23 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   private loadAds(url: string): void {
     const pageKey = this.resolveActivePageKey(url);
-    this.clientContentService.resolveSidebarAds(pageKey).subscribe({
-      next: (ads) => {
-        this.topSidebarAd = ads.top ?? undefined;
-        this.bottomSidebarAd = ads.bottom ?? undefined;
-      },
-      error: () => {
-        this.topSidebarAd = undefined;
-        this.bottomSidebarAd = undefined;
-      },
-    });
+    this.clientContentService
+      .resolveSidebarAds(pageKey)
+      .pipe(
+        finalize(() => {
+          this.sidebarAdsResolved = true;
+        }),
+      )
+      .subscribe({
+        next: (ads) => {
+          this.topSidebarAd = ads.top ?? undefined;
+          this.bottomSidebarAd = ads.bottom ?? undefined;
+        },
+        error: () => {
+          this.topSidebarAd = undefined;
+          this.bottomSidebarAd = undefined;
+        },
+      });
   }
 
   private toPopularItem(article: ArticleModel): PopularItem {

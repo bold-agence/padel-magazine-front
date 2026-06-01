@@ -1,10 +1,13 @@
 <aside>
-  <div class="ad-slot">
+  <div
+    class="ad-slot"
+    [class.ad-slot--placeholder]="sidebarAdsResolved && !topSidebarAd?.imageUrl"
+  >
     @if (topSidebarAd?.imageUrl) {
       <a [href]="topSidebarAd?.targetUrl || '#'" [attr.target]="topSidebarAd?.targetUrl ? '_blank' : null" [attr.rel]="topSidebarAd?.targetUrl ? 'noopener noreferrer' : null">
         <app-ad-slot-media [ad]="topSidebarAd" [alt]="topSidebarAd?.title || 'Publicite sidebar'" />
       </a>
-    } @else {
+    } @else if (sidebarAdsResolved) {
       <span>300 × 250 — MPU #1</span>
     }
   </div>
@@ -154,12 +157,15 @@
     </div>
   </div>
 
-  <div class="ad-slot">
+  <div
+    class="ad-slot"
+    [class.ad-slot--placeholder]="sidebarAdsResolved && !bottomSidebarAd?.imageUrl"
+  >
     @if (bottomSidebarAd?.imageUrl) {
       <a [href]="bottomSidebarAd?.targetUrl || '#'" [attr.target]="bottomSidebarAd?.targetUrl ? '_blank' : null" [attr.rel]="bottomSidebarAd?.targetUrl ? 'noopener noreferrer' : null">
         <app-ad-slot-media [ad]="bottomSidebarAd" [alt]="bottomSidebarAd?.title || 'Publicite sidebar'" />
       </a>
-    } @else {
+    } @else if (sidebarAdsResolved) {
       <span>300 × 250 — MPU #2</span>
     }
   </div>

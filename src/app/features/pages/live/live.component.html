@@ -128,7 +128,10 @@
       </div>
 
       <aside class="live-side">
-        <div class="ad-slot">
+        <div
+          class="ad-slot"
+          [class.ad-slot--placeholder]="liveSidebarAdsResolved && !topSidebarAd?.imageUrl"
+        >
           @if (topSidebarAd?.imageUrl) {
             <a
               [href]="topSidebarAd?.targetUrl || '#'"
@@ -140,7 +143,7 @@
                 [alt]="topSidebarAd?.title || 'Publicite sidebar'"
               />
             </a>
-          } @else {
+          } @else if (liveSidebarAdsResolved) {
             <span>300 × 250 — MPU #1</span>
           }
         </div>
@@ -202,7 +205,10 @@
           }
         </div>
 
-        <div class="ad-slot">
+        <div
+          class="ad-slot"
+          [class.ad-slot--placeholder]="liveSidebarAdsResolved && !bottomSidebarAd?.imageUrl"
+        >
           @if (bottomSidebarAd?.imageUrl) {
             <a
               [href]="bottomSidebarAd?.targetUrl || '#'"
@@ -214,7 +220,7 @@
                 [alt]="bottomSidebarAd?.title || 'Publicite sidebar'"
               />
             </a>
-          } @else {
+          } @else if (liveSidebarAdsResolved) {
             <span>300 × 250 — MPU #2</span>
           }
         </div>

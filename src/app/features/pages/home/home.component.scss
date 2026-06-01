@@ -190,7 +190,7 @@
   position: relative;
   overflow: hidden;
 
-  &:not(:has(a)) {
+  &--placeholder {
     border-style: dashed;
     border-color: #d8dee4;
     background: repeating-linear-gradient(135deg, #f5f7fa, #f5f7fa 12px, #eef2f6 12px, #eef2f6 24px);

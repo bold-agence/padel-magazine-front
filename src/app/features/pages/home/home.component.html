@@ -58,7 +58,10 @@
   </section>
 
   <div class="home-leaderboard-wrap">
-    <div class="home-leaderboard">
+    <div
+      class="home-leaderboard"
+      [class.home-leaderboard--placeholder]="homeLeaderboardAdResolved && !homeLeaderboardAd?.imageUrl"
+    >
       @if (homeLeaderboardAd?.imageUrl) {
         <a
           [href]="homeLeaderboardAd?.targetUrl || '#'"
@@ -70,7 +73,7 @@
             [alt]="homeLeaderboardAd?.title || 'Publicite home leaderboard'"
           />
         </a>
-      } @else {
+      } @else if (homeLeaderboardAdResolved) {
         <span>1280 × 90 — Leaderboard</span>
       }
     </div>

@@ -111,6 +111,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   protected heroSideNews: HeroItem[] = [];
   protected heroActiveIndex = 0;
   protected homeLeaderboardAd?: AdImageItem;
+  protected homeLeaderboardAdResolved = false;
   /** Copie logique page International — 3 derniers résultats Premier Padel (API). */
   protected premierPadelLatestResults: HomePremierPadelResultRow[] = [];
   protected isLoadingLatestResults = true;
@@ -502,14 +503,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadHomeAds(): void {
-    this.clientContentService.findAdImages('home_leaderboard', true).subscribe({
-      next: (items) => {
-        this.homeLeaderboardAd = this.clientContentService.pickAdForPage(items, 'home');
-      },
-      error: () => {
-        this.homeLeaderboardAd = undefined;
-      },
-    });
+    this.clientContentService
+      .findAdImages('home_leaderboard', true)
+      .pipe(
+        finalize(() => {
+          this.homeLeaderboardAdResolved = true;
+        }),
+      )
+      .subscribe({
+        next: (items) => {
+          this.homeLeaderboardAd = this.clientContentService.pickAdForPage(items, 'home');
+        },
+        error: () => {
+          this.homeLeaderboardAd = undefined;
+        },
+      });
   }
 
   /** Top 3 hommes / femmes — même API que la page Classements. */
