@@ -147,7 +147,8 @@
 }
 
 .logo img {
-  height: 120px;
+  margin: 30px 0;
+  height: 54px;
   width: auto;
 }
 
@@ -208,9 +209,14 @@
   color: var(--ink);
 }
 
-.icon-btn:hover {
+.icon-btn:hover:not(:disabled) {
   background: var(--paper);
   color: var(--green);
+}
+
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .nav {
@@ -599,6 +605,10 @@
 }
 
 @media (max-width: 768px) {
+  .logo img {
+    margin: 10px 0;
+  }
+
   .topbar-tagline {
     display: none;
   }
