@@ -2,7 +2,14 @@
   <section class="hero" id="hero">
     <div class="hero-main">
       @for (item of heroMainNews; track item.slug + '-' + $index; let i = $index) {
-        <a class="slide" [class.active]="i === heroActiveIndex" [attr.data-idx]="i" [hidden]="i !== heroActiveIndex" [attr.href]="item.slug ? '/actualites/' + item.slug : null">
+        <a
+          class="slide"
+          [class.active]="i === heroActiveIndex"
+          [attr.data-idx]="i"
+          [attr.href]="item.slug ? '/actualites/' + item.slug : null"
+          [attr.tabindex]="i === heroActiveIndex ? null : -1"
+          [attr.aria-hidden]="i !== heroActiveIndex ? true : null"
+        >
           @if (item.bannerImage) {
             <img [src]="item.bannerImage" class="hero-media" alt="image article hero" />
           } @else {
