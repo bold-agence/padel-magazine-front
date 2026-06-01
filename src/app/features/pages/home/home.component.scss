@@ -23,6 +23,11 @@
   height: 100%;
 }
 
+$hero-fade-duration: 1.15s;
+$hero-fade-ease: cubic-bezier(0.22, 1, 0.36, 1);
+$hero-zoom-duration: 1.45s;
+$hero-overlay-ease: cubic-bezier(0.33, 0.85, 0.45, 1);
+
 .hero-main .slide {
   position: absolute;
   inset: 0;
@@ -31,21 +36,56 @@
   height: 100%;
   text-decoration: none;
   color: inherit;
-  opacity: 0;
   z-index: 0;
   pointer-events: none;
-  transition: opacity 0.65s ease-in-out;
+  will-change: opacity;
 
   &.active {
-    opacity: 1;
     z-index: 1;
     pointer-events: auto;
+  }
+
+  > .hero-media,
+  > .ph {
+    opacity: 0;
+    transform: scale(1.06);
+    transition:
+      opacity $hero-fade-duration $hero-fade-ease,
+      transform $hero-zoom-duration $hero-fade-ease;
+    will-change: opacity, transform;
+  }
+
+  &.active > .hero-media,
+  &.active > .ph {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .hero-overlay {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    transition:
+      opacity 0.7s $hero-overlay-ease,
+      transform 0.7s $hero-overlay-ease;
+  }
+
+  &.active .hero-overlay {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity 0.95s $hero-overlay-ease 0.28s,
+      transform 0.95s $hero-overlay-ease 0.28s;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-main .slide {
-    transition: none;
+    > .hero-media,
+    > .ph,
+    .hero-overlay {
+      transition: none;
+      transform: none;
+    }
   }
 }
 

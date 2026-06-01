@@ -269,7 +269,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.heroTimer = setInterval(() => {
       this.heroActiveIndex = (this.heroActiveIndex + 1) % this.heroMainNews.length;
-    }, 5000);
+    }, 7000);
   }
 
   private loadHomeLives(): void {
