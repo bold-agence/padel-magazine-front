@@ -272,6 +272,21 @@
   color: #fff;
   font-weight: 700;
   font-size: 13px;
+  flex-shrink: 0;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+}
+
+.social-widget .s-ico--instagram {
+  background: linear-gradient(135deg, #ffc107, #e1306c, #833ab4);
+}
+
+.social-widget .s-ico--youtube {
+  background: #ff0000;
 }
 
 .social-widget .s-info {
